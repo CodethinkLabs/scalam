@@ -20,6 +20,9 @@
 #ifndef SCALAM_H
 #define SCALAM_H
 
+#include <stdio.h>
+#include <string.h>
+
 #define APPNAME "scalam"
 #define VERSION "0.1"
 
@@ -103,5 +106,7 @@ typedef struct {
 	/* The goal transition */
 	sc_goal goal;
 } sc_population;
+
+void show_help();
 
 #endif

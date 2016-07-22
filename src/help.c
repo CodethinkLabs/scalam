@@ -19,22 +19,9 @@
 
 #include "scalam.h"
 
-int main(int argc, char **argv)
+void show_help()
 {
-	int i;
+	printf("%s version %s\n\n", (char*)APPNAME, (char*)VERSION);
 
-	if (argc <= 1) {
-		show_help();
-		return 0;
-	}
-
-	for (i = 1; i < argc; i++) {
-		/* show help */
-		if ((strcmp(argv[i],"-h")==0) ||
-			(strcmp(argv[i],"--help")==0)) {
-			show_help();
-		}
-	}
-
-	return 0;
+	printf(" -v --version             Show version number\n");
 }
