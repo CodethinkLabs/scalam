@@ -20,7 +20,7 @@
 #include <assert.h>
 #include "scalam.h"
 
-void test_program_get_versions()
+void test_program_get_versions_git()
 {
 	int retval;
 	char * repo_url = "https://github.com/CodethinkLabs/frepo";
@@ -73,7 +73,7 @@ void run_tests()
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
-	test_program_get_versions();
+	test_program_get_versions_git();
 
 	printf("All tests passed\n");
 }
