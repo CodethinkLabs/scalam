@@ -1,19 +1,28 @@
 #ifndef SCALAM_H
 #define SCALAM_H
 
-#define MAX_SYSTEM_SIZE           99999
-#define MAX_STRING                  256
-#define MAX_VERSION_STRING_LENGTH   512
+/* The maximum number of programs in a system */
+#define SC_MAX_SYSTEM_SIZE           99999
+
+/* maximum length of strings used for program names */
+#define SC_MAX_STRING                  256
+
+#define SC_MAX_POPULATION_SIZE         512
+
+/* The maximum number of state changes to get from the
+   starting system to the reference system.
+   This is assumed to be fairly small. */
+#define SC_MAX_CHANGE_SEQUENCE          32
 
 /* Defines a program and its possible versions */
 typedef struct {
-	char name[MAX_STRING];
+	char name[SC_MAX_STRING];
 
-	char repo_url[MAX_STRING];
+	char repo_url[SC_MAX_STRING];
 
 	/* File containing list of versions
 	   For example, coule be the result of:
-	       git log --all --oneline > versions.txt
+		   git log --all --oneline > versions.txt
 	   or could be created from a debian changelog */
 	char * versions_file;
 
@@ -21,26 +30,56 @@ typedef struct {
 	   For exported git commit this would just be the line count */
 	int no_of_versions;
 
-	/* index within the list of the current version
+	/* Index within the list of the current version
 	   which this program is on */
 	int version_index;
 
-	/* is the program installed or not */
+	/* Is the program installed or not */
 	unsigned char installed;
 } sc_program;
 
 /* A collection of programs defines the state of a system */
 typedef struct {
 	int no_of_programs;
-	sc_program program[MAX_SYSTEM_SIZE];
+	sc_program program[SC_MAX_SYSTEM_SIZE];
 } sc_system;
 
 /* A minimal description of a change to a system.
    Some version indexes could be the same as the previous state.
    Indexes could also go either forwards or backwards. */
 typedef struct {
-	int version_index[MAX_SYSTEM_SIZE];
-	int installed[MAX_SYSTEM_SIZE];
-} sc_system_change;
+	int version_index[SC_MAX_SYSTEM_SIZE];
+	int installed[SC_MAX_SYSTEM_SIZE];
+} sc_system_state;
+
+/* A genome defines a sequence of changes to get to the reference state.
+   After evaluation a score is assigned to it */
+typedef struct {
+	sc_system_state change[SC_MAX_CHANGE_SEQUENCE];
+	int score;
+} sc_genome;
+
+/* Defines the goal of the upgrade */
+typedef struct {
+	/* What programs and versions do we have at the start */
+	sc_system_state start;
+
+	/* What programs and versions do we want to end up with */
+	sc_system_state reference;
+} sc_goal;
+
+/* Population of genomes */
+typedef struct {
+	/* Number of individuals in the population */
+	int size;
+
+	sc_genome individual[SC_MAX_POPULATION_SIZE];
+
+	/* Definition of the system */
+	sc_system sys;
+
+	/* The goal transition */
+	sc_goal goal;
+} sc_population;
 
 #endif
