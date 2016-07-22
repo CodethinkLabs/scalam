@@ -108,5 +108,6 @@ typedef struct {
 } sc_population;
 
 void show_help();
+void run_tests();
 
 #endif

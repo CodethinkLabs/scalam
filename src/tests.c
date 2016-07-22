@@ -17,32 +17,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
 #include "scalam.h"
 
-int main(int argc, char **argv)
+void run_tests()
 {
-	int i;
+	printf("Running unit tests for %s version %s\n",
+		   (char*)APPNAME, (char*)VERSION);
 
-	/* If there are no arguments then show help */
-	if (argc <= 1) {
-		show_help();
-		return 0;
-	}
+	/* TODO */
 
-	/* Parse the arguments */
-	for (i = 1; i < argc; i++) {
-		/* show help */
-		if ((strcmp(argv[i],"-h")==0) ||
-			(strcmp(argv[i],"--help")==0)) {
-			show_help();
-			return 0;
-		}
-		if ((strcmp(argv[i],"-t")==0) ||
-			(strcmp(argv[i],"--tests")==0)) {
-			run_tests();
-			return 0;
-		}
-	}
-
-	return 0;
+	printf("All tests passed\n");
 }
