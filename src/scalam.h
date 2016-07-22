@@ -40,6 +40,7 @@ typedef struct {
    Indexes could also go either forwards or backwards. */
 typedef struct {
 	int version_index[MAX_SYSTEM_SIZE];
+	int installed[MAX_SYSTEM_SIZE];
 } sc_system_change;
 
 #endif
