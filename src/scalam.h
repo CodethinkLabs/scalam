@@ -22,6 +22,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -109,5 +111,8 @@ typedef struct {
 
 void show_help();
 void run_tests();
+int run_shell_command(char * commandstr);
+int file_exists(char * filename);
+int program_get_versions(char * repos_dir, char * repo_url, char * program_name);
 
 #endif
