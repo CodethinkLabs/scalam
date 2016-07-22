@@ -19,6 +19,28 @@
 
 #include "scalam.h"
 
+/**
+ * @brief Returns non-zero value if the given file exists
+ * @param filename Name of the file
+ * @returns Non-zero if the file exists
+ */
+int file_exists(char * filename)
+{
+	FILE * fp;
+
+	fp = fopen(filename, "r");
+	if (fp) {
+		fclose(fp);
+		return 1;
+	}
+	return 0;
+}
+
+/**
+ * @brief Returns the total number of lines in a file
+ * @param filename Name of the file
+ * @returns Number of lines in the file
+ */
 int lines_in_file(char * filename)
 {
 	FILE * fp;
@@ -38,6 +60,14 @@ int lines_in_file(char * filename)
 	return ctr;
 }
 
+/**
+ * @brief Returns a specific line from a file.
+ *        Note that commit lists or changelogs are in descending order.
+ * @param filename Name of the file
+ * @param line_number The line number to get, beginning from the end of the file
+ * @param line The returned line
+ * @returns Zero on success
+ */
 int get_line_from_file(char * filename, int line_number, char * line)
 {
 	FILE * fp;
@@ -77,6 +107,11 @@ int get_line_from_file(char * filename, int line_number, char * line)
 	return 0;
 }
 
+/**
+ * @brief Runs a shell command
+ * @param commandstr The command to be run
+ * @returns Zero on success
+ */
 int run_shell_command(char * commandstr)
 {
 	if (system(commandstr) != -1)

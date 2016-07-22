@@ -20,18 +20,6 @@
 #include <assert.h>
 #include "scalam.h"
 
-int file_exists(char * filename)
-{
-	FILE * fp;
-
-	fp = fopen(filename, "r");
-	if (fp) {
-		fclose(fp);
-		return 1;
-	}
-	return 0;
-}
-
 void test_program_get_versions()
 {
 	int retval;

@@ -19,6 +19,13 @@
 
 #include "scalam.h"
 
+/**
+ * @brief Gets a list of commits as a file called versions.txt
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param repo_url URL of the git repo
+ * @param program_name Name of the program
+ * @returns zero on success
+ */
 int program_get_versions_git(char * repos_dir, char * repo_url, char * program_name)
 {
 	char commandstr[SC_MAX_STRING];
@@ -31,12 +38,26 @@ int program_get_versions_git(char * repos_dir, char * repo_url, char * program_n
 	return 0;
 }
 
-int program_get_versions_tarball(char * repos_dir, char * repo_url, char * program_name)
+/**
+ * @brief Gets a list of versions from a changelog within a tarball
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param tarball_url URL of the tarball
+ * @param program_name Name of the program
+ * @returns zero on success
+ */
+int program_get_versions_tarball(char * repos_dir, char * tarball_url, char * program_name)
 {
 	/* TODO */
 	return 0;
 }
 
+/**
+ * @brief Gets a list of versions as a file valled versions.txt
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param repo_url URL of the git repo or tarball
+ * @param program_name Name of the program
+ * @returns zero on success
+ */
 int program_get_versions(char * repos_dir, char * repo_url, char * program_name)
 {
 	/* check for empty strings */
