@@ -1,5 +1,5 @@
 /*
-	functions useful for parsing GHCN data
+	Smart search for upgrade paths
 	Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
 					   Bob Mottram <bob.mottram@codethink.co.uk>
 
@@ -19,6 +19,9 @@
 
 #ifndef SCALAM_H
 #define SCALAM_H
+
+#define APPNAME "scalam"
+#define VERSION "0.1"
 
 /* The maximum number of programs in a system */
 #define SC_MAX_SYSTEM_SIZE           99999

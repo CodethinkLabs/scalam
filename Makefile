@@ -4,14 +4,13 @@ RELEASE=1
 PREFIX?=/usr/local
 
 CC=gcc
-LIBS='-lm -fopenmp'
 
 all:
 	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
-	$(CC) -o ${APP} src/* ${LIBS}
+	$(CC) -o ${APP} src/* -lm -fopenmp
 debug:
 	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
-	$(CC) -o ${APP} -g src/* ${LIBS}
+	$(CC) -o ${APP} -g src/* -lm -fopenmp
 clean:
 	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
 source:
