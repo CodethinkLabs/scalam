@@ -185,8 +185,14 @@ void test_program_version_from_index()
 	prog.no_of_versions = lines_in_file(test_filename);
 
 	str[0] = 0;
+	assert(program_version_from_index(&prog, 0, str) == 0);
+	assert(strcmp(str, "foobars") == 0);
+
+	str[0] = 0;
 	assert(program_version_from_index(&prog, 1, str) == 0);
 	assert(strcmp(str, "for") == 0);
+
+	str[0] = 0;
 	assert(program_version_from_index(&prog, 3, str) == 0);
 	assert(strcmp(str, "foobar") == 0);
 
