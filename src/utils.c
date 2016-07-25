@@ -153,7 +153,7 @@ int run_shell_command_with_output(char * commandstr, char * output)
 	if (ctr > 1) ctr -= 2;
 	output[ctr] = 0;
 
-	/* close */
 	pclose(fp);
+
 	return 0;
 }
