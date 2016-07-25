@@ -129,7 +129,28 @@ int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_p
 	if (file_exists(prog->versions_file)) return 6;
 
 	/* TODO
-	   This should wget the package, extract changelog from the DEBIAN directory hten
+	   This should wget the package, extract changelog from the DEBIAN directory then
+	   call program_get_versions_from_changelog */
+
+	return 0;
+}
+
+/**
+ * @brief Gets a list of versions from a RPM package
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param rpm_url URL where the debian package can be downloaded from
+ * @param prog Program object
+ * @returns zero on success
+ */
+int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_program * prog)
+{
+	if (program_name_is_valid(prog) != 0) return 5;
+
+	/* do we know where to put the resulting versions list? */
+	if (file_exists(prog->versions_file)) return 6;
+
+	/* TODO
+	   This should wget the package, extract changelog from the spec directory then
 	   call program_get_versions_from_changelog */
 
 	return 0;

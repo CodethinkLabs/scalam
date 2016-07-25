@@ -128,5 +128,6 @@ int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program
 int program_get_versions_from_changelog(char * changelog_filename, sc_program * prog);
 int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_program * prog);
 int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_program * prog);
+int program_get_versions_from_rpm_package(char * repos_dir, char * deb_url, sc_program * prog);
 
 #endif
