@@ -159,12 +159,28 @@ void test_program_get_versions_from_rpm_package()
 	printf("Ok\n");
 }
 
+void test_run_shell_command_with_output()
+{
+	char * commandstr = "echo 'foo'";
+	char output[2048];
+
+	printf("test_run_shell_command_with_output...");
+
+	run_shell_command_with_output(commandstr, output);
+
+	assert(strcmp(output, "foo")==0);
+
+	printf("Ok\n");
+}
+
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
 	test_file_exists();
+	test_run_shell_command_with_output();
 	test_program_name_is_valid();
 	test_program_version_from_index();
 	test_program_get_versions_from_git();

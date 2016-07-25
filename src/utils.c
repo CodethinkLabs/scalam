@@ -119,3 +119,41 @@ int run_shell_command(char * commandstr)
 	else
 		return 1;
 }
+
+/**
+ * @brief Runs a command and returns its output as a string
+ * @param commandstr The command to be run
+ * @param output The returned output of the command
+ * @param zero on success
+ */
+int run_shell_command_with_output(char * commandstr, char * output)
+{
+	FILE *fp;
+	char str[2048];
+	int i, ctr = 0;
+
+	fp = popen(commandstr, "r");
+	if (fp == NULL) {
+		printf("Failed to run command\n" );
+		return 1;
+	}
+
+	/* Read the output */
+	output[0] = 0;
+	while (fgets(str, sizeof(str)-1, fp) != NULL) {
+		for (i = 0; i < strlen(str); i++) {
+			output[ctr++] = str[i];
+		}
+
+		/* at the end of each line */
+		output[ctr++] = '\n';
+	}
+
+	/* string terminator */
+	if (ctr > 1) ctr -= 2;
+	output[ctr] = 0;
+
+	/* close */
+	pclose(fp);
+	return 0;
+}
