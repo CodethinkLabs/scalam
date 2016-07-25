@@ -104,6 +104,53 @@ void test_program_get_versions_from_tarball()
 	printf("Ok\n");
 }
 
+void test_program_get_versions_from_aptitude()
+{
+	int retval;
+	char * program_name = "vim";
+	int line_number = 5;
+	char * expected_commit = "4.5-3"; //"2:7.4.488-3";	
+	char template[] = "/tmp/scalam.XXXXXX";
+	char * repos_dir = mkdtemp(template);
+	char filename[SC_MAX_STRING];
+	char rmcommandstr[SC_MAX_STRING];
+	char commitstr[SC_MAX_STRING];
+	sc_program prog;	
+	
+	printf("test_program_get_versions_from_aptitude...");
+
+	sprintf(&prog.name[0],"%s",program_name);
+	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
+	assert(program_get_versions_from_aptitude(repos_dir, &prog) == 0);
+
+	/* check that the versions file was created */
+	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
+	assert(file_exists(filename));
+
+	retval=get_line_from_file(filename, line_number, commitstr);
+	if (retval != 0) {
+		printf("\nCommit line %d not found\n", line_number);
+		/* remove the temporary directory */
+		run_shell_command(rmcommandstr);
+	}
+	assert(retval==0);
+
+	/* Remove trailing newline */
+	commitstr[strcspn(commitstr, "\n")] = 0;
+	retval = strcmp(commitstr,expected_commit);
+	if (retval != 0) {
+		printf("\nCommit not expected\n");
+		/* remove the temporary directory */
+		run_shell_command(rmcommandstr);
+	}
+	assert(retval==0);
+
+	/* tidy up */
+	run_shell_command(rmcommandstr);
+
+	printf("Ok\n");
+}
+
 void test_program_name_is_valid()
 {
 	sc_program prog;
@@ -214,6 +261,8 @@ void run_tests()
 	test_program_get_versions_from_deb_package();
 	test_program_get_versions_from_rpm_package();
 	test_program_version_from_index();
+	test_program_get_versions_from_aptitude();
+
 
 	printf("All tests passed\n");
 }
