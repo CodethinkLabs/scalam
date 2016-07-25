@@ -82,7 +82,13 @@ typedef struct {
 /* A genome defines a sequence of changes to get to the reference state.
    After evaluation a score is assigned to it */
 typedef struct {
+	/* the number of steps in the sequence */
+	int steps;
+
+	/* The list of program versions at each step */
 	sc_system_state change[SC_MAX_CHANGE_SEQUENCE];
+
+	/* score for this sequence after evaluation */
 	int score;
 } sc_genome;
 
