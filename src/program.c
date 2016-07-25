@@ -50,9 +50,42 @@ int program_name_is_valid(sc_program * prog)
  */
 int program_version_from_index(sc_program * prog, int version_index, char * version)
 {
-	/* TODO */
+	FILE * fp;
+	int index = 0;
+	char linestr[SC_MAX_STRING];
 
-	return 0;
+	/* check that the versions file exists */
+	if (!file_exists(prog->versions_file)) return 1;
+
+	/* check that the index is within range */
+	if ((version_index < 0) ||
+		(version_index >= prog->no_of_versions))
+		return 2;
+
+	fp = fopen(prog->versions_file, "r");
+	if (!fp) return 3;
+
+	while (!feof(fp)) {
+		if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
+			if (linestr == NULL) continue;
+			if (index == version_index) {
+				sprintf(version, "%s", linestr);
+				fclose(fp);
+
+				/* remove any trailing carriage return */
+				if (strlen(version) > 2)
+					if (version[strlen(version)-1] == '\n')
+						version[strlen(version)-1] = 0;
+
+				return 0;
+			}
+			index++;
+		}
+	}
+
+	fclose(fp);
+
+	return 3;
 }
 
 /**

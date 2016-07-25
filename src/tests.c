@@ -132,15 +132,6 @@ void test_program_name_is_valid()
 	printf("Ok\n");
 }
 
-void test_program_version_from_index()
-{
-	printf("test_program_version_from_index...");
-
-	/* TODO */
-
-	printf("Ok\n");
-}
-
 void test_program_get_versions_from_deb_package()
 {
 	printf("test_program_get_versions_from_deb_package...");
@@ -173,6 +164,34 @@ void test_run_shell_command_with_output()
 	printf("Ok\n");
 }
 
+void test_program_version_from_index()
+{
+	FILE * fp;
+	char * test_filename = "/tmp/test_program_version_from_index";
+	sc_program prog;
+	char str[SC_MAX_STRING];
+
+	printf("test_program_version_from_index...");
+
+	/* create a test file with a number of lines */
+	fp = fopen(test_filename, "w");
+	assert(fp);
+	fprintf(fp, "%s", "foobars\nfor\nthe\nfoobar\ngod");
+	fclose(fp);
+
+	assert(lines_in_file(test_filename) == 5);
+
+	sprintf(&prog.versions_file[0],"%s",test_filename);
+	prog.no_of_versions = lines_in_file(test_filename);
+
+	str[0] = 0;
+	assert(program_version_from_index(&prog, 1, str) == 0);
+	assert(strcmp(str, "for") == 0);
+	assert(program_version_from_index(&prog, 3, str) == 0);
+	assert(strcmp(str, "foobar") == 0);
+
+	printf("Ok\n");
+}
 
 void run_tests()
 {
@@ -188,6 +207,7 @@ void run_tests()
 	test_program_get_versions_from_tarball();
 	test_program_get_versions_from_deb_package();
 	test_program_get_versions_from_rpm_package();
+	test_program_version_from_index();
 
 	printf("All tests passed\n");
 }
