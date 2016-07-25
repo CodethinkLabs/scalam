@@ -75,6 +75,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 			repos_dir, prog->name, prog->versions_file);
 	if (run_shell_command(commandstr) != 0) return 7;
 	if (!file_exists(prog->versions_file)) return 8;
+	prog->no_of_versions = lines_in_file(prog->versions_file);
 	return 0;
 }
 
