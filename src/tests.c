@@ -132,6 +132,14 @@ void test_program_name_is_valid()
 	printf("Ok\n");
 }
 
+void test_program_version_from_index()
+{
+	printf("test_program_version_from_index...");
+
+	/* TODO */
+
+	printf("Ok\n");
+}
 
 void run_tests()
 {
@@ -140,6 +148,7 @@ void run_tests()
 
 	test_file_exists();
 	test_program_name_is_valid();
+	test_program_version_from_index();
 	test_program_get_versions_from_git();
 	test_program_get_versions_from_changelog();
 	test_program_get_versions_from_tarball();
