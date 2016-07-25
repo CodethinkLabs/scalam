@@ -18,3 +18,16 @@
 */
 
 #include "scalam.h"
+
+/**
+ * @brief For a given goal create a population of possible upgrade paths
+ * @param population The population to be created
+ * @param goal The given goal
+ * @returns zero on success
+ */
+int population_create(sc_population * population, sc_goal goal)
+{
+	/* TODO */
+
+	return 0;
+}

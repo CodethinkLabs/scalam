@@ -251,11 +251,26 @@ void test_create_goal(sc_goal * goal)
 	/* TODO */
 }
 
+void test_population_create()
+{
+	printf("test_population_create...");
+
+	/* TODO
+	sc_population population;
+	sc_goal goal;
+
+	test_create_goal(&goal);
+
+    assert(population_create(&population, &goal) == 0); */
+
+	printf("Ok\n");
+}
+
 void test_genome_mutate()
 {
 	printf("test_genome_mutate...");
 
-    /*
+    /* TODO
 	sc_population population;
 	sc_genome before, after;
 	sc_goal goal;
@@ -285,7 +300,7 @@ void test_genome_spawn()
 {
 	printf("test_genome_spawn...");
 
-	/*
+	/* TODO
 	sc_population population;
 	sc_genome parent1, parent2, child;
 	sc_goal goal;
@@ -316,7 +331,7 @@ void test_genome_create()
 {
 	printf("test_genome_create...");
 
-	/*
+	/* TODO
 	sc_population population;
 	sc_genome individual;
 	sc_goal goal;
@@ -347,6 +362,7 @@ void run_tests()
 	test_program_version_from_index();
 	test_program_get_versions_from_aptitude();
 
+	test_population_create();
 	test_genome_spawn();
     test_genome_mutate();
 	test_genome_create();
