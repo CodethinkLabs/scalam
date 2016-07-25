@@ -20,6 +20,25 @@
 #include "scalam.h"
 
 /**
+ * @brief Checks whether the name of the given program is valid
+ * @param prog Program object
+ * @returns Zero on success
+ */
+int program_name_is_valid(sc_program * prog)
+{
+	/* null string */
+	if (prog->name[0] == 0)
+		return 1;
+
+	/* first character is not an ascii letter */
+	if (!(((prog->name[0] >= 'a') && (prog->name[0] <= 'z')) ||
+		  ((prog->name[0] >= 'A') && (prog->name[0] <= 'Z'))))
+		return 2;
+
+	return 0;
+}
+
+/**
  * @brief Gets a list of commits from a git repo as a file called versions.txt
  * @param repos_dir Directory where the git repo will be checked out
  * @param repo_url URL of the git repo

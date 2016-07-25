@@ -86,11 +86,41 @@ void test_program_get_versions_from_tarball()
 	printf("Ok\n");
 }
 
+void test_program_name_is_valid()
+{
+	sc_program prog;
+
+	printf("test_program_name_is_valid...");
+
+	sprintf(&prog.name[0], "%s", "validprogram");
+	assert(program_name_is_valid(&prog) == 0);
+
+	/* can include capitals */
+	sprintf(&prog.name[0], "%s", "ValidProgram");
+	assert(program_name_is_valid(&prog) == 0);
+
+	/* empty program name is not valid */
+	sprintf(&prog.name[0], "%s", "");
+	assert(program_name_is_valid(&prog) != 0);
+
+	/* null program name is not valid */
+	prog.name[0] = 0;
+	assert(program_name_is_valid(&prog) != 0);
+
+	/* invalid program names */
+	sprintf(&prog.name[0], "%s", "^£!");
+	assert(program_name_is_valid(&prog) != 0);
+
+	printf("Ok\n");
+}
+
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
+	test_program_name_is_valid();
 	test_program_get_versions_from_git();
 	test_program_get_versions_from_changelog();
 	test_program_get_versions_from_tarball();
