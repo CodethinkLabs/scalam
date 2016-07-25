@@ -61,3 +61,24 @@ float population_average_score(sc_population * population)
 	}
 	return score  / population->size;
 }
+
+/**
+ * @brief Returns the array index of the top scoring genome
+ * @param population The population after individuals have been evaluated
+ * @returns Array index of the highest scoring genome, or -1 on failure
+ */
+int population_best_index(sc_population * population)
+{
+	int max_score = 0;
+	int i, index = -1;
+
+	if (population->size <= 0) return 0;
+
+	for (i = 0; i < population->size; i++) {
+		if (population->individual[i].score > max_score) {
+			max_score = population->individual[i].score;
+			index = i;
+		}
+	}
+	return index;
+}

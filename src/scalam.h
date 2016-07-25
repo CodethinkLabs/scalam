@@ -151,5 +151,6 @@ int genome_create(sc_population * population, sc_genome * individual);
 int population_create(sc_population * population, sc_goal goal);
 int population_next_generation(sc_population * population);
 float population_average_score(sc_population * population);
+int population_best_index(sc_population * population);
 
 #endif
