@@ -43,3 +43,21 @@ int population_next_generation(sc_population * population)
 
 	return 0;
 }
+
+/**
+ * @brief Returns the average fitness score for the population
+ * @param population The population after individuals have been evaluated
+ * @returns Average score
+ */
+float population_average_score(sc_population * population)
+{
+	float score = 0;
+	int i;
+
+	if (population->size <= 0) return 0;
+
+	for (i = 0; i < population->size; i++) {
+		score += (float)population->individual[i].score;
+	}
+	return score  / population->size;
+}
