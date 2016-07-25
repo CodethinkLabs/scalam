@@ -31,3 +31,15 @@ int population_create(sc_population * population, sc_goal goal)
 
 	return 0;
 }
+
+/**
+ * @brief Creates the next generation
+ * @param population The population to be updated
+ * @returns zero on success
+ */
+int population_next_generation(sc_population * population)
+{
+	/* TODO */
+
+	return 0;
+}

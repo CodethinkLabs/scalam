@@ -266,6 +266,27 @@ void test_population_create()
 	printf("Ok\n");
 }
 
+void test_population_next_generation()
+{
+	printf("test_population_next_generation...");
+
+	/* TODO
+	sc_population before, after;
+	sc_goal goal;
+
+	test_create_goal(&goal);
+
+    assert(population_create(&before, &goal) == 0);
+	memcpy(&after, &before, sizeof(sc_population));
+	assert(memcmp(&before, &after, sizeof(sc_population)) == 0);
+
+    assert(population_next_generation(&after) == 0);
+	assert(memcmp(&before, &after, sizeof(sc_population)) != 0);
+	*/
+
+	printf("Ok\n");
+}
+
 void test_genome_mutate()
 {
 	printf("test_genome_mutate...");
@@ -363,6 +384,8 @@ void run_tests()
 	test_program_get_versions_from_aptitude();
 
 	test_population_create();
+	test_population_next_generation();
+
 	test_genome_spawn();
     test_genome_mutate();
 	test_genome_create();
