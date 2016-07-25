@@ -115,6 +115,27 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 }
 
 /**
+ * @brief Gets a list of versions from a debian package
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param deb_url URL where the debian package can be downloaded from
+ * @param prog Program object
+ * @returns zero on success
+ */
+int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_program * prog)
+{
+	if (program_name_is_valid(prog) != 0) return 5;
+
+	/* do we know where to put the resulting versions list? */
+	if (file_exists(prog->versions_file)) return 6;
+
+	/* TODO
+	   This should wget the package, extract changelog from the DEBIAN directory hten
+	   call program_get_versions_from_changelog */
+
+	return 0;
+}
+
+/**
  * @brief Gets a list of versions from a repo as a file valled versions.txt
  * @param repos_dir Directory where the git repo will be checked out
  * @param repo_url URL of the git repo or tarball
