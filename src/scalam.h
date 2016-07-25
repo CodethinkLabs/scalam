@@ -115,6 +115,9 @@ typedef struct {
 	/* Percentage of the population to crossover in the range 0.0 -> 1.0 */
 	float crossover;
 
+	/* Percentage of rebel genomes in the range 0.0 -> 1.0 */
+	float rebels;
+
 	/* Definition of the system */
 	sc_system sys;
 
