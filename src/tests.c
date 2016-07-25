@@ -186,15 +186,15 @@ void test_program_version_from_index()
 
 	str[0] = 0;
 	assert(program_version_from_index(&prog, 0, str) == 0);
-	assert(strcmp(str, "foobars") == 0);
+	assert(strcmp(str, "god") == 0);
 
 	str[0] = 0;
 	assert(program_version_from_index(&prog, 1, str) == 0);
-	assert(strcmp(str, "for") == 0);
+	assert(strcmp(str, "foobar") == 0);
 
 	str[0] = 0;
 	assert(program_version_from_index(&prog, 3, str) == 0);
-	assert(strcmp(str, "foobar") == 0);
+	assert(strcmp(str, "for") == 0);
 
 	printf("Ok\n");
 }

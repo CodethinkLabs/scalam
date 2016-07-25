@@ -92,7 +92,10 @@ int get_line_from_file(char * filename, int line_number, char * line)
 					/* Here we're only looking for the first thing which appears
 					   which is typically the commit or version number.
 					   The rest is likely to be comments */
-					if ((linestr[i] == ' ') || (linestr[i] == '\t')) break;
+					if ((linestr[i] == ' ') ||
+						(linestr[i] == '\t') ||
+						(linestr[i] == '\n'))
+						break;
 					line[i] = linestr[i];
 				}
 				line[i] = 0;
