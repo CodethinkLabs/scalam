@@ -109,14 +109,14 @@ void test_program_get_versions_from_aptitude()
 	int retval;
 	char * program_name = "vim";
 	int line_number = 5;
-	char * expected_commit = "4.5-3"; //"2:7.4.488-3";	
+	char * expected_commit = "4.5-3"; //"2:7.4.488-3";
 	char template[] = "/tmp/scalam.XXXXXX";
 	char * repos_dir = mkdtemp(template);
 	char filename[SC_MAX_STRING];
 	char rmcommandstr[SC_MAX_STRING];
 	char commitstr[SC_MAX_STRING];
-	sc_program prog;	
-	
+	sc_program prog;
+
 	printf("test_program_get_versions_from_aptitude...");
 
 	sprintf(&prog.name[0],"%s",program_name);
@@ -246,6 +246,90 @@ void test_program_version_from_index()
 	printf("Ok\n");
 }
 
+void test_create_goal(sc_goal * goal)
+{
+	/* TODO */
+}
+
+void test_genome_mutate()
+{
+	printf("test_genome_mutate...");
+
+    /*
+	sc_population population;
+	sc_genome before, after;
+	sc_goal goal;
+
+	test_create_goal(&goal);
+
+    assert(population_create(&population, &goal) == 0);
+
+    assert(genome_create(&population, &before) == 0);
+
+	// copy before genome to after
+	memcpy(&after, &before, sizeof(sc_genome));
+
+	// the two genomes should be the same
+	assert(memcmp(&after, &before, sizeof(sc_genome)) == 0);
+
+	// now mutate the after genome
+    assert(genome_mutate(&population, &after) == 0);
+
+	// the two genomes should be different
+	assert(memcmp(&after, &before, sizeof(sc_genome)) != 0); */
+
+	printf("Ok\n");
+}
+
+void test_genome_spawn()
+{
+	printf("test_genome_spawn...");
+
+	/*
+	sc_population population;
+	sc_genome parent1, parent2, child;
+	sc_goal goal;
+
+	test_create_goal(&goal);
+
+    assert(population_create(&population, &goal) == 0);
+
+	// create the parents
+	assert(genome_create(&population, &parent1) == 0);
+    assert(genome_create(&population, &parent2) == 0);
+
+	// create a child
+	assert(genome_spawn(&population, &parent1, &parent2, &child) == 0);
+
+	// parents should be different
+	assert(memcmp(&parent1, &parent2, sizeof(sc_genome)) != 0);
+
+	// child should not be exactly like either parent
+	assert(memcmp(&child, &parent1, sizeof(sc_genome)) != 0);
+	assert(memcmp(&child, &parent2, sizeof(sc_genome)) != 0);
+	*/
+
+	printf("Ok\n");
+}
+
+void test_genome_create()
+{
+	printf("test_genome_create...");
+
+	/*
+	sc_population population;
+	sc_genome individual;
+	sc_goal goal;
+
+	test_create_goal(&goal);
+
+    assert(population_create(&population, &goal) == 0);
+
+	assert(genome_create(&population, &individual) == 0); */
+
+	printf("Ok\n");
+}
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
@@ -263,6 +347,9 @@ void run_tests()
 	test_program_version_from_index();
 	test_program_get_versions_from_aptitude();
 
+	test_genome_spawn();
+    test_genome_mutate();
+	test_genome_create();
 
 	printf("All tests passed\n");
 }

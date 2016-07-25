@@ -133,4 +133,10 @@ int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_p
 int program_get_versions_from_rpm_package(char * repos_dir, char * deb_url, sc_program * prog);
 int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog);
 
+int genome_mutate(sc_population * population, sc_genome * individual);
+int genome_spawn(sc_population * population,
+				 sc_genome * parent1, sc_genome * parent2,
+				 sc_genome * child);
+int genome_create(sc_population * population, sc_genome * individual);
+
 #endif

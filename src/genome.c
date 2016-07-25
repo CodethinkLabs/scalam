@@ -18,3 +18,42 @@
 */
 
 #include "scalam.h"
+
+/**
+ * @brief Mutates a given genome
+ * @param population The population in which the genome exists
+ * @param individual The genome to be mutated
+ * @returns zero on success
+ */
+int genome_mutate(sc_population * population, sc_genome * individual)
+{
+	/* TODO */
+	return 0;
+}
+
+/**
+ * @brief create a child from two parents
+ * @param population The population in which the individuals exist
+ * @param parent1 First parent
+ * @param parent2 Second parent
+ * @param child Returned child genome
+ * @returns zero on success
+ */
+int genome_spawn(sc_population * population,
+				 sc_genome * parent1, sc_genome * parent2,
+				 sc_genome * child)
+{
+	/* TODO */
+	return 0;
+}
+
+/**
+ * @brief Ahistorically create a new individual
+ * @param population The population in which the genome exists
+ * @param individual The genome to be mutated
+ */
+int genome_create(sc_population * population, sc_genome * individual)
+{
+	/* TODO */
+	return 0;
+}
