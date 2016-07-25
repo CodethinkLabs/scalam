@@ -51,7 +51,7 @@ typedef struct {
 	   For example, coule be the result of:
 		   git log --all --oneline > versions.txt
 	   or could be created from a debian changelog */
-	char * versions_file;
+	char versions_file[SC_MAX_STRING];
 
 	/* The number of possible versions.
 	   For exported git commit this would just be the line count */
