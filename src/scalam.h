@@ -72,7 +72,8 @@ typedef struct {
 } sc_system;
 
 /* A minimal description of a change to a system.
-   Some version indexes could be the same as the previous state.
+   Some version indexes could be the same as the previous
+   step in the upgrade sequence
    Indexes could also go either forwards or backwards. */
 typedef struct {
 	int version_index[SC_MAX_SYSTEM_SIZE];
