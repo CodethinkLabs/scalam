@@ -109,6 +109,12 @@ typedef struct {
 
 	sc_genome individual[SC_MAX_POPULATION_SIZE];
 
+	/* in the range 0.0 -> 1.0 */
+    float mutation_rate;
+
+	/* Percentage of the population to crossover in the range 0.0 -> 1.0 */
+	float crossover;
+
 	/* Definition of the system */
 	sc_system sys;
 
