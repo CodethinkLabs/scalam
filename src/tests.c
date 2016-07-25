@@ -20,7 +20,7 @@
 #include <assert.h>
 #include "scalam.h"
 
-void test_program_get_versions_git()
+void test_program_get_versions_from_git()
 {
 	int retval;
 	char * repo_url = "https://github.com/CodethinkLabs/frepo";
@@ -33,10 +33,10 @@ void test_program_get_versions_git()
 	char rmcommandstr[SC_MAX_STRING];
 	char commitstr[SC_MAX_STRING];
 
-	printf("test_program_get_versions...");
+	printf("test_program_get_versions_from_git...");
 
 	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
-	assert(program_get_versions(repos_dir, repo_url, program_name) == 0);
+	assert(program_get_versions_from_repo(repos_dir, repo_url, program_name) == 0);
 
 	/* check that the versions file was created */
 	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
@@ -73,7 +73,7 @@ void run_tests()
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
-	test_program_get_versions_git();
+	test_program_get_versions_from_git();
 
 	printf("All tests passed\n");
 }

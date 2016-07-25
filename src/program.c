@@ -20,13 +20,13 @@
 #include "scalam.h"
 
 /**
- * @brief Gets a list of commits as a file called versions.txt
+ * @brief Gets a list of commits from a git repo as a file called versions.txt
  * @param repos_dir Directory where the git repo will be checked out
  * @param repo_url URL of the git repo
  * @param program_name Name of the program
  * @returns zero on success
  */
-int program_get_versions_git(char * repos_dir, char * repo_url, char * program_name)
+int program_get_versions_from_git(char * repos_dir, char * repo_url, char * program_name)
 {
 	char commandstr[SC_MAX_STRING];
 
@@ -39,26 +39,40 @@ int program_get_versions_git(char * repos_dir, char * repo_url, char * program_n
 }
 
 /**
- * @brief Gets a list of versions from a changelog within a tarball
- * @param repos_dir Directory where the git repo will be checked out
- * @param tarball_url URL of the tarball
+ * @brief Gets a list of versions from a changelog
+ * @param changelog_filename Filename of the changelog
  * @param program_name Name of the program
  * @returns zero on success
  */
-int program_get_versions_tarball(char * repos_dir, char * tarball_url, char * program_name)
+int program_get_versions_from_changelog(char * changelog_filename, char * program_name)
 {
 	/* TODO */
 	return 0;
 }
 
 /**
- * @brief Gets a list of versions as a file valled versions.txt
+ * @brief Gets a list of versions from a changelog within a tarball
+ * @param repos_dir Directory where the git repo will be checked out
+ * @param tarball_url URL of the tarball
+ * @param program_name Name of the program
+ * @returns zero on success
+ */
+int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, char * program_name)
+{
+	/* TODO
+	   This should untar, find the changelog and then call program_get_versions_from_changelog */
+
+	return 0;
+}
+
+/**
+ * @brief Gets a list of versions from a repo as a file valled versions.txt
  * @param repos_dir Directory where the git repo will be checked out
  * @param repo_url URL of the git repo or tarball
  * @param program_name Name of the program
  * @returns zero on success
  */
-int program_get_versions(char * repos_dir, char * repo_url, char * program_name)
+int program_get_versions_from_repo(char * repos_dir, char * repo_url, char * program_name)
 {
 	/* check for empty strings */
 	if (strlen(repos_dir) == 0) return 1;
@@ -72,12 +86,12 @@ int program_get_versions(char * repos_dir, char * repo_url, char * program_name)
 
 	/* handle git repos */
 	if (strstr(repo_url, "git") != NULL) {
-		return program_get_versions_git(repos_dir, repo_url, program_name);
+		return program_get_versions_from_git(repos_dir, repo_url, program_name);
 	}
 
 	/* handle tarballs */
 	if (strstr(repo_url, "tar.gz") != NULL) {
-		return program_get_versions_tarball(repos_dir, repo_url, program_name);
+		return program_get_versions_from_tarball(repos_dir, repo_url, program_name);
 	}
 	return 4;
 }
