@@ -39,6 +39,23 @@ int program_name_is_valid(sc_program * prog)
 }
 
 /**
+ * @brief Returns the commit or version number for the given index number.
+ *        Within sc_program an index number indicates what version the program
+ *        is currently on.
+ * @paam prog Program object
+ * @param version_index The desired version index. This could be the same as
+ *                      prog->version_index, or might be different
+ * @param version The returned commit or version number string
+ * @returns zero on success
+ */
+int program_version_from_index(sc_program * prog, int version_index, char * version)
+{
+	/* TODO */
+
+	return 0;
+}
+
+/**
  * @brief Gets a list of commits from a git repo as a file called versions.txt
  * @param repos_dir Directory where the git repo will be checked out
  * @param repo_url URL of the git repo

@@ -121,6 +121,7 @@ void run_tests();
 int run_shell_command(char * commandstr);
 int file_exists(char * filename);
 int program_name_is_valid(sc_program * prog);
+int program_version_from_index(sc_program * prog, int version_index, char * version);
 
 /* functions to get versions of commits for a program */
 int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program * prog);
