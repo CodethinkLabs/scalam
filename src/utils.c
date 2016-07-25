@@ -22,7 +22,7 @@
 /**
  * @brief Returns non-zero value if the given file exists
  * @param filename Name of the file
- * @returns Non-zero if the file exists
+ * @returns True if the file exists
  */
 int file_exists(char * filename)
 {
@@ -31,9 +31,9 @@ int file_exists(char * filename)
 	fp = fopen(filename, "r");
 	if (fp) {
 		fclose(fp);
-		return 1;
+		return (1 == 1);
 	}
-	return 0;
+	return (1 == 0);
 }
 
 /**

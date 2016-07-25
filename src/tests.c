@@ -20,6 +20,26 @@
 #include <assert.h>
 #include "scalam.h"
 
+void test_file_exists()
+{
+	char * test_filename = "/tmp/scalam_test_file_exists";
+	char cmdstr[SC_MAX_STRING];
+
+	printf("test_file_exists...");
+
+	sprintf(cmdstr, "touch %s", test_filename);
+	run_shell_command(cmdstr);
+
+	assert(file_exists(test_filename));
+
+	sprintf(cmdstr, "rm %s", test_filename);
+	run_shell_command(cmdstr);
+
+	assert(!file_exists(test_filename));
+
+	printf("Ok\n");
+}
+
 void test_program_get_versions_from_git()
 {
 	int retval;
@@ -41,12 +61,8 @@ void test_program_get_versions_from_git()
 	assert(program_get_versions_from_repo(repos_dir, repo_url, &prog) == 0);
 
 	/* check that the versions file was created */
-	sprintf(filename, "%s/%s/versions.txt", repos_dir, &prog.name[0]);
-	if (file_exists(filename) == 0) {
-		/* remove the temporary directory */
-		run_shell_command(rmcommandstr);
-	}
-	assert(file_exists(filename) != 0);
+	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
+	assert(file_exists(filename));
 
 	retval=get_line_from_file(filename, line_number, commitstr);
 	if (retval != 0) {
@@ -122,6 +138,7 @@ void run_tests()
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
+	test_file_exists();
 	test_program_name_is_valid();
 	test_program_get_versions_from_git();
 	test_program_get_versions_from_changelog();

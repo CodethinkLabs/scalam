@@ -69,7 +69,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 int program_get_versions_from_changelog(char * changelog_filename, sc_program * prog)
 {
 	if (program_name_is_valid(prog) != 0) return 5;
-	if (file_exists(prog->versions_file) == 0) return 6;
+	if (file_exists(prog->versions_file)) return 6;
 
 	/* TODO */
 	return 0;
@@ -85,7 +85,7 @@ int program_get_versions_from_changelog(char * changelog_filename, sc_program * 
 int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_program * prog)
 {
 	if (program_name_is_valid(prog) != 0) return 5;
-	if (file_exists(prog->versions_file) == 0) return 6;
+	if (file_exists(prog->versions_file)) return 6;
 
 	/* TODO
 	   This should untar, find the changelog and then call program_get_versions_from_changelog */
