@@ -68,12 +68,32 @@ void test_program_get_versions_from_git()
 	printf("Ok\n");
 }
 
+void test_program_get_versions_from_changelog()
+{
+	printf("test_program_get_versions_from_changelog...");
+
+	/* TODO */
+
+	printf("Ok\n");
+}
+
+void test_program_get_versions_from_tarball()
+{
+	printf("test_program_get_versions_from_tarball...");
+
+	/* TODO */
+
+	printf("Ok\n");
+}
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
 	test_program_get_versions_from_git();
+	test_program_get_versions_from_changelog();
+	test_program_get_versions_from_tarball();
 
 	printf("All tests passed\n");
 }
