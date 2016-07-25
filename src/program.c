@@ -74,6 +74,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 	sprintf(commandstr, "cd \"%s/%s\" && git log --all --oneline > %s",
 			repos_dir, prog->name, prog->versions_file);
 	if (run_shell_command(commandstr) != 0) return 7;
+	if (!file_exists(prog->versions_file)) return 8;
 	return 0;
 }
 
