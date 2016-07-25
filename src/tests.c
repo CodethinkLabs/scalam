@@ -141,6 +141,15 @@ void test_program_version_from_index()
 	printf("Ok\n");
 }
 
+void test_program_get_versions_from_deb_package()
+{
+	printf("test_program_get_versions_from_deb_package...");
+
+	/* TODO */
+
+	printf("Ok\n");
+}
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
@@ -152,6 +161,7 @@ void run_tests()
 	test_program_get_versions_from_git();
 	test_program_get_versions_from_changelog();
 	test_program_get_versions_from_tarball();
+	test_program_get_versions_from_deb_package();
 
 	printf("All tests passed\n");
 }
