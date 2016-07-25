@@ -122,8 +122,8 @@ int file_exists(char * filename);
 int program_name_is_valid(sc_program * prog);
 
 /* functions to get versions of commits for a program */
-int program_get_versions_from_repo(char * repos_dir, char * repo_url, char * program_name);
-int program_get_versions_from_changelog(char * changelog_filename, char * program_name);
-int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, char * program_name);
+int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program * prog);
+int program_get_versions_from_changelog(char * changelog_filename, sc_program * prog);
+int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_program * prog);
 
 #endif

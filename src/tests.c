@@ -32,14 +32,16 @@ void test_program_get_versions_from_git()
 	char filename[SC_MAX_STRING];
 	char rmcommandstr[SC_MAX_STRING];
 	char commitstr[SC_MAX_STRING];
+	sc_program prog;
 
 	printf("test_program_get_versions_from_git...");
 
+	sprintf(&prog.name[0],"%s",program_name);
 	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
-	assert(program_get_versions_from_repo(repos_dir, repo_url, program_name) == 0);
+	assert(program_get_versions_from_repo(repos_dir, repo_url, &prog) == 0);
 
 	/* check that the versions file was created */
-	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
+	sprintf(filename, "%s/%s/versions.txt", repos_dir, &prog.name[0]);
 	if (file_exists(filename) == 0) {
 		/* remove the temporary directory */
 		run_shell_command(rmcommandstr);
