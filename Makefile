@@ -6,13 +6,13 @@ PREFIX?=/usr/local
 CC=gcc
 
 all:
-	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
-	$(CC) -o ${APP} src/* -lm -fopenmp
+	rm -f *.plist src/*.plist tests/*.plist src/*.c~ tests/*~ src/*.h~ ${APP}
+	$(CC) -o ${APP} src/* tests/* -lm -fopenmp
 debug:
-	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
-	$(CC) -o ${APP} -g src/* -lm -fopenmp
+	rm -f *.plist src/*.plist tests/*.plist src/*.c~ tests/*~ src/*.h~ ${APP}
+	$(CC) -o ${APP} -g src/* tests/* -lm -fopenmp
 clean:
-	rm -f *.plist src/*.plist src/*.c~ src/*.h~ ${APP}
+	rm -f *.plist src/*.plist tests/*.plist tests/*.plist src/*.c~ tests/*~ src/*.h~ ${APP}
 source:
 	tar -cvf ../${APP}_${VERSION}.orig.tar ../${APP}-${VERSION} --exclude-vcs
 	gzip -f9n ../${APP}_${VERSION}.orig.tar

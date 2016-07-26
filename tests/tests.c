@@ -18,7 +18,7 @@
 */
 
 #include <assert.h>
-#include "scalam.h"
+#include "../src/scalam.h"
 
 void test_file_exists()
 {
