@@ -33,12 +33,54 @@ int population_create(sc_population * population, sc_goal goal)
 }
 
 /**
+ * @brief Calculate the reproduction probability for each genome
+ * @param population The population to be updated
+ * @returns zero on success
+ */
+int population_spawning_probabilities(sc_population * population)
+{
+	int i, best_index, worst_index, score_variance;
+	float normalised_score;
+
+	/* get the indexes of the best and worst individuals */
+	best_index = population_best_index(population);
+	worst_index = population_worst_index(population);
+
+	/* variation in score */
+	score_variance =
+		population_get_score(population, best_index) -
+		population_get_score(population, worst_index);
+
+	/* if there's no variance then either there's a catastrophic
+	   diversity loss or there have been no evaluations yet */
+	if (score_variance == 0) return 1;
+
+	for (i = 0; i < population->size; i++) {
+		/* score in the range 0.0 -> 1.0 */
+		normalised_score =
+			(float)(population_get_score(population, i) -
+					population_get_score(population, worst_index))/
+			(float)score_variance;
+
+		/* A simple probability of reproduction.
+		   This function could be adjustable, so you could have
+		   different islands with different reproduction strategies */
+		population->individual[i].spawning_probability =
+			normalised_score * normalised_score;
+	}
+
+	return 0;
+}
+
+/**
  * @brief Creates the next generation
  * @param population The population to be updated
  * @returns zero on success
  */
 int population_next_generation(sc_population * population)
 {
+	if (population_spawning_probabilities(population) != 0) return 1;
+
 	/* TODO */
 
 	return 0;

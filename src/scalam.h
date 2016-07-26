@@ -91,6 +91,9 @@ typedef struct {
 
 	/* score for this sequence after evaluation */
 	int score;
+
+	/* the probability of reproduction when creating the next generation */
+	float spawning_probability;
 } sc_genome;
 
 /* Defines the goal of the upgrade */
