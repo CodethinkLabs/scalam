@@ -154,5 +154,6 @@ float population_average_score(sc_population * population);
 int population_set_score(sc_population * population, int index, int score);
 int population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
+int population_worst_index(sc_population * population);
 
 #endif

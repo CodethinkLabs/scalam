@@ -113,3 +113,25 @@ int population_best_index(sc_population * population)
 	}
 	return index;
 }
+
+/**
+ * @brief Returns the array index of the lowest scoring genome
+ * @param population The population after individuals have been evaluated
+ * @returns Array index of the lowest scoring genome, or -1 on failure
+ */
+int population_worst_index(sc_population * population)
+{
+	int min_score = 0;
+	int i, index = -1;
+
+	if (population->size <= 0) return 0;
+
+	for (i = 0; i < population->size; i++) {
+		if ((min_score == 0) ||
+			(population->individual[i].score < min_score)) {
+			min_score = population->individual[i].score;
+			index = i;
+		}
+	}
+	return index;
+}
