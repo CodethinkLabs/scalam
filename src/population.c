@@ -33,6 +33,8 @@ int population_create(int size, sc_population * population,
 					  sc_system * system_definition,
 					  sc_goal * goal)
 {
+	if (size < 0) return 1;
+
 	/* don't exceed array bounds */
 	if (size > SC_MAX_POPULATION_SIZE)
 		size = SC_MAX_POPULATION_SIZE;
