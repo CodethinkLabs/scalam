@@ -102,15 +102,17 @@ int population_next_generation(sc_population * population)
  * @brief Sets the evaluation score for a genome with the given array index
  * @param population The population after individuals have been evaluated
  * @param index Array index of the genome for an individual
- * @param score The evaluation score for an individual
+ * @param test_passes The number of test passes from evaluation
  * @returns zero on success
  */
-int population_set_score(sc_population * population, int index, float score)
+int population_set_test_passes(sc_population * population, int index, int test_passes)
 {
 	if (index < 0) return 1;
 	if (index >= population->size) return 2;
 
-	population->individual[index].score = score;
+	population->individual[index].score =
+		(float)test_passes /
+		(float)population->individual[index].steps;
 
 	return 0;
 }
