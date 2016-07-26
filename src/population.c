@@ -51,8 +51,8 @@ float population_reproduction_function(float normalised_score)
  */
 int population_spawning_probabilities(sc_population * population)
 {
-	int i, best_index, worst_index, score_variance;
-	float normalised_score;
+	int i, best_index, worst_index;
+	float score_variance, normalised_score;
 
 	/* get the indexes of the best and worst individuals */
 	best_index = population_best_index(population);
@@ -70,9 +70,9 @@ int population_spawning_probabilities(sc_population * population)
 	for (i = 0; i < population->size; i++) {
 		/* score in the range 0.0 -> 1.0 */
 		normalised_score =
-			(float)(population_get_score(population, i) -
-					population_get_score(population, worst_index))/
-			(float)score_variance;
+			(population_get_score(population, i) -
+			 population_get_score(population, worst_index))/
+			score_variance;
 
 		/* A simple probability of reproduction.
 		   This function could be adjustable, so you could have
@@ -86,7 +86,7 @@ int population_spawning_probabilities(sc_population * population)
 
 /**
  * @brief Creates the next generation
- * @param population The population to be updated
+ * @param population The population to be updated after evaluation of genomes
  * @returns zero on success
  */
 int population_next_generation(sc_population * population)
@@ -105,7 +105,7 @@ int population_next_generation(sc_population * population)
  * @param score The evaluation score for an individual
  * @returns zero on success
  */
-int population_set_score(sc_population * population, int index, int score)
+int population_set_score(sc_population * population, int index, float score)
 {
 	if (index < 0) return 1;
 	if (index >= population->size) return 2;
@@ -121,7 +121,7 @@ int population_set_score(sc_population * population, int index, int score)
  * @param index Array index of the genome for an individual
  * @returns Evaluation score (fitness)
  */
-int population_get_score(sc_population * population, int index)
+float population_get_score(sc_population * population, int index)
 {
 	if (index < 0) return 1;
 	if (index >= population->size) return 2;
@@ -154,7 +154,7 @@ float population_average_score(sc_population * population)
  */
 int population_best_index(sc_population * population)
 {
-	int max_score = 0;
+	float max_score = 0;
 	int i, index = -1;
 
 	if (population->size <= 0) return 0;
@@ -175,7 +175,7 @@ int population_best_index(sc_population * population)
  */
 int population_worst_index(sc_population * population)
 {
-	int min_score = 0;
+	float min_score = 0;
 	int i, index = -1;
 
 	if (population->size <= 0) return 0;

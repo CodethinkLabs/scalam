@@ -93,7 +93,7 @@ typedef struct {
 	sc_system_state change[SC_MAX_CHANGE_SEQUENCE];
 
 	/* score for this sequence after evaluation */
-	int score;
+	float score;
 
 	/* the probability of reproduction when creating the next generation */
 	float spawning_probability;
@@ -163,8 +163,8 @@ int genome_create(sc_population * population, sc_genome * individual);
 int population_create(sc_population * population, sc_goal goal);
 int population_next_generation(sc_population * population);
 float population_average_score(sc_population * population);
-int population_set_score(sc_population * population, int index, int score);
-int population_get_score(sc_population * population, int index);
+int population_set_score(sc_population * population, int index, float score);
+float population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
 
