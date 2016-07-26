@@ -84,7 +84,13 @@ typedef struct {
    step in the upgrade sequence
    Indexes could also go either forwards or backwards. */
 typedef struct {
+	/* Version index for each possible program corresponds to a
+	   version number or commit within versions_file */
 	int version_index[SC_MAX_SYSTEM_SIZE];
+
+	/* Whether each possible program is installed or not.
+	   Some upgrade sequences might require uninstalls and
+	   reinstalls at a later step in the sequence */
 	int installed[SC_MAX_SYSTEM_SIZE];
 } sc_system_state;
 
