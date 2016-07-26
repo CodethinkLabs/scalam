@@ -55,5 +55,11 @@ int genome_spawn(sc_population * population,
 int genome_create(sc_population * population, sc_genome * individual)
 {
 	/* TODO */
+	individual->steps=0;
+	
+	memcpy(&individual->change, &population->goal->start, sizeof(population->goal->start));
+	individual->score=0;
+	individual->spawning_probability=0.0;
+
 	return 0;
 }

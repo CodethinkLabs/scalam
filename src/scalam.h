@@ -44,10 +44,10 @@
 /* The number of training history steps to keep */
 #define SC_MAX_HISTORY                 10000
 
-/* Defaults for population rates */
-#define SC_DEFAULT_MUTATION				0.5
-#define SC_DEFAULT_CROSSOVER			0.5
-#define SC_DEFAULT_REBELS				0.1
+/* default evolution parameters */
+#define SC_DEFAULT_MUTATION_RATE       0.2
+#define SC_DEFAULT_CROSSOVER           0.5
+#define	SC_DEFAULT_REBELS              0.05
 
 /* Defines a program and its possible versions */
 typedef struct {
@@ -84,7 +84,13 @@ typedef struct {
    step in the upgrade sequence
    Indexes could also go either forwards or backwards. */
 typedef struct {
+	/* Version index for each possible program corresponds to a
+	   version number or commit within versions_file */
 	int version_index[SC_MAX_SYSTEM_SIZE];
+
+	/* Whether each possible program is installed or not.
+	   Some upgrade sequences might require uninstalls and
+	   reinstalls at a later step in the sequence */
 	int installed[SC_MAX_SYSTEM_SIZE];
 } sc_system_state;
 
@@ -166,12 +172,18 @@ int genome_spawn(sc_population * population,
 				 sc_genome * child);
 int genome_create(sc_population * population, sc_genome * individual);
 
-int population_create(int size, sc_population * population, sc_goal goal);
+int population_create(int size, sc_population * population,
+					  sc_system * system_definition,
+					  sc_goal * goal);
 int population_next_generation(sc_population * population);
 float population_average_score(sc_population * population);
 int population_set_test_passes(sc_population * population, int index, int test_passes);
 float population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
+
+void run_program_tests();
+void run_genome_tests();
+void run_population_tests();
 
 #endif
