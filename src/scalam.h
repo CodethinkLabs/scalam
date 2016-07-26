@@ -183,5 +183,6 @@ int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
 
 void run_program_tests();
+void run_genome_tests();
 
 #endif
