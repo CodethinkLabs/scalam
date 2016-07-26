@@ -110,6 +110,7 @@ int population_set_test_passes(sc_population * population, int index, int test_p
 	if (index < 0) return 1;
 	if (index >= population->size) return 2;
 
+	/* This division biases the score in favour of shorter upgrade sequences */
 	population->individual[index].score =
 		(float)test_passes /
 		(float)population->individual[index].steps;
