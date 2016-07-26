@@ -301,7 +301,12 @@ void test_program_version_from_index()
 
 void test_create_goal(sc_goal * goal)
 {
-	/* TODO */
+	/* TODO make a test goal*/
+}
+
+void test_create_system(sc_system * system_definition)
+{
+	/* TODO create system definition */
 }
 
 void test_population_create()
