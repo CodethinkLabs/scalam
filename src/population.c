@@ -113,7 +113,7 @@ int population_set_test_passes(sc_population * population, int index, int test_p
 	/* This division biases the score in favour of shorter upgrade sequences */
 	population->individual[index].score =
 		(float)test_passes /
-		(float)population->individual[index].steps;
+		(float)(1 + population->individual[index].steps);
 
 	return 0;
 }
