@@ -24,18 +24,29 @@
  * @param size Number of individuals in the population.
  *             It's expected that this will remain constant
  * @param population The population to be created
+ * @param system_definition Defines all of the programs within the system
+ *                          and their possible versions/commits
  * @param goal The given goal
  * @returns zero on success
  */
-int population_create(int size, sc_population * population, sc_goal goal)
+int population_create(int size, sc_population * population,
+					  sc_system * system_definition,
+					  sc_goal * goal)
 {
 	/* don't exceed array bounds */
 	if (size > SC_MAX_POPULATION_SIZE)
 		size = SC_MAX_POPULATION_SIZE;
 
 	population->size = size;
+	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
+	population->crossover = SC_DEFAULT_CROSSOVER;
+	population->rebels = SC_DEFAULT_REBELS;
+	population->history_index = 0;
 
-	/* TODO */
+	memcpy(&population->goal, &goal, sizeof(sc_goal));
+	memcpy(&population->sys, &goal, sizeof(sc_system));
+
+	/* TODO create initial population */
 
 	return 0;
 }

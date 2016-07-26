@@ -311,10 +311,13 @@ void test_population_create()
 	/* TODO
 	sc_population population;
 	sc_goal goal;
+	sc_system system_definition;
 
 	test_create_goal(&goal);
 
-    assert(population_create(100, &population, &goal) == 0); */
+	test_create_system(&system_definition);
+
+    assert(population_create(100, &population, &system_definition, &goal) == 0); */
 
 	printf("Ok\n");
 }
@@ -326,10 +329,12 @@ void test_population_next_generation()
 	/* TODO
 	sc_population before, after;
 	sc_goal goal;
+	sc_system system_definition;
 
 	test_create_goal(&goal);
+	test_create_system(&system_definition);
 
-    assert(population_create(100, &before, &goal) == 0);
+    assert(population_create(100, &before, &system_definition, &goal) == 0);
 	memcpy(&after, &before, sizeof(sc_population));
 	assert(memcmp(&before, &after, sizeof(sc_population)) == 0);
 
@@ -348,10 +353,12 @@ void test_genome_mutate()
 	sc_population population;
 	sc_genome before, after;
 	sc_goal goal;
+	sc_system system_definition;
 
 	test_create_goal(&goal);
+	test_create_system(&system_definition);
 
-    assert(population_create(100, &population, &goal) == 0);
+    assert(population_create(100, &population, &system_definition, &goal) == 0);
 
     assert(genome_create(&population, &before) == 0);
 
@@ -378,10 +385,13 @@ void test_genome_spawn()
 	sc_population population;
 	sc_genome parent1, parent2, child;
 	sc_goal goal;
+	sc_system system_definition;
 
 	test_create_goal(&goal);
 
-    assert(population_create(100, &population, &goal) == 0);
+	test_create_system(&system_definition);
+
+    assert(population_create(100, &population, &system_definition, &goal) == 0);
 
 	// create the parents
 	assert(genome_create(&population, &parent1) == 0);
@@ -409,10 +419,13 @@ void test_genome_create()
 	sc_population population;
 	sc_genome individual;
 	sc_goal goal;
+	sc_system system_definition;
 
 	test_create_goal(&goal);
 
-    assert(population_create(100, &population, &goal) == 0);
+	test_create_system(&system_definition);
+
+    assert(population_create(100, &population, &system_definition, &goal) == 0);
 
 	assert(genome_create(&population, &individual) == 0); */
 
