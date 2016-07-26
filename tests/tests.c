@@ -120,93 +120,6 @@ void test_population_next_generation()
 	printf("Ok\n");
 }
 
-void test_genome_mutate()
-{
-	printf("test_genome_mutate...");
-
-    /* TODO
-	sc_population population;
-	sc_genome before, after;
-	sc_goal goal;
-	sc_system system_definition;
-
-	test_create_goal(&goal);
-	test_create_system(&system_definition);
-
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
-
-    assert(genome_create(&population, &before) == 0);
-
-	// copy before genome to after
-	memcpy(&after, &before, sizeof(sc_genome));
-
-	// the two genomes should be the same
-	assert(memcmp(&after, &before, sizeof(sc_genome)) == 0);
-
-	// now mutate the after genome
-    assert(genome_mutate(&population, &after) == 0);
-
-	// the two genomes should be different
-	assert(memcmp(&after, &before, sizeof(sc_genome)) != 0); */
-
-	printf("Ok\n");
-}
-
-void test_genome_spawn()
-{
-	printf("test_genome_spawn...");
-
-	/* TODO
-	sc_population population;
-	sc_genome parent1, parent2, child;
-	sc_goal goal;
-	sc_system system_definition;
-
-	test_create_goal(&goal);
-
-	test_create_system(&system_definition);
-
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
-
-	// create the parents
-	assert(genome_create(&population, &parent1) == 0);
-    assert(genome_create(&population, &parent2) == 0);
-
-	// create a child
-	assert(genome_spawn(&population, &parent1, &parent2, &child) == 0);
-
-	// parents should be different
-	assert(memcmp(&parent1, &parent2, sizeof(sc_genome)) != 0);
-
-	// child should not be exactly like either parent
-	assert(memcmp(&child, &parent1, sizeof(sc_genome)) != 0);
-	assert(memcmp(&child, &parent2, sizeof(sc_genome)) != 0);
-	*/
-
-	printf("Ok\n");
-}
-
-void test_genome_create()
-{
-	printf("test_genome_create...");
-
-	/* TODO
-	sc_population population;
-	sc_genome individual;
-	sc_goal goal;
-	sc_system system_definition;
-
-	test_create_goal(&goal);
-
-	test_create_system(&system_definition);
-
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
-
-	assert(genome_create(&population, &individual) == 0); */
-
-	printf("Ok\n");
-}
-
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
@@ -220,9 +133,7 @@ void run_tests()
 	test_population_create();
 	test_population_next_generation();
 
-	test_genome_spawn();
-    test_genome_mutate();
-	test_genome_create();
+	run_genome_tests();
 
 	printf("All tests passed\n");
 }
