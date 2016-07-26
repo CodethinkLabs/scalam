@@ -62,6 +62,20 @@ int population_set_score(sc_population * population, int index, int score)
 }
 
 /**
+ * @brief Returns the evaluation score for a genome with the given array index
+ * @param population The population after individuals have been evaluated
+ * @param index Array index of the genome for an individual
+ * @returns Evaluation score (fitness)
+ */
+int population_get_score(sc_population * population, int index)
+{
+	if (index < 0) return 1;
+	if (index >= population->size) return 2;
+
+	return population->individual[index].score;
+}
+
+/**
  * @brief Returns the average fitness score for the population
  * @param population The population after individuals have been evaluated
  * @returns Average score
