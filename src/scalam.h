@@ -44,6 +44,11 @@
 /* The number of training history steps to keep */
 #define SC_MAX_HISTORY                 10000
 
+/* Defaults for population rates */
+#define SC_DEFAULT_MUTATION				0.5
+#define SC_DEFAULT_CROSSOVER			0.5
+#define SC_DEFAULT_REBELS				0.1
+
 /* Defines a program and its possible versions */
 typedef struct {
 	char name[SC_MAX_STRING];

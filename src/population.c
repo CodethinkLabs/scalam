@@ -34,9 +34,18 @@ int population_create(int size, sc_population * population, sc_goal goal)
 		size = SC_MAX_POPULATION_SIZE;
 
 	population->size = size;
+	
+	population->mutation_rate=SC_DEFAULT_MUTATION;
+	population->crossover=SC_DEFAULT_CROSSOVER;
+	population->rebels=SC_DEFAULT_REBELS;
 
+	//population->goal=&goal;
 	/* TODO */
-
+	
+	/*  Set up system
+		population->sys=
+	*/
+	
 	return 0;
 }
 
