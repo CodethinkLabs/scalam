@@ -33,6 +33,18 @@ int population_create(sc_population * population, sc_goal goal)
 }
 
 /**
+ * @brief Given a normalised evaluation score for a genome return the probability
+ *        of reproduction. That is, the likelihood of being selected as a
+ *        parent for the next generation
+ * @param normalised_score Evaluation score in the range 0.0 -> 1.0
+ * @returns Spawning probability.
+ */
+float population_reproduction_function(float normalised_score)
+{
+	return normalised_score * normalised_score;
+}
+
+/**
  * @brief Calculate the reproduction probability for each genome
  * @param population The population to be updated
  * @returns zero on success
@@ -66,7 +78,7 @@ int population_spawning_probabilities(sc_population * population)
 		   This function could be adjustable, so you could have
 		   different islands with different reproduction strategies */
 		population->individual[i].spawning_probability =
-			normalised_score * normalised_score;
+			population_reproduction_function(normalised_score);
 	}
 
 	return 0;
