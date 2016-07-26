@@ -39,7 +39,10 @@
 /* The maximum number of state changes to get from the
    starting system to the reference system.
    This is assumed to be fairly small. */
-#define SC_MAX_CHANGE_SEQUENCE          32
+#define SC_MAX_CHANGE_SEQUENCE         32
+
+/* The number of training history steps to keep */
+#define SC_MAX_HISTORY                 10000
 
 /* Defines a program and its possible versions */
 typedef struct {
@@ -113,7 +116,7 @@ typedef struct {
 	sc_genome individual[SC_MAX_POPULATION_SIZE];
 
 	/* in the range 0.0 -> 1.0 */
-    float mutation_rate;
+	float mutation_rate;
 
 	/* Percentage of the population to crossover in the range 0.0 -> 1.0 */
 	float crossover;
@@ -126,6 +129,12 @@ typedef struct {
 
 	/* The goal transition */
 	sc_goal goal;
+
+	/* The current index within the score history */
+	int history_index;
+
+	/* history of average scores */
+	float score_history[SC_MAX_HISTORY];
 } sc_population;
 
 void show_help();
