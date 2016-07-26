@@ -163,3 +163,18 @@ int run_shell_command_with_output(char * commandstr, char * output)
 
 	return 0;
 }
+
+/**
+ * @breif Checks to see if software is installed
+ * @param softwarename Name of the cli software
+ * @returns 1 on success
+ */
+int software_installed(char * softwarename)
+{
+	char commandstr[SC_MAX_STRING];
+
+	/* Apparently system runs sh not bash so messes up some of the syntax */
+	sprintf(commandstr, "[ $(which %s | wc -c) = 0 ]", softwarename);
+
+	return system(commandstr);
+}

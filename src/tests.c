@@ -40,6 +40,21 @@ void test_file_exists()
 	printf("Ok\n");
 }
 
+void test_software_exists()
+{
+	char * test_software = "nano";
+	char cmdstr[SC_MAX_STRING];
+
+	printf("test_software_exists...");
+
+	assert(software_installed(test_software));
+
+	char * test_software_non = "fooby_null";
+	assert(!software_installed(test_software_non));
+
+	printf("Ok\n");	
+}
+
 void test_program_get_versions_from_git()
 {
 	int retval;
@@ -192,7 +207,45 @@ void test_program_get_versions_from_rpm_package()
 {
 	printf("test_program_get_versions_from_rpm_package...");
 
-	/* TODO */
+	int retval;
+	char * repo_url = "http://download1.rpmfusion.org/free/fedora/updates/24/SRPMS/r/rfpkg-1.23.4-1.fc24.src.rpm";
+	char * program_name = "rfpkg";
+	int line_number = 5;
+	char * expected_commit = "1.21-1";
+	char template[] = "/tmp/scalam.XXXXXX";
+	char * repos_dir = mkdtemp(template);
+	char filename[SC_MAX_STRING];
+	char rmcommandstr[SC_MAX_STRING];
+	char commitstr[SC_MAX_STRING];
+	sc_program prog;
+
+	sprintf(&prog.name[0],"%s",program_name);
+	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
+	assert( program_get_versions_from_rpm_package(repos_dir, repo_url, &prog) == 0);
+
+	/* check that the versions file was created */
+	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
+	assert(file_exists(filename));
+
+	retval=get_line_from_file(filename, line_number, commitstr);
+	if (retval != 0) {
+		printf("\nCommit line %d not found\n", line_number);
+		/* remove the temporary directory */
+		run_shell_command(rmcommandstr);
+	}
+	assert(retval==0);
+
+	retval = strcmp(commitstr,expected_commit);
+	if (retval != 0) {
+		printf("\nCommit not expected\n");
+		/* remove the temporary directory */
+		run_shell_command(rmcommandstr);
+	}
+	assert(retval==0);
+
+	/* tidy up */
+	run_shell_command(rmcommandstr);
+
 
 	printf("Ok\n");
 }
@@ -372,6 +425,7 @@ void run_tests()
 		   (char*)APPNAME, (char*)VERSION);
 
 	test_file_exists();
+	test_software_exists();
 	test_run_shell_command_with_output();
 	test_program_name_is_valid();
 	test_program_version_from_index();

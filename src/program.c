@@ -130,19 +130,18 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 	/* do we know where to put the resulting versions list? */
 	if (file_exists(prog->versions_file)) return 6;
 
-	/* TODO
-	   This should untar, find the changelog and then call program_get_versions_from_changelog */
-
 	sprintf(commandstr, "cd %s && tar -xf %s -C %s --strip 1", repos_dir, tarball_url, prog->name);
 	if (run_shell_command(commandstr) != 0) return 6;
-	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
+	
 	/* TODO
-	sprintf(commandstr, "cd \"%s/%s\" && git log --all --oneline > %s",
-			repos_dir, prog->name, prog->versions_file);
-	if (run_shell_command(commandstr) != 0) return 7;
-    */
-	   
-	return 0;
+	   find the actual filename of the change log in the extracted directory
+	   assumed to be ChangeLog, but could also be one of the following:
+	   CHANGELOG.md, HISTORY.txt, HISTORY.md, History.md, NEWS.txt, NEWS.md,
+	   News.txt, RELEASES.txt, RELEASE.md, releases.md
+	*/
+	char changelog_filename[] = "foobar";
+	
+	return program_get_versions_from_changelog(changelog_filename, prog);
 }
 
 /**
@@ -180,10 +179,34 @@ int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_p
 	/* do we know where to put the resulting versions list? */
 	if (file_exists(prog->versions_file)) return 6;
 
-	/* TODO
-	   This should wget the package, extract changelog from the spec directory then
-	   call program_get_versions_from_changelog */
+	/* Check that things are installed */
+	if (!software_installed("rpm2cpio") || !software_installed("cpio")) return 8;
+	
+	
+	/* Grab the rpm from url */
+	char commandstr[SC_MAX_STRING];
+	sprintf(commandstr, "wget -q -O %s/%s.rpm %s", repos_dir, prog->name, rpm_url );
+	if (run_shell_command(commandstr) != 0) return 7;
+	
+	/* Extract RPM */
+	sprintf(commandstr, "(rpm2cpio %s/%s.rpm | (cd %s; cpio -i --quiet 2> /dev/null))", repos_dir, prog->name, repos_dir);
+	if (run_shell_command(commandstr) != 0) return 7;
 
+	/* Grab the changelog from the spec file */
+	//sprintf(commandstr, "find %s -name *.spec",repos_dir);
+	//system(commandstr);
+	
+	char mkdirstr[SC_MAX_STRING];
+	sprintf(mkdirstr, "%s/%s", repos_dir, prog->name);
+	mkdir(mkdirstr, 0700);
+	
+	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
+	sprintf(commandstr, "awk '/^\\*(.*)$/ {print $(NF)}' %s/%s.spec > %s",repos_dir, prog->name,prog->versions_file);
+	if (run_shell_command(commandstr) != 0) return 7;
+	
+	if (!file_exists(prog->versions_file)) return 8;
+	prog->no_of_versions = lines_in_file(prog->versions_file);
+	
 	return 0;
 }
 
