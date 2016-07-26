@@ -52,7 +52,7 @@ void test_software_exists()
 	char * test_software_non = "fooby_null";
 	assert(!software_installed(test_software_non));
 
-	printf("Ok\n");	
+	printf("Ok\n");
 }
 
 void test_program_get_versions_from_git()
@@ -221,7 +221,7 @@ void test_program_get_versions_from_rpm_package()
 
 	sprintf(&prog.name[0],"%s",program_name);
 	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
-	assert( program_get_versions_from_rpm_package(repos_dir, repo_url, &prog) == 0);
+	assert(program_get_versions_from_rpm_package(repos_dir, repo_url, &prog) == 0);
 
 	/* check that the versions file was created */
 	sprintf(filename, "%s/%s/versions.txt", repos_dir, program_name);
