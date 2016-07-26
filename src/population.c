@@ -145,9 +145,9 @@ float population_average_score(sc_population * population)
 	if (population->size <= 0) return 0;
 
 	for (i = 0; i < population->size; i++) {
-		score += (float)population->individual[i].score;
+		score += population->individual[i].score;
 	}
-	return score  / population->size;
+	return score  / (float)population->size;
 }
 
 /**
