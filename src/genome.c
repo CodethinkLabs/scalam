@@ -28,6 +28,25 @@
 int genome_mutate(sc_population * population, sc_genome * individual)
 {
 	/* TODO */
+	
+	/* Depending on the strategy, increment a single or jump to goal */
+	
+	
+	/* Pick a random gene (software) to mutate */
+	int gene_index = rand() % population->sys.no_of_programs;
+	
+	sc_system_state state = individual->change[individual->steps];
+	/* Increment or decrement the version index */
+	if (rand() % 2 == 0)
+		state.version_index[gene_index]++;
+	else
+		state.version_index[gene_index]--;
+		
+		
+	// state->installed[gene_index]=?
+	
+	individual->steps++;
+	
 	return 0;
 }
 
@@ -54,12 +73,16 @@ int genome_spawn(sc_population * population,
  */
 int genome_create(sc_population * population, sc_genome * individual)
 {
-	/* TODO */
 	individual->steps=0;
 	
-	memcpy(&individual->change, &population->goal->start, sizeof(population->goal->start));
+	memcpy(&individual->change, &population->goal.start, sizeof(population->goal.start));
+	
 	individual->score=0;
 	individual->spawning_probability=0.0;
 
+	/* Add genome to population */
+	population->individual[population->size]=*individual;
+	population->size++;
+	
 	return 0;
 }
