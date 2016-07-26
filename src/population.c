@@ -21,12 +21,20 @@
 
 /**
  * @brief For a given goal create a population of possible upgrade paths
+ * @param size Number of individuals in the population.
+ *             It's expected that this will remain constant
  * @param population The population to be created
  * @param goal The given goal
  * @returns zero on success
  */
-int population_create(sc_population * population, sc_goal goal)
+int population_create(int size, sc_population * population, sc_goal goal)
 {
+	/* don't exceed array bounds */
+	if (size > SC_MAX_POPULATION_SIZE)
+		size = SC_MAX_POPULATION_SIZE;
+
+	population->size = size;
+
 	/* TODO */
 
 	return 0;
