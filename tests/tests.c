@@ -79,47 +79,6 @@ void test_create_system(sc_system * system_definition)
 	/* TODO create system definition */
 }
 
-void test_population_create()
-{
-	printf("test_population_create...");
-
-	/* TODO
-	sc_population population;
-	sc_goal goal;
-	sc_system system_definition;
-
-	test_create_goal(&goal);
-
-	test_create_system(&system_definition);
-
-    assert(population_create(100, &population, &system_definition, &goal) == 0); */
-
-	printf("Ok\n");
-}
-
-void test_population_next_generation()
-{
-	printf("test_population_next_generation...");
-
-	/* TODO
-	sc_population before, after;
-	sc_goal goal;
-	sc_system system_definition;
-
-	test_create_goal(&goal);
-	test_create_system(&system_definition);
-
-    assert(population_create(100, &before, &system_definition, &goal) == 0);
-	memcpy(&after, &before, sizeof(sc_population));
-	assert(memcmp(&before, &after, sizeof(sc_population)) == 0);
-
-    assert(population_next_generation(&after) == 0);
-	assert(memcmp(&before, &after, sizeof(sc_population)) != 0);
-	*/
-
-	printf("Ok\n");
-}
-
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
@@ -129,10 +88,7 @@ void run_tests()
 	test_software_exists();
 	test_run_shell_command_with_output();
 	run_program_tests();
-
-	test_population_create();
-	test_population_next_generation();
-
+	run_population_tests();
 	run_genome_tests();
 
 	printf("All tests passed\n");
