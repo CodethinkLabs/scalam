@@ -21,21 +21,47 @@
 
 int system_create_from_repos(sc_system * sys, char * repos_dir)
 {
+	char commandstr[SC_MAX_STRING];
+	char directories[SC_MAX_STRING];
+	char current_directory[SC_MAX_STRING];
+	char full_directory[SC_MAX_STRING];
+	char current_commit[SC_MAX_STRING];
+	char head_commit[SC_MAX_STRING];
+	int i, ctr;
+
 	/* TODO */
 
 	/* find the subdirectories */
+	sprintf(commandstr, "cd %s\nls -F | grep /", repos_dir);
+	if (run_shell_command_with_output(commandstr, directories) != 0)
+		return 1;
+	if (directories[0] == 0)
+		return 2;
 
-    /* set sys->no_of_programs */
+	current_directory[0] = 0;
+	ctr = 0;
+	sys->no_of_programs = 0;
+	for (i = 0; i < strlen(directories); i++) {
+		if ((directories[i] != '\n') && (i < strlen(directories)-1)) {
+			/* read the directory name */
+			if (directories[i] != '/')
+				current_directory[ctr++] = directories[i];
+		}
+		else {
+			/* string terminator */
+			current_directory[ctr] = 0;
 
-	/* for each subdirectory (program repo) */
+			/* the full path for the program repo */
+			sprintf(full_directory,"%s/%s",repos_dir,current_directory);
 
-	/*     get list of commits,
-		   similar to program_get_versions_from_repo
-	       but for a directory rather than a url */
+			/* update the details for this program */
+			if (program_repo_get_commits(full_directory,
+										 &sys->program[sys->no_of_programs]) != 0)
+				return 3;
 
-	/*     get the current checkout hash and convert it to an index number */
-
-	/*     update sys->program[index] */
+			sys->no_of_programs++;
+		}
+	}
 
 	return 0;
 }

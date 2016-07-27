@@ -277,6 +277,19 @@ int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program
 }
 
 /**
+ * @brief Gets a list of commits from a repo directory
+ * @param repo_dir Directory where the git repo exists
+ * @param prog Program object
+ * @returns zero on success
+ */
+int program_repo_get_commits(char * repo_dir, sc_program * prog)
+{
+	/* TODO */
+	return 0;
+}
+
+
+/**
  * @brief Gets a list of versions provided by aptitude
  * @param prog Program object
  * @returns zero on success

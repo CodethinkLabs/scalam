@@ -173,6 +173,7 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_program * prog);
 int program_get_versions_from_rpm_package(char * repos_dir, char * deb_url, sc_program * prog);
 int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog);
+int program_repo_get_commits(char * repo_dir, sc_program * prog);
 int program_repo_get_current_checkout(char * repo_dir, char * commit);
 int program_repo_get_head(char * repo_dir, char * commit);
 
