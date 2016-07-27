@@ -23,7 +23,7 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 {
 	char commandstr[SC_MAX_STRING];
 	char directories[SC_MAX_STRING];
-	char current_directory[SC_MAX_STRING];
+	char subdirectory[SC_MAX_STRING];
 	char full_directory[SC_MAX_STRING];
 	char current_commit[SC_MAX_STRING];
 	char head_commit[SC_MAX_STRING];
@@ -42,7 +42,7 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 	if (directories[0] == 0)
 		return 2;
 
-	current_directory[0] = 0;
+	subdirectory[0] = 0;
 	ctr = 0;
 	sys->no_of_programs = 0;
 
@@ -52,14 +52,14 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 		if ((directories[i] != '\n') && (i < strlen(directories)-1)) {
 			/* read the directory name */
 			if (directories[i] != '/')
-				current_directory[ctr++] = directories[i];
+				subdirectory[ctr++] = directories[i];
 		}
 		else {
 			/* string terminator */
-			current_directory[ctr] = 0;
+			subdirectory[ctr] = 0;
 
 			/* the full path for the program repo */
-			sprintf(full_directory,"%s/%s",repos_dir,current_directory);
+			sprintf(full_directory,"%s/%s",repos_dir,subdirectory);
 
 			/* update the details for this program */
 			if (program_repo_get_commits(full_directory,
