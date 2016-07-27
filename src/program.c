@@ -20,6 +20,22 @@
 #include "scalam.h"
 
 /**
+ * @brief for a cloned program git repo return the current checkout point
+ * @param repo_dir Directory containing the git repo
+ * @param commit The returned commit, or an empty string
+ * @returns zero on success
+ */
+int program_repo_get_current_checkout(char * repo_dir, char * commit)
+{
+	char commandstr[SC_MAX_STRING];
+
+	commit[0] = 0;
+	sprintf(commandstr,"%s","git log -1 | grep commit | awk -F ' ' '{print $2}'");
+	if (run_shell_command_with_output(commandstr, commit) != 0) return 1;
+	return 0;
+}
+
+/**
  * @brief Checks whether the name of the given program is valid
  * @param prog Program object
  * @returns Zero on success
@@ -124,7 +140,7 @@ int program_get_versions_from_changelog(char * changelog_filename, sc_program * 
 int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_program * prog)
 {
 	char commandstr[SC_MAX_STRING];
-	
+
 	if (program_name_is_valid(prog) != 0) return 5;
 
 	/* do we know where to put the resulting versions list? */
@@ -132,7 +148,7 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 
 	sprintf(commandstr, "cd %s && tar -xf %s -C %s --strip 1", repos_dir, tarball_url, prog->name);
 	if (run_shell_command(commandstr) != 0) return 6;
-	
+
 	/* TODO
 	   find the actual filename of the change log in the extracted directory
 	   assumed to be ChangeLog, but could also be one of the following:
@@ -140,7 +156,7 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 	   News.txt, RELEASES.txt, RELEASE.md, releases.md
 	*/
 	char changelog_filename[] = "foobar";
-	
+
 	return program_get_versions_from_changelog(changelog_filename, prog);
 }
 
@@ -181,13 +197,13 @@ int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_p
 
 	/* Check that things are installed */
 	if (!software_installed("rpm2cpio") || !software_installed("cpio")) return 8;
-	
-	
+
+
 	/* Grab the rpm from url */
 	char commandstr[SC_MAX_STRING];
 	sprintf(commandstr, "wget -q -O %s/%s.rpm %s", repos_dir, prog->name, rpm_url );
 	if (run_shell_command(commandstr) != 0) return 7;
-	
+
 	/* Extract RPM */
 	sprintf(commandstr, "(rpm2cpio %s/%s.rpm | (cd %s; cpio -i --quiet 2> /dev/null))", repos_dir, prog->name, repos_dir);
 	if (run_shell_command(commandstr) != 0) return 7;
@@ -195,18 +211,18 @@ int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_p
 	/* Grab the changelog from the spec file */
 	//sprintf(commandstr, "find %s -name *.spec",repos_dir);
 	//system(commandstr);
-	
+
 	char mkdirstr[SC_MAX_STRING];
 	sprintf(mkdirstr, "%s/%s", repos_dir, prog->name);
 	mkdir(mkdirstr, 0700);
-	
+
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
 	sprintf(commandstr, "awk '/^\\*(.*)$/ {print $(NF)}' %s/%s.spec > %s",repos_dir, prog->name,prog->versions_file);
 	if (run_shell_command(commandstr) != 0) return 7;
-	
+
 	if (!file_exists(prog->versions_file)) return 8;
 	prog->no_of_versions = lines_in_file(prog->versions_file);
-	
+
 	return 0;
 }
 
@@ -248,11 +264,11 @@ int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program
 int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog)
 {
 	char commandstr[SC_MAX_STRING];
-	
+
 	if (program_name_is_valid(prog) != 0) return 5;
 	if (file_exists(prog->versions_file)) return 6;
 	if (system("aptitude -h > /dev/null") == 127) return 8;
-	
+
 	char mkdirstr[SC_MAX_STRING];
 	sprintf(mkdirstr, "%s/%s", repos_dir, prog->name);
 	mkdir(mkdirstr, 0700);
@@ -260,9 +276,9 @@ int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog)
 			awk -F '(' '{print $2}' | awk -F ')' '{print $1}' > %s/%s/versions.txt",
 			prog->name, repos_dir, prog->name);
 	if (run_shell_command(commandstr) != 0) return 7;
-	
+
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
-   
-	   
+
+
 	return 0;
 }
