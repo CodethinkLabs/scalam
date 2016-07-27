@@ -154,6 +154,39 @@ typedef struct {
 	unsigned int random_seed;
 } sc_population;
 
+
+/* The largest number of rows in our dataframe */
+#define SC_MAX_DF_SIZE      10000
+
+/* Partial set of rows in a dataframe, generated per step */
+typedef struct {
+    int cycle_no;
+    float scores[SC_MAX_POPULATION_SIZE];
+    int population_size;
+    
+} sc_dataframe_slice;
+
+typedef struct {    
+    /* As score data is only known per iteration, generate a slice per iteration */
+    int slice_no;
+    sc_dataframe_slice slice[SC_MAX_CHANGE_SEQUENCE];
+    
+    /* List of params used for the simulation */
+    
+    /* Range  0.0 - 1.0 */
+    int population_size;
+    float mutation_rate;
+    float crossover;
+    float rebels;
+    
+    /* Seed used for simulation */
+    unsigned int random_seed;
+    
+    
+} sc_dataframe;
+
+
+
 void show_help();
 void run_tests();
 int run_shell_command(char * commandstr);
@@ -188,6 +221,10 @@ int population_set_test_passes(sc_population * population, int index, int test_p
 float population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
+
+void plot_create_df_slice(sc_dataframe * df, sc_population * population);
+void plot_create_dataframe(sc_dataframe * df, sc_population * population);
+void plot_dataframe_save(sc_dataframe * df);
 
 void run_program_tests();
 void run_genome_tests();
