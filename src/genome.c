@@ -33,11 +33,12 @@ int genome_mutate(sc_population * population, sc_genome * individual)
 
 
 	/* Pick a random gene (software) to mutate */
-	int gene_index = rand() % population->sys.no_of_programs;
+	int gene_index =
+		rand_num(&individual->random_seed) % population->sys.no_of_programs;
 
 	sc_system_state state = individual->change[individual->steps];
 	/* Increment or decrement the version index */
-	if (rand() % 2 == 0)
+	if (rand_num(&individual->random_seed) % 2 == 0)
 		state.version_index[gene_index]++;
 	else
 		state.version_index[gene_index]--;
@@ -82,9 +83,14 @@ int genome_create(sc_population * population, sc_genome * individual)
 	/* clear all values */
 	memset((void*)individual,'\0',sizeof(sc_genome));
 
+	/* Assign a random seed for this individual.
+	   Each genome has its own random seed so that evaluations could
+	   take place in parallel without compromising determinism */
+	individual->random_seed = rand_num(&population->random_seed);
+
 	/* Number of steps in the upgrade.
 	   Zero means we just go straight to the goal */
-	individual->steps = rand() % SC_MAX_CHANGE_SEQUENCE;
+	individual->steps = rand_num(&individual->random_seed) % SC_MAX_CHANGE_SEQUENCE;
 
 	/* for every step in the upgrade sequence */
 	for (upgrade_step = 0;
@@ -98,10 +104,12 @@ int genome_create(sc_population * population, sc_genome * individual)
 
 			/* assign a random version/commit for this program */
 			population->sys.program[prog_index].version_index =
-				rand() % population->sys.program[prog_index].no_of_versions;
+				rand_num(&individual->random_seed) %
+				population->sys.program[prog_index].no_of_versions;
 
 			/* assign a random install state for this program, 0 or 1 */
-			population->sys.program[prog_index].installed = rand() % 2;
+			population->sys.program[prog_index].installed =
+				rand_num(&individual->random_seed) % 2;
 		}
 	}
 
