@@ -79,11 +79,35 @@ void test_create_system(sc_system * system_definition)
 	/* TODO create system definition */
 }
 
+void test_rand_num()
+{
+	unsigned int random_seed = 562482;
+	int i, j, rand_value[10];
+
+	printf("test_rand_num...");
+
+	/* make some random values */
+	for (i = 0; i < 10; i++) {
+		rand_value[i] = rand_num(&random_seed);
+	}
+
+	/* Check that none of them are the same.
+	   This is not a strong assimption, but probably true for a small sequence. */
+	for (i = 0; i < 9; i++) {
+		for (j = i+1; j < 10; j++) {
+			assert(rand_value[i] != rand_value[j]);
+		}
+	}
+
+	printf("Ok\n");
+}
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
 		   (char*)APPNAME, (char*)VERSION);
 
+	test_rand_num();
 	test_file_exists();
 	test_software_exists();
 	test_run_shell_command_with_output();
