@@ -30,7 +30,9 @@ int program_repo_get_current_checkout(char * repo_dir, char * commit)
 	char commandstr[SC_MAX_STRING];
 
 	commit[0] = 0;
-	sprintf(commandstr,"%s","git log -1 | grep commit | awk -F ' ' '{print $2}'");
+	sprintf(commandstr,
+			"cd %s\ngit log -1 | grep commit | awk -F ' ' '{print $2}'",
+			repo_dir);
 	if (run_shell_command_with_output(commandstr, commit) != 0) return 1;
 	return 0;
 }

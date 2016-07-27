@@ -20,6 +20,43 @@
 #include <assert.h>
 #include "../src/scalam.h"
 
+void test_program_repo_get_current_checkout()
+{
+	char * repo_url = "https://github.com/CodethinkLabs/frepo";
+	char * checkout = "618e913171d2cf8e731bc0c4ab4516f395dddba0";
+	char template[] = "/tmp/scalam.XXXXXX";
+	char * repo_dir = mkdtemp(template);
+	char commitstr[SC_MAX_STRING];
+	char commandstr[SC_MAX_STRING];
+
+	printf("test_program_repo_get_current_checkout...");
+
+	/* clone a repo into a temporary directory */
+	sprintf(commandstr,"git clone %s %s",repo_url, repo_dir);
+	run_shell_command(commandstr);
+
+	/* checkout a particular commit */
+	sprintf(commandstr,"cd %s\ngit checkout %s -b %s", repo_dir, checkout, checkout);
+	run_shell_command(commandstr);
+
+	/* get the current checkout and test that it's the same as the expected */
+	assert(program_repo_get_current_checkout(repo_dir, commitstr) == 0);
+	if (strcmp(commitstr, checkout) != 0) {
+		printf("\nExpected: %s\nActual: %s\n", checkout, commitstr);
+
+		/* remove the test repo */
+		sprintf(commandstr,"rm -rf %s", repo_dir);
+		run_shell_command(commandstr);
+	}
+	assert(strcmp(commitstr, checkout) == 0);
+
+	/* remove the test repo */
+	sprintf(commandstr,"rm -rf %s", repo_dir);
+	run_shell_command(commandstr);
+
+	printf("Ok\n");
+}
+
 void test_program_get_versions_from_git()
 {
 	int retval;
@@ -254,6 +291,7 @@ void run_program_tests()
 {
 	test_program_name_is_valid();
 	test_program_version_from_index();
+	test_program_repo_get_current_checkout();
 	test_program_get_versions_from_git();
 	test_program_get_versions_from_changelog();
 	test_program_get_versions_from_tarball();
