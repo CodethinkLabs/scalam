@@ -19,6 +19,13 @@
 
 #include "scalam.h"
 
+/**
+ * @brief Creates a system definition from a set of git repos within
+ *        a given directory
+ * @param sys System definition
+ * @param repos_dir The directory where the repos exist
+ * @returns zero on success
+ */
 int system_create_from_repos(sc_system * sys, char * repos_dir)
 {
 	char commandstr[SC_MAX_STRING];
