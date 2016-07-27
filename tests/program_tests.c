@@ -27,6 +27,7 @@ void test_program_repo_get_current_checkout()
 	char template[] = "/tmp/scalam.XXXXXX";
 	char * repo_dir = mkdtemp(template);
 	char commitstr[SC_MAX_STRING];
+	char head_commitstr[SC_MAX_STRING];
 	char commandstr[SC_MAX_STRING];
 
 	printf("test_program_repo_get_current_checkout...");
@@ -49,6 +50,29 @@ void test_program_repo_get_current_checkout()
 		run_shell_command(commandstr);
 	}
 	assert(strcmp(commitstr, checkout) == 0);
+
+	/* get the HEAD commit */
+	assert(program_repo_get_head(repo_dir, head_commitstr) == 0);
+
+	/* check that a non-null string was returned as the HEAD commit */
+	if (head_commitstr[0] == 0) {
+		printf("\nHEAD commit not found\n");
+
+		/* remove the test repo */
+		sprintf(commandstr,"rm -rf %s", repo_dir);
+		run_shell_command(commandstr);
+	}
+	assert(head_commitstr[0] != 0);
+
+	/* check that the HEAD commit is not the same as the checkout commit */
+	if (strcmp(head_commitstr, checkout) == 0) {
+		printf("\nUnexpected HEAD commit\n%s\n", head_commitstr);
+
+		/* remove the test repo */
+		sprintf(commandstr,"rm -rf %s", repo_dir);
+		run_shell_command(commandstr);
+	}
+	assert(strcmp(head_commitstr, checkout) != 0);
 
 	/* remove the test repo */
 	sprintf(commandstr,"rm -rf %s", repo_dir);

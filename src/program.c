@@ -38,6 +38,24 @@ int program_repo_get_current_checkout(char * repo_dir, char * commit)
 }
 
 /**
+ * @brief for a cloned program git repo return the HEAD commit
+ * @param repo_dir Directory containing the git repo
+ * @param commit The returned HEAD commit, or an empty string
+ * @returns zero on success
+ */
+int program_repo_get_head(char * repo_dir, char * commit)
+{
+	char commandstr[SC_MAX_STRING];
+
+	commit[0] = 0;
+	sprintf(commandstr,
+			"cd %s\ngit show-ref --head | grep master | head -n 1 | awk -F ' ' '{print $1}'",
+			repo_dir);
+	if (run_shell_command_with_output(commandstr, commit) != 0) return 1;
+	return 0;
+}
+
+/**
  * @brief Checks whether the name of the given program is valid
  * @param prog Program object
  * @returns Zero on success
