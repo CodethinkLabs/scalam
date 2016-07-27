@@ -92,7 +92,7 @@ void test_rand_num()
 	}
 
 	/* Check that none of them are the same.
-	   This is not a strong assimption, but probably true for a small sequence. */
+	   This is not a strong assumption, but probably true for a small sequence. */
 	for (i = 0; i < 9; i++) {
 		for (j = i+1; j < 10; j++) {
 			assert(rand_value[i] != rand_value[j]);
