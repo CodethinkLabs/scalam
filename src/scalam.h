@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -205,6 +206,9 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_program * prog);
 int program_get_versions_from_rpm_package(char * repos_dir, char * deb_url, sc_program * prog);
 int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog);
+int program_repo_get_commits(char * repo_dir, sc_program * prog);
+int program_repo_get_current_checkout(char * repo_dir, char * commit);
+int program_repo_get_head(char * repo_dir, char * commit);
 
 int genome_mutate(sc_population * population, sc_genome * individual);
 int genome_spawn(sc_population * population,
@@ -229,5 +233,7 @@ void plot_dataframe_save(sc_dataframe * df);
 void run_program_tests();
 void run_genome_tests();
 void run_population_tests();
+
+int system_create_from_repos(sc_system * sys, char * repos_dir);
 
 #endif

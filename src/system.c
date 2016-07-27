@@ -18,3 +18,64 @@
 */
 
 #include "scalam.h"
+
+/**
+ * @brief Creates a system definition from a set of git repos within
+ *        a given directory
+ * @param sys System definition
+ * @param repos_dir The directory where the repos exist
+ * @returns zero on success
+ */
+int system_create_from_repos(sc_system * sys, char * repos_dir)
+{
+	char commandstr[SC_MAX_STRING];
+	char directories[SC_MAX_STRING];
+	char subdirectory[SC_MAX_STRING];
+	char full_directory[SC_MAX_STRING];
+	char current_commit[SC_MAX_STRING];
+	char head_commit[SC_MAX_STRING];
+	int i, ctr;
+
+	/* find the subdirectories. This returns a string with directories listed
+	   such as:
+
+	       dir1/
+	       dir2/
+	       dir3/
+	*/
+	sprintf(commandstr, "cd %s\nls -F | grep /", repos_dir);
+	if (run_shell_command_with_output(commandstr, directories) != 0)
+		return 1;
+	if (directories[0] == 0)
+		return 2;
+
+	subdirectory[0] = 0;
+	ctr = 0;
+	sys->no_of_programs = 0;
+
+	/* scan the directories string extracting individual subdirectories */
+	for (i = 0; i < strlen(directories); i++) {
+		/* look for carriage returns */
+		if ((directories[i] != '\n') && (i < strlen(directories)-1)) {
+			/* read the directory name */
+			if (directories[i] != '/')
+				subdirectory[ctr++] = directories[i];
+		}
+		else {
+			/* string terminator */
+			subdirectory[ctr] = 0;
+
+			/* the full path for the program repo */
+			sprintf(full_directory,"%s/%s",repos_dir,subdirectory);
+
+			/* update the details for this program */
+			if (program_repo_get_commits(full_directory,
+										 &sys->program[sys->no_of_programs]) != 0)
+				return 3;
+
+			sys->no_of_programs++;
+		}
+	}
+
+	return 0;
+}
