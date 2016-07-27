@@ -29,9 +29,13 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 	char head_commit[SC_MAX_STRING];
 	int i, ctr;
 
-	/* TODO */
+	/* find the subdirectories. This returns a string with directories listed
+	   such as:
 
-	/* find the subdirectories */
+	       dir1/
+	       dir2/
+	       dir3/
+	*/
 	sprintf(commandstr, "cd %s\nls -F | grep /", repos_dir);
 	if (run_shell_command_with_output(commandstr, directories) != 0)
 		return 1;
@@ -41,7 +45,10 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 	current_directory[0] = 0;
 	ctr = 0;
 	sys->no_of_programs = 0;
+
+	/* scan the directories string extracting individual subdirectories */
 	for (i = 0; i < strlen(directories); i++) {
+		/* look for carriage returns */
 		if ((directories[i] != '\n') && (i < strlen(directories)-1)) {
 			/* read the directory name */
 			if (directories[i] != '/')
