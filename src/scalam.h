@@ -233,6 +233,7 @@ void plot_dataframe_save(sc_dataframe * df);
 void run_program_tests();
 void run_genome_tests();
 void run_population_tests();
+void run_system_tests();
 
 int system_create_from_repos(sc_system * sys, char * repos_dir);
 

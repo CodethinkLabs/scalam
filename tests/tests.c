@@ -112,6 +112,7 @@ void run_tests()
 	test_software_exists();
 	test_run_shell_command_with_output();
 	run_program_tests();
+	run_system_tests();
 	run_population_tests();
 	run_genome_tests();
 
