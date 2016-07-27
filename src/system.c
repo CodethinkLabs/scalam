@@ -18,3 +18,22 @@
 */
 
 #include "scalam.h"
+
+int system_create_from_repos(sc_system * sys, char * repos_dir)
+{
+	/* TODO */
+
+	/* find the subdirectories */
+
+    /* set sys->no_of_programs */
+
+	/* for each subdirectory (program repo) */
+
+	/*     get list of commits, similar to program_get_versions_from_repo */
+
+	/*     get the current checkout hash and convert it to an index number */
+
+	/*     update sys->program[index] */
+
+	return 0;
+}
