@@ -33,27 +33,33 @@ int population_create(int size, sc_population * population,
 					  sc_system * system_definition,
 					  sc_goal * goal)
 {
+	int i;
+
 	if (size < 0) return 1;
 
 	/* don't exceed array bounds */
 	if (size > SC_MAX_POPULATION_SIZE)
 		size = SC_MAX_POPULATION_SIZE;
 
-	population->size = size;
+	/* clear everything to ensure no stray values */
+    memset((void*)population, '\0', sizeof(sc_population));
 
+	population->size = size;
 	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
 	population->crossover = SC_DEFAULT_CROSSOVER;
 	population->rebels = SC_DEFAULT_REBELS;
-	population->history_index = 0;
 
     /* Possibly this could be the same as an island index
        for deterministic islanded runs */
 	population->random_seed = (unsigned int)time(NULL);
 
 	memcpy(&population->goal, &goal, sizeof(sc_goal));
-	memcpy(&population->sys, &goal, sizeof(sc_system));
+	memcpy(&population->sys, &system_definition, sizeof(sc_system));
 
-	/* TODO create initial population */
+	/* Create an initially random population */
+	for (i = 0; i < population->size; i++)
+		if (genome_create(population, &population->individual[i]) != 0)
+			return 1;
 
 	return 0;
 }
