@@ -59,7 +59,7 @@ int population_create(int size, sc_population * population,
 	/* Create an initially random population */
 	for (i = 0; i < population->size; i++)
 		if (genome_create(population, &population->individual[i]) != 0)
-			return 1;
+			return 2;
 
 	return 0;
 }
