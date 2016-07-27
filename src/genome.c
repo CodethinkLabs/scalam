@@ -28,25 +28,25 @@
 int genome_mutate(sc_population * population, sc_genome * individual)
 {
 	/* TODO */
-	
+
 	/* Depending on the strategy, increment a single or jump to goal */
-	
-	
+
+
 	/* Pick a random gene (software) to mutate */
 	int gene_index = rand() % population->sys.no_of_programs;
-	
+
 	sc_system_state state = individual->change[individual->steps];
 	/* Increment or decrement the version index */
 	if (rand() % 2 == 0)
 		state.version_index[gene_index]++;
 	else
 		state.version_index[gene_index]--;
-		
-		
+
+
 	// state->installed[gene_index]=?
-	
+
 	individual->steps++;
-	
+
 	return 0;
 }
 
@@ -67,22 +67,43 @@ int genome_spawn(sc_population * population,
 }
 
 /**
- * @brief Ahistorically create a new individual
+ * @brief Ahistorically create a new individual.
+ *        This creates a completely random upgrade sequence.
+ *        There's no attempt to ratchet through versions/commits and the
+ *        scoring function should take care of long redundant sequences.
  * @param population The population in which the genome exists
  * @param individual The genome to be mutated
+ * @returns zero on success
  */
 int genome_create(sc_population * population, sc_genome * individual)
 {
-	individual->steps=0;
-	
-	memcpy(&individual->change, &population->goal.start, sizeof(population->goal.start));
-	
-	individual->score=0;
-	individual->spawning_probability=0.0;
+	int upgrade_step, prog_index;
 
-	/* Add genome to population */
-	population->individual[population->size]=*individual;
-	population->size++;
-	
+	/* clear all values */
+	memset((void*)individual,'\0',sizeof(sc_genome));
+
+	/* Number of steps in the upgrade.
+	   Zero means we just go straight to the goal */
+	individual->steps = rand() % SC_MAX_CHANGE_SEQUENCE;
+
+	/* for every step in the upgrade sequence */
+	for (upgrade_step = 0;
+		 upgrade_step < individual->steps;
+		 upgrade_step++) {
+
+		/* for each possible program within the system */
+		for (prog_index = 0;
+			 prog_index < population->sys.no_of_programs;
+			 prog_index++) {
+
+			/* assign a random version/commit for this program */
+			population->sys.program[prog_index].version_index =
+				rand() % population->sys.program[prog_index].no_of_versions;
+
+			/* assign a random install state for this program, 0 or 1 */
+			population->sys.program[prog_index].installed = rand() % 2;
+		}
+	}
+
 	return 0;
 }

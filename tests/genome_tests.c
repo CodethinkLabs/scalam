@@ -92,9 +92,9 @@ void test_genome_create()
 
 	/* TODO
 	sc_population population;
-	sc_genome individual;
 	sc_goal goal;
 	sc_system system_definition;
+	sc_genome individual;
 
 	test_create_goal(&goal);
 
