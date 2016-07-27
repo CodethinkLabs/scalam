@@ -35,11 +35,12 @@ int population_create(int size, sc_population * population,
 {
 	int i;
 
-	if (size < 0) return 1;
+	if (size < 0)
+		return 1;
 
 	/* don't exceed array bounds */
 	if (size > SC_MAX_POPULATION_SIZE)
-		size = SC_MAX_POPULATION_SIZE;
+		return 2;
 
 	/* clear everything to ensure no stray values */
     memset((void*)population, '\0', sizeof(sc_population));
@@ -59,7 +60,7 @@ int population_create(int size, sc_population * population,
 	/* Create an initially random population */
 	for (i = 0; i < population->size; i++)
 		if (genome_create(population, &population->individual[i]) != 0)
-			return 2;
+			return 3;
 
 	return 0;
 }
