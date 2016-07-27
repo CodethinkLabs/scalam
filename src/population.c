@@ -46,6 +46,10 @@ int population_create(int size, sc_population * population,
 	population->rebels = SC_DEFAULT_REBELS;
 	population->history_index = 0;
 
+    /* Possibly this could be the same as an island index
+       for deterministic islanded runs */
+	population->random_seed = (unsigned int)time(NULL);
+
 	memcpy(&population->goal, &goal, sizeof(sc_goal));
 	memcpy(&population->sys, &goal, sizeof(sc_system));
 
