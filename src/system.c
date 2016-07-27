@@ -29,7 +29,9 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 
 	/* for each subdirectory (program repo) */
 
-	/*     get list of commits, similar to program_get_versions_from_repo */
+	/*     get list of commits,
+		   similar to program_get_versions_from_repo
+	       but for a directory rather than a url */
 
 	/*     get the current checkout hash and convert it to an index number */
 
