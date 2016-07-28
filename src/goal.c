@@ -27,10 +27,22 @@
  */
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal)
 {
-	/* clear all values so that we begin with a known state */
+	int p;
+
+	/* Clear all values so that we begin with a known state */
 	memset((void*)goal, '\0', sizeof(sc_goal));
 
-	/* TODO */
+	/* for every possible program */
+	for (p = 0; p < sys->no_of_programs; p++) {
+		/* Duplicate the current system state */
+		goal->start.version_index[p] = sys->program[p].version_index;
+		goal->start.installed[p] = sys->program[p].installed;
+
+		/* goal is just all programs installed and on their final
+		   commit (the head of master) */
+		goal->reference.version_index[p] = sys->program[p].no_of_versions;
+		goal->reference.installed[p] = 1;
+	}
 
 	return 0;
 }
