@@ -284,7 +284,16 @@ int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program
  */
 int program_repo_get_commits(char * repo_dir, sc_program * prog)
 {
-	/* TODO */
+	char commandstr[SC_MAX_STRING];
+
+	prog->no_of_versions = 0;
+	sprintf(prog->versions_file, "%s/versions.txt", repo_dir);
+	sprintf(commandstr, "cd \"%s\" && git log --all --oneline > %s",
+			repo_dir, prog->versions_file);
+	if (run_shell_command(commandstr) != 0) return 1;
+	if (!file_exists(prog->versions_file)) return 2;
+	prog->no_of_versions = lines_in_file(prog->versions_file);
+
 	return 0;
 }
 
