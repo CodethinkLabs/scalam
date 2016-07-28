@@ -27,6 +27,7 @@
  */
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal)
 {
+	/* clear all values so that we begin with a known state */
 	memset((void*)goal, '\0', sizeof(sc_goal));
 
 	/* TODO */
