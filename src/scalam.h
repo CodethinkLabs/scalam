@@ -92,7 +92,7 @@ typedef struct {
 	/* Whether each possible program is installed or not.
 	   Some upgrade sequences might require uninstalls and
 	   reinstalls at a later step in the sequence */
-	int installed[SC_MAX_SYSTEM_SIZE];
+	unsigned char installed[SC_MAX_SYSTEM_SIZE];
 } sc_system_state;
 
 /* A genome defines a sequence of changes to get to the reference state.
