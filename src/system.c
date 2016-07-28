@@ -32,7 +32,7 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 {
 	char full_directory[SC_MAX_STRING];
 	char current_checkout[SC_MAX_STRING];
-	int version_index;
+	int line_number;
 
 	if (ctr == 0)
 		return 0;
@@ -52,7 +52,7 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 		return 1;
 
 	/* check that there are some commits */
-	if (sys->program[sys->no_of_programs].no_of_versions == 0)
+	if (sys->program[sys->no_of_programs].no_of_versions <= 0)
 		return 2;
 
 	/* get the current checkout commit */
@@ -60,13 +60,18 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 		return 3;
 
 	/* Get the array index from the checkout */
-	version_index =
+	line_number =
 		get_line_number_from_string_in_file((&sys->program[sys->no_of_programs])->versions_file,
 											(char*)current_checkout);
-	if (version_index < 0)
+	if (line_number < 0)
 		return 4;
 
-	sys->program[sys->no_of_programs].version_index = version_index;
+	/* Invert the line number so that the last line in versions_file
+	   corresponds to version index zero. This just makes incrementing
+	   through versions more intuitive. */
+	sys->program[sys->no_of_programs].version_index =
+		sys->program[sys->no_of_programs].no_of_versions -
+		line_number;
 
 	/* increment the number of programs in the system */
 	sys->no_of_programs++;
