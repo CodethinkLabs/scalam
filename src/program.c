@@ -75,6 +75,20 @@ int program_name_is_valid(sc_program * prog)
 }
 
 /**
+ * @brief Sets the program name from the repo information
+ * @param prog Program object
+ * @param repos_dir Directory where the git repo will be checked out
+ * @returns Zero on success
+ */
+int program_name_from_repo(sc_program * prog, char * repos_dir)
+{
+	/* TODO */
+
+
+	return 0;
+}
+
+/**
  * @brief Returns the commit or version number for the given index number.
  *        Within sc_program an index number indicates what version the program
  *        is currently on.
@@ -122,7 +136,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 
 	if (program_name_is_valid(prog) != 0) return 5;
 
-	sprintf(commandstr, "cd %s && git clone %s \"%s\"", repos_dir, repo_url, prog->name);
+	sprintf(commandstr, "cd %s && git clone %s \"%s\" > /dev/null", repos_dir, repo_url, prog->name);
 	if (run_shell_command(commandstr) != 0) return 6;
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
 	sprintf(commandstr, "cd \"%s/%s\" && git log --all --oneline > %s",

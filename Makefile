@@ -10,7 +10,7 @@ all:
 	$(CC) -o ${APP} src/* tests/* -lm -fopenmp
 debug:
 	rm -f *.plist src/*.plist tests/*.plist src/*.c~ tests/*~ src/*.h~ ${APP}
-	$(CC) -o ${APP} -g src/* tests/* -lm -fopenmp
+	$(CC) -O0 -o ${APP} -g3 src/* tests/* -lm -fopenmp
 clean:
 	rm -f *.plist src/*.plist tests/*.plist tests/*.plist src/*.c~ tests/*~ src/*.h~ ${APP}
 source:

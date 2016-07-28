@@ -311,9 +311,17 @@ void test_program_version_from_index()
 	printf("Ok\n");
 }
 
+void test_program_name_from_repo()
+{
+	printf("test_program_version_from_index...");
+	/* TODO */
+	printf("OK\n");
+}
+
 void run_program_tests()
 {
 	test_program_name_is_valid();
+	test_program_name_from_repo();
 	test_program_version_from_index();
 	test_program_repo_get_current_checkout();
 	test_program_get_versions_from_git();
