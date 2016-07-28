@@ -102,6 +102,15 @@ void test_rand_num()
 	printf("Ok\n");
 }
 
+void test_get_line_number_from_string_in_file()
+{
+	printf("test_get_line_number_from_string_in_file...");
+
+	/* TODO */
+
+	printf("Ok\n");
+}
+
 void run_tests()
 {
 	printf("Running unit tests for %s version %s\n",
@@ -111,6 +120,7 @@ void run_tests()
 	test_file_exists();
 	test_software_exists();
 	test_run_shell_command_with_output();
+	test_get_line_number_from_string_in_file();
 	run_program_tests();
 	run_system_tests();
 	run_population_tests();

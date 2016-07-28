@@ -148,7 +148,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 		return 6;
 
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
-	sprintf(commandstr, "cd \"%s/%s\" && git log --all --oneline > %s",
+	sprintf(commandstr, "cd \"%s/%s\" && git log --pretty=tformat:\"%H\" --all --first-parent master > %s",
 			repos_dir, prog->name, prog->versions_file);
 
 	if (run_shell_command(commandstr) != 0)
@@ -335,7 +335,7 @@ int program_repo_get_commits(char * repo_dir, sc_program * prog)
 	prog->no_of_versions = 0;
 	sprintf(prog->versions_file, "%s/versions.txt", repo_dir);
 
-	sprintf(commandstr, "cd \"%s\" && git log --all --oneline > %s",
+	sprintf(commandstr, "cd \"%s\" && git log --pretty=tformat:\"%H\" --all --first-parent master > %s",
 			repo_dir, prog->versions_file);
 
 	if (run_shell_command(commandstr) != 0)
