@@ -33,7 +33,10 @@ int program_repo_get_current_checkout(char * repo_dir, char * commit)
 	sprintf(commandstr,
 			"cd %s\ngit log -1 | grep commit | awk -F ' ' '{print $2}'",
 			repo_dir);
-	if (run_shell_command_with_output(commandstr, commit) != 0) return 1;
+
+	if (run_shell_command_with_output(commandstr, commit) != 0)
+		return 1;
+
 	return 0;
 }
 
@@ -51,7 +54,9 @@ int program_repo_get_head(char * repo_dir, char * commit)
 	sprintf(commandstr,
 			"cd %s\ngit show-ref --head | grep master | head -n 1 | awk -F ' ' '{print $1}'",
 			repo_dir);
-	if (run_shell_command_with_output(commandstr, commit) != 0) return 1;
+	if (run_shell_command_with_output(commandstr, commit) != 0)
+		return 1;
+
 	return 0;
 }
 
@@ -134,16 +139,26 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
 {
 	char commandstr[SC_MAX_STRING];
 
-	if (program_name_is_valid(prog) != 0) return 5;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
 
-	sprintf(commandstr, "cd %s && git clone %s \"%s\" > /dev/null", repos_dir, repo_url, prog->name);
-	if (run_shell_command(commandstr) != 0) return 6;
+	sprintf(commandstr, "cd %s && git clone %s \"%s\"", repos_dir, repo_url, prog->name);
+
+	if (run_shell_command(commandstr) != 0)
+		return 6;
+
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
 	sprintf(commandstr, "cd \"%s/%s\" && git log --all --oneline > %s",
 			repos_dir, prog->name, prog->versions_file);
-	if (run_shell_command(commandstr) != 0) return 7;
-	if (!file_exists(prog->versions_file)) return 8;
+
+	if (run_shell_command(commandstr) != 0)
+		return 7;
+
+	if (!file_exists(prog->versions_file))
+		return 8;
+
 	prog->no_of_versions = lines_in_file(prog->versions_file);
+
 	return 0;
 }
 
@@ -155,10 +170,12 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
  */
 int program_get_versions_from_changelog(char * changelog_filename, sc_program * prog)
 {
-	if (program_name_is_valid(prog) != 0) return 5;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
 
 	/* do we know where to put the resulting versions list? */
-	if (file_exists(prog->versions_file)) return 6;
+	if (file_exists(prog->versions_file))
+		return 6;
 
 	/* TODO */
 	return 0;
@@ -175,13 +192,16 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
 {
 	char commandstr[SC_MAX_STRING];
 
-	if (program_name_is_valid(prog) != 0) return 5;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
 
 	/* do we know where to put the resulting versions list? */
-	if (file_exists(prog->versions_file)) return 6;
+	if (file_exists(prog->versions_file))
+		return 6;
 
 	sprintf(commandstr, "cd %s && tar -xf %s -C %s --strip 1", repos_dir, tarball_url, prog->name);
-	if (run_shell_command(commandstr) != 0) return 6;
+	if (run_shell_command(commandstr) != 0)
+		return 6;
 
 	/* TODO
 	   find the actual filename of the change log in the extracted directory
@@ -203,10 +223,12 @@ int program_get_versions_from_tarball(char * repos_dir, char * tarball_url, sc_p
  */
 int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_program * prog)
 {
-	if (program_name_is_valid(prog) != 0) return 5;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
 
 	/* do we know where to put the resulting versions list? */
-	if (file_exists(prog->versions_file)) return 6;
+	if (file_exists(prog->versions_file))
+		return 6;
 
 	/* TODO
 	   This should wget the package, extract changelog from the DEBIAN directory then
@@ -224,23 +246,28 @@ int program_get_versions_from_deb_package(char * repos_dir, char * deb_url, sc_p
  */
 int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_program * prog)
 {
-	if (program_name_is_valid(prog) != 0) return 5;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
 
 	/* do we know where to put the resulting versions list? */
-	if (file_exists(prog->versions_file)) return 6;
+	if (file_exists(prog->versions_file))
+		return 6;
 
 	/* Check that things are installed */
-	if (!software_installed("rpm2cpio") || !software_installed("cpio")) return 8;
+	if (!software_installed("rpm2cpio") || !software_installed("cpio"))
+		return 8;
 
 
 	/* Grab the rpm from url */
 	char commandstr[SC_MAX_STRING];
 	sprintf(commandstr, "wget -q -O %s/%s.rpm %s", repos_dir, prog->name, rpm_url );
-	if (run_shell_command(commandstr) != 0) return 7;
+	if (run_shell_command(commandstr) != 0)
+		return 7;
 
 	/* Extract RPM */
 	sprintf(commandstr, "(rpm2cpio %s/%s.rpm | (cd %s; cpio -i --quiet 2> /dev/null))", repos_dir, prog->name, repos_dir);
-	if (run_shell_command(commandstr) != 0) return 7;
+	if (run_shell_command(commandstr) != 0)
+		return 7;
 
 	/* Grab the changelog from the spec file */
 	//sprintf(commandstr, "find %s -name *.spec",repos_dir);
@@ -252,9 +279,11 @@ int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_p
 
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
 	sprintf(commandstr, "awk '/^\\*(.*)$/ {print $(NF)}' %s/%s.spec > %s",repos_dir, prog->name,prog->versions_file);
-	if (run_shell_command(commandstr) != 0) return 7;
+	if (run_shell_command(commandstr) != 0)
+		return 7;
 
-	if (!file_exists(prog->versions_file)) return 8;
+	if (!file_exists(prog->versions_file))
+		return 8;
 	prog->no_of_versions = lines_in_file(prog->versions_file);
 
 	return 0;
@@ -270,8 +299,11 @@ int program_get_versions_from_rpm_package(char * repos_dir, char * rpm_url, sc_p
 int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program * prog)
 {
 	/* check for empty strings */
-	if (strlen(repos_dir) == 0) return 1;
-	if (strlen(repo_url) == 0) return 2;
+	if (strlen(repos_dir) == 0)
+		return 1;
+
+	if (strlen(repo_url) == 0)
+		return 2;
 
 	/* remove trailing slash if needed */
 	if (strlen(repos_dir) > 1)
@@ -298,7 +330,22 @@ int program_get_versions_from_repo(char * repos_dir, char * repo_url, sc_program
  */
 int program_repo_get_commits(char * repo_dir, sc_program * prog)
 {
-	/* TODO */
+	char commandstr[SC_MAX_STRING];
+
+	prog->no_of_versions = 0;
+	sprintf(prog->versions_file, "%s/versions.txt", repo_dir);
+
+	sprintf(commandstr, "cd \"%s\" && git log --all --oneline > %s",
+			repo_dir, prog->versions_file);
+
+	if (run_shell_command(commandstr) != 0)
+		return 1;
+
+	if (!file_exists(prog->versions_file))
+		return 2;
+
+	prog->no_of_versions = lines_in_file(prog->versions_file);
+
 	return 0;
 }
 
@@ -312,9 +359,14 @@ int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog)
 {
 	char commandstr[SC_MAX_STRING];
 
-	if (program_name_is_valid(prog) != 0) return 5;
-	if (file_exists(prog->versions_file)) return 6;
-	if (system("aptitude -h > /dev/null") == 127) return 8;
+	if (program_name_is_valid(prog) != 0)
+		return 5;
+
+	if (file_exists(prog->versions_file))
+		return 6;
+
+	if (system("aptitude -h > /dev/null") == 127)
+		return 8;
 
 	char mkdirstr[SC_MAX_STRING];
 	sprintf(mkdirstr, "%s/%s", repos_dir, prog->name);
@@ -322,7 +374,9 @@ int program_get_versions_from_aptitude(char * repos_dir, sc_program * prog)
 	sprintf(commandstr, "aptitude changelog %s | grep \"urgency\" | \
 			awk -F '(' '{print $2}' | awk -F ')' '{print $1}' > %s/%s/versions.txt",
 			prog->name, repos_dir, prog->name);
-	if (run_shell_command(commandstr) != 0) return 7;
+
+	if (run_shell_command(commandstr) != 0)
+		return 7;
 
 	sprintf(prog->versions_file, "%s/%s/versions.txt", repos_dir, prog->name);
 

@@ -30,7 +30,7 @@
 #define VERSION "0.1"
 
 /* The maximum number of programs in a system */
-#define SC_MAX_SYSTEM_SIZE           99999
+#define SC_MAX_SYSTEM_SIZE            9999
 
 /* maximum length of strings used for program names */
 #define SC_MAX_STRING                  256
@@ -164,26 +164,26 @@ typedef struct {
     int cycle_no;
     float scores[SC_MAX_POPULATION_SIZE];
     int population_size;
-    
+
 } sc_dataframe_slice;
 
-typedef struct {    
+typedef struct {
     /* As score data is only known per iteration, generate a slice per iteration */
     int slice_no;
     sc_dataframe_slice slice[SC_MAX_CHANGE_SEQUENCE];
-    
+
     /* List of params used for the simulation */
-    
+
     /* Range  0.0 - 1.0 */
     int population_size;
     float mutation_rate;
     float crossover;
     float rebels;
-    
+
     /* Seed used for simulation */
     unsigned int random_seed;
-    
-    
+
+
 } sc_dataframe;
 
 
@@ -236,5 +236,7 @@ void run_population_tests();
 void run_system_tests();
 
 int system_create_from_repos(sc_system * sys, char * repos_dir);
+
+int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 
 #endif
