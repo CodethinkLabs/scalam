@@ -31,6 +31,8 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 										   char * subdirectory, int ctr)
 {
 	char full_directory[SC_MAX_STRING];
+	char current_checkout[SC_MAX_STRING];
+	int line_number;
 
 	if (ctr == 0)
 		return 0;
@@ -48,6 +50,28 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 	if (program_repo_get_commits(full_directory,
 								 &sys->program[sys->no_of_programs]) != 0)
 		return 1;
+
+	/* check that there are some commits */
+	if (sys->program[sys->no_of_programs].no_of_versions <= 0)
+		return 2;
+
+	/* get the current checkout commit */
+	if (program_repo_get_current_checkout(full_directory, current_checkout) != 0)
+		return 3;
+
+	/* Get the array index from the checkout */
+	line_number =
+		get_line_number_from_string_in_file((&sys->program[sys->no_of_programs])->versions_file,
+											(char*)current_checkout);
+	if (line_number < 0)
+		return 4;
+
+	/* Invert the line number so that the last line in versions_file
+	   corresponds to version index zero. This just makes incrementing
+	   through versions more intuitive. */
+	sys->program[sys->no_of_programs].version_index =
+		sys->program[sys->no_of_programs].no_of_versions -
+		line_number;
 
 	/* increment the number of programs in the system */
 	sys->no_of_programs++;
@@ -69,7 +93,7 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 	char subdirectory[SC_MAX_STRING];
 	char current_commit[SC_MAX_STRING];
 	char head_commit[SC_MAX_STRING];
-	int i, ctr;
+	int i, ctr, retval;
 
 	/* find the subdirectories. This returns a string with directories listed
 	   such as:
@@ -99,9 +123,12 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 				subdirectory[ctr++] = directories[i];
 		}
 		else {
-			if (system_add_program_from_repo_directory(sys, repos_dir,
-													   (char*)subdirectory, ctr) != 0)
+			retval = system_add_program_from_repo_directory(sys, repos_dir,
+															(char*)subdirectory, ctr);
+			if (retval != 0) {
+				printf("system_add_program_from_repo_directory err %d", retval);
 				return 3;
+			}
 
 			/* reset the character counter */
 			ctr = 0;

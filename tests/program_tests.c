@@ -87,7 +87,7 @@ void test_program_get_versions_from_git()
 	char * repo_url = "https://github.com/CodethinkLabs/frepo";
 	char * program_name = "frepo";
 	int line_number = 5;
-	char * expected_commit = "3c74943";
+	char * expected_commit = "3c74943345d0d51ce33b0d86c3f81846fa15bf95";
 	char template[] = "/tmp/scalam.XXXXXX";
 	char * repos_dir = mkdtemp(template);
 	char filename[SC_MAX_STRING];
@@ -113,9 +113,12 @@ void test_program_get_versions_from_git()
 	}
 	assert(retval==0);
 
+	/* check that this is the full commit hash length */
+	assert(strlen(commitstr) > 8);
+
 	retval = strcmp(commitstr,expected_commit);
 	if (retval != 0) {
-		printf("\nCommit not expected\n");
+		printf("\nCommit not expected %s %s\n", commitstr, expected_commit);
 		/* remove the temporary directory */
 		run_shell_command(rmcommandstr);
 	}

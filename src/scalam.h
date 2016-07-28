@@ -58,7 +58,7 @@ typedef struct {
 
 	/* File containing list of versions
 	   For example, coule be the result of:
-		   git log --all --oneline > versions.txt
+		   git log --pretty=tformat:"%H" --all --first-parent master > versions.txt
 	   or could be created from a debian changelog */
 	char versions_file[SC_MAX_STRING];
 
@@ -194,6 +194,7 @@ int run_shell_command(char * commandstr);
 int run_shell_command_with_output(char * commandstr, char * output);
 int file_exists(char * filename);
 int lines_in_file(char * filename);
+int get_line_number_from_string_in_file(char * filename, char * line);
 int program_name_is_valid(sc_program * prog);
 int program_version_from_index(sc_program * prog, int version_index, char * version);
 int software_installed(char * softwarename);

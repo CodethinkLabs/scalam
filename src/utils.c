@@ -61,6 +61,51 @@ int lines_in_file(char * filename)
 }
 
 /**
+ * @brief Given a string corresponding to a line in a file
+ *        return the line number for that string
+ * @param filename The file to be searched
+ * @param search_line The line string to search for
+ * @returns The line number for the string,
+ *          -1 if not found
+ *          -2 if file does not exist
+ */
+int get_line_number_from_string_in_file(char * filename, char * search_line)
+{
+	int line_number = -1;
+	int i, ctr, index = 0;
+    FILE * fp;
+    char linestr[SC_MAX_STRING];
+    char first_entry[SC_MAX_STRING];
+
+    fp = fopen(filename, "r");
+    if (!fp) return -2;
+
+    while (!feof(fp)) {
+        if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
+            if (linestr == NULL) continue;
+			ctr = 0;
+			for (i = 0; i < strlen(linestr); i++) {
+				if ((linestr[i] == ' ') || (linestr[i] == '\t') ||
+					(linestr[i] == '\n')) {
+					break;
+				}
+				else {
+					first_entry[ctr++] = linestr[i];
+				}
+			}
+			first_entry[ctr] = 0;
+			if (strstr(first_entry, search_line) != NULL) {
+				line_number = index;
+				break;
+			}
+			index++;
+		}
+	}
+	fclose(fp);
+	return line_number;
+}
+
+/**
  * @brief Returns a specific line from a file.
  *        Note that commit lists or changelogs are in descending order.
  * @param filename Name of the file

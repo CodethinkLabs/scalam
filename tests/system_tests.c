@@ -43,6 +43,7 @@ void test_system_create_from_repos()
 
 	retval = system_create_from_repos(&sys, repo_dir);
 	if (retval != 0) {
+		printf("\nsystem_create_from_repos err %d\n", retval);
 		sprintf(commandstr,"rm -rf %s", repo_dir);
 		run_shell_command(commandstr);
 	}
