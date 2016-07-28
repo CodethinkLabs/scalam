@@ -20,6 +20,42 @@
 #include "scalam.h"
 
 /**
+ * @brief Adds a program to a system from a directory containing repos
+ * @param sys System object
+ * @param repos_dir The directory which contains the repos
+ * @param subdirectory The subdirectory of repos_dir currently being scanned
+ * @param ctr Character position during scan of the returned directories
+ * @returns zero on success
+ */
+int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
+										   char * subdirectory, int ctr)
+{
+	char full_directory[SC_MAX_STRING];
+
+	if (ctr == 0)
+		return 0;
+
+	/* string terminator */
+	subdirectory[ctr] = 0;
+
+	/* the full path for the program repo */
+	sprintf(full_directory,"%s/%s",repos_dir,subdirectory);
+
+	/* set the name of the program */
+	sprintf((&sys->program[sys->no_of_programs])->name, "%s", subdirectory);
+
+	/* update the details for this program */
+	if (program_repo_get_commits(full_directory,
+								 &sys->program[sys->no_of_programs]) != 0)
+		return 1;
+
+	/* increment the number of programs in the system */
+	sys->no_of_programs++;
+
+	return 0;
+}
+
+/**
  * @brief Creates a system definition from a set of git repos within
  *        a given directory
  * @param sys System definition
@@ -31,7 +67,6 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 	char commandstr[SC_MAX_STRING];
 	char directories[SC_MAX_STRING];
 	char subdirectory[SC_MAX_STRING];
-	char full_directory[SC_MAX_STRING];
 	char current_commit[SC_MAX_STRING];
 	char head_commit[SC_MAX_STRING];
 	int i, ctr;
@@ -51,7 +86,9 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 
 	subdirectory[0] = 0;
 	ctr = 0;
-	sys->no_of_programs = 0;
+
+	/* clear the system so that it's initial state is consistent */
+	memset((void*)sys, '\0', sizeof(sc_system));
 
 	/* scan the directories string extracting individual subdirectories */
 	for (i = 0; i < strlen(directories); i++) {
@@ -62,20 +99,20 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 				subdirectory[ctr++] = directories[i];
 		}
 		else {
-			/* string terminator */
-			subdirectory[ctr] = 0;
-
-			/* the full path for the program repo */
-			sprintf(full_directory,"%s/%s",repos_dir,subdirectory);
-
-			/* update the details for this program */
-			if (program_repo_get_commits(full_directory,
-										 &sys->program[sys->no_of_programs]) != 0)
+			if (system_add_program_from_repo_directory(sys, repos_dir,
+													   (char*)subdirectory, ctr) != 0)
 				return 3;
 
-			sys->no_of_programs++;
+			/* reset the character counter */
+			ctr = 0;
 		}
 	}
+
+	/* Handle any stragglers if we didn't encounter a final carriage
+	   return or / character */
+	if (system_add_program_from_repo_directory(sys, repos_dir,
+											   (char*)subdirectory, ctr) != 0)
+		return 4;
 
 	return 0;
 }

@@ -30,7 +30,7 @@
 #define VERSION "0.1"
 
 /* The maximum number of programs in a system */
-#define SC_MAX_SYSTEM_SIZE           99999
+#define SC_MAX_SYSTEM_SIZE           9999
 
 /* maximum length of strings used for program names */
 #define SC_MAX_STRING                  256

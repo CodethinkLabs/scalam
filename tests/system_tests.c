@@ -22,56 +22,50 @@
 
 void test_system_create_from_repos()
 {
-	printf("test_system_create_from_repos...");
-    
-    int retval;
-    char * program_name="freop";
-    char * program_name2="morph-to-bb";
-    char * program_url="https://github.com/CodethinkLabs/frepo";
-    char * program_url2="https://github.com/CodethinkLabs/morph-to-bb";
+	sc_system sys;
+	int retval, p;
+	char * repo_url1 = "https://github.com/CodethinkLabs/frepo";
+	char * repo_url2 = "https://github.com/CodethinkLabs/firehose";
 	char template[] = "/tmp/scalam.XXXXXX";
-	char * repos_dir = mkdtemp(template);
-	char filename[SC_MAX_STRING];
-	char rmcommandstr[SC_MAX_STRING];
-    
-	sc_program prog;
-    sc_program prog2;
+	char * repo_dir;
+	char commandstr[SC_MAX_STRING];
 
-    
-	sprintf(&prog.name[0],"%s",program_name);
-	sprintf(&prog2.name[0],"%s",program_name2);
-    
-	sprintf(rmcommandstr, "rm -rf %s", repos_dir);
-	program_get_versions_from_repo(repos_dir,program_url, &prog);   
-	program_get_versions_from_repo(repos_dir, program_url2 , &prog2);
-    
-    // Check basic system construction
-    /*
-    sc_system sys;  //seg faults here
-    
-    retval=system_create_from_repos(&sys, repos_dir);
-    if(retval != 0)
-    {
-        printf("\nSystem failed to create\n");
-        // remove the temporary directory
-		run_shell_command(rmcommandstr);
-    }
-    assert(retval == 0);
-    
-    // Check number of system programs
-    assert(sys.no_of_programs != 2);
-    
-    // Are program names correct
-    assert(!strcmp(sys.program[0].name,program_name)
-        && !strcmp(sys.program[0].name,program_name2));
-    assert(!strcmp(sys.program[1].name,program_name)
-        && !strcmp(sys.program[1].name,program_name2));
-    
-	// tidy up
-	run_shell_command(rmcommandstr);
-    */
+	printf("test_system_create_from_repos...");
+
+	/* create a test directory which will contain repos */
+	repo_dir = mkdtemp(template);
+
+	/* clone repos into a test directory */
+	sprintf(commandstr,"git clone %s %s/frepo",repo_url1, repo_dir);
+	run_shell_command(commandstr);
+	sprintf(commandstr,"git clone %s %s/firehose",repo_url2, repo_dir);
+	run_shell_command(commandstr);
+
+	retval = system_create_from_repos(&sys, repo_dir);
+	if (retval != 0) {
+		sprintf(commandstr,"rm -rf %s", repo_dir);
+		run_shell_command(commandstr);
+	}
+	assert(retval == 0);
+
+	if (sys.no_of_programs != 2) {
+		printf("sys.no_of_programs %d\n",sys.no_of_programs);
+	}
+	assert(sys.no_of_programs == 2);
+
+	/* check that programs were actually created */
+	for (p = 0; p < sys.no_of_programs; p++) {
+		assert(sys.program[p].name[0] != 0);
+		assert(sys.program[p].no_of_versions > 0);
+		assert(sys.program[p].versions_file[0] != 0);
+		assert(file_exists(sys.program[p].versions_file));
+	}
+
+	/* remove the test directory */
+	sprintf(commandstr,"rm -rf %s", repo_dir);
+	run_shell_command(commandstr);
+
 	printf("Ok\n");
-    
 }
 
 void run_system_tests()
