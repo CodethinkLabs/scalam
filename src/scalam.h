@@ -30,7 +30,7 @@
 #define VERSION "0.1"
 
 /* The maximum number of programs in a system */
-#define SC_MAX_SYSTEM_SIZE            9999
+#define SC_MAX_SYSTEM_SIZE            5000
 
 /* maximum length of strings used for program names */
 #define SC_MAX_STRING                  256
@@ -41,9 +41,6 @@
    starting system to the reference system.
    This is assumed to be fairly small. */
 #define SC_MAX_CHANGE_SEQUENCE         32
-
-/* The number of training history steps to keep */
-#define SC_MAX_HISTORY                 10000
 
 /* default evolution parameters */
 #define SC_DEFAULT_MUTATION_RATE       0.2
@@ -128,7 +125,7 @@ typedef struct {
 	/* Number of individuals in the population */
 	int size;
 
-	sc_genome individual[SC_MAX_POPULATION_SIZE];
+	sc_genome * individual;
 
 	/* in the range 0.0 -> 1.0 */
 	float mutation_rate;
@@ -144,12 +141,6 @@ typedef struct {
 
 	/* The goal transition */
 	sc_goal goal;
-
-	/* The current index within the score history */
-	int history_index;
-
-	/* history of average scores */
-	float score_history[SC_MAX_HISTORY];
 
 	/* seed for PRNG */
 	unsigned int random_seed;
@@ -220,6 +211,7 @@ int genome_create(sc_population * population, sc_genome * individual);
 int population_create(int size, sc_population * population,
 					  sc_system * system_definition,
 					  sc_goal * goal);
+void population_free(sc_population * population);
 int population_next_generation(sc_population * population);
 float population_average_score(sc_population * population);
 int population_set_test_passes(sc_population * population, int index, int test_passes);

@@ -46,6 +46,7 @@ int population_create(int size, sc_population * population,
     memset((void*)population, '\0', sizeof(sc_population));
 
 	population->size = size;
+	population->individual = (sc_genome*)malloc(size*sizeof(sc_genome));
 	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
 	population->crossover = SC_DEFAULT_CROSSOVER;
 	population->rebels = SC_DEFAULT_REBELS;
@@ -63,6 +64,15 @@ int population_create(int size, sc_population * population,
 			return 3;
 
 	return 0;
+}
+
+/**
+ * @brief Deallocates memory for a population
+ * @param population Population object
+ */
+void population_free(sc_population * population)
+{
+	free(population);
 }
 
 /**

@@ -28,18 +28,18 @@
 void plot_create_df_slice(sc_dataframe * df, sc_population * population)
 {
     sc_dataframe_slice slice;
-    
+
     /* Dataframe Fields */
     slice.population_size=population->size;
-    slice.cycle_no=population->history_index;
-    
+    /*slice.cycle_no=population->history_index;*/
+
     int i;
     /* Get the current scores for all the genomes */
     for (i=0; i<population->size; i++)
     {
-        slice.scores[i]=population_get_score(population, i);      
+        slice.scores[i]=population_get_score(population, i);
     }
-    
+
     df->slice[df->slice_no]=slice;
     df->slice_no++;
 }
@@ -71,7 +71,7 @@ void plot_create_dataframe(sc_dataframe * df, sc_population * population)
 void plot_dataframe_save(sc_dataframe * df)
 {
     int i,j;
-    
+
     FILE * fp;
     char *filename="dataframe.csv";
     fp = fopen(filename, "r");
@@ -79,19 +79,19 @@ void plot_dataframe_save(sc_dataframe * df)
     {
         /* Dataframe headers */
         fprintf(fp, "cycle_ix,genome_ix,score");
-    
+
         /* Each cycle */
         for( i=0; i< df->slice_no; i++)
         {
             /* Each genome score for this cycle */
             for( j=0; j< df->slice[i].population_size; j++)
             {
-                fprintf(fp, "%d,%d,%f\n", i, j, df->slice[i].scores[j]);       
+                fprintf(fp, "%d,%d,%f\n", i, j, df->slice[i].scores[j]);
             }
         }
-        
+
         fclose(fp);
     }
-    
-    
+
+
 }

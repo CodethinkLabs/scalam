@@ -69,16 +69,6 @@ void test_run_shell_command_with_output()
 	printf("Ok\n");
 }
 
-void test_create_goal(sc_goal * goal)
-{
-	/* TODO make a test goal*/
-}
-
-void test_create_system(sc_system * system_definition)
-{
-	/* TODO create system definition */
-}
-
 void test_rand_num()
 {
 	unsigned int random_seed = 562482;
