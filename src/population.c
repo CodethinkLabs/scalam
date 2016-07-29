@@ -81,6 +81,32 @@ void population_free(sc_population * population)
 }
 
 /**
+ * @brief Copies a population object
+ *        Note that the destination populaion should *not* have
+ *        been previously created
+ * @param destination Population object to copy to
+ * @param source Population object to copy from
+ * @returns zero on success
+ */
+int population_copy(sc_population * destination, sc_population * source)
+{
+	if (source->size <= 0)
+		return 1;
+
+	memcpy((void*)destination, (void*)source, sizeof(sc_population));
+
+	/* allocate memory for the destination population */
+	destination->individual = (sc_genome*)malloc(destination->size*sizeof(sc_genome));
+	if (destination->individual == NULL)
+		return 2;
+
+	/* copy individuals */
+	memcpy((void*)destination->individual,source->individual,destination->size*sizeof(sc_genome));
+
+	return 0;
+}
+
+/**
  * @brief Given a normalised evaluation score for a genome return the probability
  *        of reproduction. That is, the likelihood of being selected as a
  *        parent for the next generation

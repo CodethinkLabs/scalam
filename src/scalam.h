@@ -212,6 +212,7 @@ int population_create(int size, sc_population * population,
 					  sc_system * system_definition,
 					  sc_goal * goal);
 void population_free(sc_population * population);
+int population_copy(sc_population * destination, sc_population * source);
 int population_next_generation(sc_population * population);
 float population_average_score(sc_population * population);
 int population_set_test_passes(sc_population * population, int index, int test_passes);
