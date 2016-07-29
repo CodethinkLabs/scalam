@@ -33,7 +33,7 @@ int population_create(int size, sc_population * population,
 					  sc_system * system_definition,
 					  sc_goal * goal)
 {
-	int i;
+	int i, retval;
 
 	if (size < 0)
 		return 1;
@@ -57,14 +57,16 @@ int population_create(int size, sc_population * population,
        for deterministic islanded runs */
 	population->random_seed = (unsigned int)time(NULL);
 
-	memcpy(&population->goal, &goal, sizeof(sc_goal));
-	memcpy(&population->sys, &system_definition, sizeof(sc_system));
+	memcpy((void*)&population->goal, (void*)goal, sizeof(sc_goal));
+	memcpy((void*)&population->sys, (void*)system_definition,
+		   sizeof(sc_system));
 
 	/* Create an initially random population */
 	for (i = 0; i < population->size; i++) {
-		if (genome_create(population, &population->individual[i]) != 0) {
+		retval = genome_create(population, &population->individual[i]);
+		if (retval != 0) {
 			population_free(population);
-			return 4;
+			return 40 + retval;
 		}
 	}
 

@@ -92,6 +92,12 @@ int genome_create(sc_population * population, sc_genome * individual)
 	   Zero means we just go straight to the goal */
 	individual->steps = rand_num(&individual->random_seed) % SC_MAX_CHANGE_SEQUENCE;
 
+	/* check that there are some programs in the system */
+	if (population->sys.no_of_programs <= 0) {
+		printf("\nNo programs\n");
+		return 1;
+	}
+
 	/* for every step in the upgrade sequence */
 	for (upgrade_step = 0;
 		 upgrade_step < individual->steps;
@@ -101,6 +107,10 @@ int genome_create(sc_population * population, sc_genome * individual)
 		for (prog_index = 0;
 			 prog_index < population->sys.no_of_programs;
 			 prog_index++) {
+
+			/* check that there are some versions/commits for htis program */
+			if (population->sys.program[prog_index].no_of_versions <= 0)
+				return 2;
 
 			/* assign a random version/commit for this program */
 			population->sys.program[prog_index].version_index =

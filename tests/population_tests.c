@@ -55,6 +55,7 @@ void test_population_create()
 	char commandstr[SC_MAX_STRING];
 	char * repo_dir;
 	char template[] = "/tmp/scalam.XXXXXX";
+	int retval;
 
 	printf("test_population_create...");
 
@@ -68,7 +69,10 @@ void test_population_create()
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
 	/* generate the population */
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
+    retval = population_create(100, &population, &system_definition, &goal);
+	if (retval != 0) {
+		printf("\nDidn't create population: error %d\n", retval);
+	}
 
 	/* deallocate population */
 	population_free(&population);
@@ -215,6 +219,6 @@ void test_population_next_generation()
 void run_population_tests()
 {
 	test_population_create();
-	/* TODO test_population_copy();*/
+	/* test_population_copy(); */
 	test_population_next_generation();
 }
