@@ -61,13 +61,17 @@ void test_population_create()
 	/* create a test directory which will contain repos */
 	repo_dir = mkdtemp(template);
 
-	/*
+	/* make a test system with some repositories */
 	assert(test_create_system(&system_definition, repo_dir) == 0);
 
+	/* make a goal to get to the latest commits */
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
+	/* generate the population */
     assert(population_create(100, &population, &system_definition, &goal) == 0);
-	*/
+
+	/* deallocate population */
+	population_free(&population);
 
 	sprintf(commandstr,"rm -rf %s", repo_dir);
 	run_shell_command(commandstr);

@@ -77,7 +77,7 @@ int population_create(int size, sc_population * population,
  */
 void population_free(sc_population * population)
 {
-	free(population);
+	free(population->individual);
 }
 
 /**
