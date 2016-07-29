@@ -30,12 +30,12 @@
 #define VERSION "0.1"
 
 /* The maximum number of programs in a system */
-#define SC_MAX_SYSTEM_SIZE            5000
+#define SC_MAX_SYSTEM_SIZE            3000
 
 /* maximum length of strings used for program names */
 #define SC_MAX_STRING                  256
 
-#define SC_MAX_POPULATION_SIZE         512
+#define SC_MAX_POPULATION_SIZE         256
 
 /* The maximum number of state changes to get from the
    starting system to the reference system.
@@ -125,7 +125,7 @@ typedef struct {
 	/* Number of individuals in the population */
 	int size;
 
-	sc_genome * individual;
+	sc_genome ** individual;
 
 	/* in the range 0.0 -> 1.0 */
 	float mutation_rate;

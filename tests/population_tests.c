@@ -74,6 +74,12 @@ void test_population_create()
 		printf("\nDidn't create population: error %d\n", retval);
 	}
 
+	/* check that the size is as expected */
+	if (population.size != 100) {
+		population_free(&population);
+	}
+	assert(population.size == 100);
+
 	/* deallocate population */
 	population_free(&population);
 
@@ -85,11 +91,12 @@ void test_population_create()
 
 void test_population_copy()
 {
-	sc_population source, destination;
-	sc_system system_definition;
+	int i;
 	sc_goal goal;
 	char commandstr[SC_MAX_STRING];
 	char * repo_dir;
+	sc_system system_definition;
+	sc_population source, destination;
 	char template[] = "/tmp/scalam.XXXXXX";
 
 	printf("test_population_copy...");
@@ -109,6 +116,7 @@ void test_population_copy()
 	/* check that the size is as expected */
 	if (source.size != 100) {
 		population_free(&source);
+		assert(1==0);
 	}
 	assert(source.size == 100);
 
@@ -119,6 +127,7 @@ void test_population_copy()
 	if (destination.size != source.size) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(destination.size == source.size);
 
@@ -126,6 +135,7 @@ void test_population_copy()
 	if ((int)(destination.mutation_rate*1000) != (int)(source.mutation_rate*1000)) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert((int)(destination.mutation_rate*1000) == (int)(source.mutation_rate*1000));
 
@@ -133,6 +143,7 @@ void test_population_copy()
 	if ((int)(destination.crossover*1000) != (int)(source.crossover*1000)) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(destination.crossover == source.crossover);
 
@@ -140,6 +151,7 @@ void test_population_copy()
 	if ((int)(destination.rebels*1000) != (int)(source.rebels*1000)) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(destination.rebels == source.rebels);
 
@@ -149,6 +161,7 @@ void test_population_copy()
 			   sizeof(sc_system)) != 0) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(memcmp((void*)&source.sys,
 				  (void*)&destination.sys,
@@ -160,6 +173,7 @@ void test_population_copy()
 			   sizeof(sc_goal)) != 0) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(memcmp((void*)&source.goal,
 				  (void*)&destination.goal,
@@ -169,19 +183,20 @@ void test_population_copy()
 	if (destination.random_seed != source.random_seed) {
 		population_free(&source);
 		population_free(&destination);
+		assert(1==0);
 	}
 	assert(destination.random_seed == source.random_seed);
 
 	/* check that the genomes are the same */
-	if (memcmp((void*)&source.individual,
-			   (void*)&destination.individual,
-			   100*sizeof(sc_genome)) != 0) {
-		population_free(&source);
-		population_free(&destination);
+	for (i = 0; i < source.size; i++) {
+		if (memcmp(source.individual[i],
+				   destination.individual[i],
+				   sizeof(sc_genome)) != 0) {
+			population_free(&source);
+			population_free(&destination);
+			assert(1 == 0);
+		}
 	}
-	assert(memcmp((void*)&source.individual,
-				  (void*)&destination.individual,
-				  100*sizeof(sc_genome)) == 0);
 
 	/* deallocate populations */
 	population_free(&source);
@@ -219,6 +234,6 @@ void test_population_next_generation()
 void run_population_tests()
 {
 	test_population_create();
-	/* test_population_copy(); */
+	test_population_copy();
 	test_population_next_generation();
 }

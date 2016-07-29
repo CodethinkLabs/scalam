@@ -46,7 +46,8 @@ int population_create(int size, sc_population * population,
     memset((void*)population, '\0', sizeof(sc_population));
 
 	population->size = size;
-	population->individual = (sc_genome*)malloc(size*sizeof(sc_genome));
+	population->individual =
+		(sc_genome**)malloc(population->size*sizeof(sc_genome*));
 	if (population->individual == NULL)
 		return 3;
 	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
@@ -63,7 +64,10 @@ int population_create(int size, sc_population * population,
 
 	/* Create an initially random population */
 	for (i = 0; i < population->size; i++) {
-		retval = genome_create(population, &population->individual[i]);
+		population->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
+		if (population->individual[i] == NULL)
+			return 30;
+		retval = genome_create(population, population->individual[i]);
 		if (retval != 0) {
 			population_free(population);
 			return 40 + retval;
@@ -79,6 +83,11 @@ int population_create(int size, sc_population * population,
  */
 void population_free(sc_population * population)
 {
+	int i;
+
+	for (i = 0; i < population->size; i++)
+		free(population->individual[i]);
+
 	free(population->individual);
 }
 
@@ -92,18 +101,36 @@ void population_free(sc_population * population)
  */
 int population_copy(sc_population * destination, sc_population * source)
 {
-	if (source->size <= 0)
+	int i;
+
+	if (source->size < 1)
 		return 1;
 
-	memcpy((void*)destination, (void*)source, sizeof(sc_population));
-
-	/* allocate memory for the destination population */
-	destination->individual = (sc_genome*)malloc(destination->size*sizeof(sc_genome));
-	if (destination->individual == NULL)
+	if (source->size > SC_MAX_POPULATION_SIZE)
 		return 2;
 
+	destination->size = source->size;
+	destination->mutation_rate = source->mutation_rate;
+	destination->crossover = source->crossover;
+	destination->rebels = source->rebels;
+	destination->random_seed = source->random_seed;
+	memcpy((void*)&destination->goal, (void*)&source->goal, sizeof(sc_goal));
+	memcpy((void*)&destination->sys, (void*)&source->sys, sizeof(sc_system));
+
+	/* allocate memory for the destination population */
+	destination->individual =
+		(sc_genome**)malloc(source->size*sizeof(sc_genome*));
+	if (destination->individual == NULL)
+		return 3;
+
 	/* copy individuals */
-	memcpy((void*)destination->individual,source->individual,destination->size*sizeof(sc_genome));
+	for (i = 0; i < source->size; i++) {
+		destination->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
+		if (destination->individual[i] == NULL)
+			return 4;
+		memcpy(destination->individual[i],
+			   source->individual[i],sizeof(sc_genome));
+	}
 
 	return 0;
 }
@@ -153,7 +180,7 @@ int population_spawning_probabilities(sc_population * population)
 		/* A simple probability of reproduction.
 		   This function could be adjustable, so you could have
 		   different islands with different reproduction strategies */
-		population->individual[i].spawning_probability =
+		population->individual[i]->spawning_probability =
 			population_reproduction_function(normalised_score);
 	}
 
@@ -187,9 +214,9 @@ int population_set_test_passes(sc_population * population, int index, int test_p
 	if (index >= population->size) return 2;
 
 	/* This division biases the score in favour of shorter upgrade sequences */
-	population->individual[index].score =
+	population->individual[index]->score =
 		(float)test_passes /
-		(float)(1 + population->individual[index].steps);
+		(float)(1 + population->individual[index]->steps);
 
 	return 0;
 }
@@ -205,7 +232,7 @@ float population_get_score(sc_population * population, int index)
 	if (index < 0) return 1;
 	if (index >= population->size) return 2;
 
-	return population->individual[index].score;
+	return population->individual[index]->score;
 }
 
 /**
@@ -221,7 +248,7 @@ float population_average_score(sc_population * population)
 	if (population->size <= 0) return 0;
 
 	for (i = 0; i < population->size; i++) {
-		score += population->individual[i].score;
+		score += population->individual[i]->score;
 	}
 	return score  / (float)population->size;
 }
@@ -239,8 +266,8 @@ int population_best_index(sc_population * population)
 	if (population->size <= 0) return 0;
 
 	for (i = 0; i < population->size; i++) {
-		if (population->individual[i].score > max_score) {
-			max_score = population->individual[i].score;
+		if (population->individual[i]->score > max_score) {
+			max_score = population->individual[i]->score;
 			index = i;
 		}
 	}
@@ -261,8 +288,8 @@ int population_worst_index(sc_population * population)
 
 	for (i = 0; i < population->size; i++) {
 		if ((min_score == 0) ||
-			(population->individual[i].score < min_score)) {
-			min_score = population->individual[i].score;
+			(population->individual[i]->score < min_score)) {
+			min_score = population->individual[i]->score;
 			index = i;
 		}
 	}
