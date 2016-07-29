@@ -47,6 +47,8 @@ int population_create(int size, sc_population * population,
 
 	population->size = size;
 	population->individual = (sc_genome*)malloc(size*sizeof(sc_genome));
+	if (population->individual == NULL)
+		return 3;
 	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
 	population->crossover = SC_DEFAULT_CROSSOVER;
 	population->rebels = SC_DEFAULT_REBELS;
@@ -59,9 +61,12 @@ int population_create(int size, sc_population * population,
 	memcpy(&population->sys, &system_definition, sizeof(sc_system));
 
 	/* Create an initially random population */
-	for (i = 0; i < population->size; i++)
-		if (genome_create(population, &population->individual[i]) != 0)
-			return 3;
+	for (i = 0; i < population->size; i++) {
+		if (genome_create(population, &population->individual[i]) != 0) {
+			population_free(population);
+			return 4;
+		}
+	}
 
 	return 0;
 }

@@ -67,8 +67,8 @@ void test_population_create()
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
     assert(population_create(100, &population, &system_definition, &goal) == 0);
-
 	*/
+
 	sprintf(commandstr,"rm -rf %s", repo_dir);
 	run_shell_command(commandstr);
 
