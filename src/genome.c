@@ -38,7 +38,7 @@ int genome_create_installation_step(sc_population * population,
 		 prog_index < population->sys.no_of_programs;
 		 prog_index++) {
 
-		/* check that there are some versions/commits for htis program */
+		/* check that there are some versions/commits for this program */
 		if (population->sys.program[prog_index].no_of_versions <= 0)
 			return 2;
 
