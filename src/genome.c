@@ -33,24 +33,23 @@ int genome_mutability(sc_population * population)
  * @brief Mutates existing programs within a genome
  * @param population The population in which the genome exists
  * @param individual The genome to be mutated
+ * @returns zero on success
  */
-void genome_mutate_existing_programs(sc_population * population, sc_genome * individual)
+int genome_mutate_existing_programs(sc_population * population, sc_genome * individual)
 {
 	/* mutate a program in an existing install step */
 	int install_step, gene_index, no_of_programs, vindex;
 
 	if (individual->steps <= 0)
-		return;
+		return 0;
 
 	no_of_programs = population->sys.no_of_programs;
 	install_step = rand_num(&individual->random_seed) % individual->steps;
 	gene_index =
 		rand_num(&individual->random_seed) % no_of_programs;
 
-	if (population->sys.program[gene_index].no_of_versions <= 0) {
-		printf("WARNING: No versions found for program %d\n", gene_index);
-		return;
-	}
+	if (population->sys.program[gene_index].no_of_versions <= 0)
+		return 1;
 
 	if (rand_num(&individual->random_seed) % 2 == 0) {
 
@@ -85,7 +84,7 @@ void genome_mutate_existing_programs(sc_population * population, sc_genome * ind
  * @param individual The genome to be mutated
  * @returns zero on success
  */
-void genome_mutate_insertion_deletion(sc_population * population, sc_genome * individual)
+int genome_mutate_insertion_deletion(sc_population * population, sc_genome * individual)
 {
 	int upgrade_step, removal_index;
 	int mutation_type = rand_num(&individual->random_seed) % 2;
@@ -111,6 +110,7 @@ void genome_mutate_insertion_deletion(sc_population * population, sc_genome * in
 			individual->steps--;
 		}
 	}
+	return 0;
 }
 
 /**
@@ -124,10 +124,12 @@ int genome_mutate(sc_population * population, sc_genome * individual)
 	int mutability = genome_mutability(population);
 
 	if (rand_num(&individual->random_seed) % 1000 < mutability)
-		genome_mutate_existing_programs(population, individual);
+		if (genome_mutate_existing_programs(population, individual) != 0)
+			return 1;
 
 	if (rand_num(&individual->random_seed) % 1000 < mutability)
-		genome_mutate_insertion_deletion(population, individual);
+		if (genome_mutate_insertion_deletion(population, individual) != 0)
+			return 2;
 
 	return 0;
 }
