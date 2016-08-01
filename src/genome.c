@@ -63,8 +63,50 @@ int genome_spawn(sc_population * population,
 				 sc_genome * parent1, sc_genome * parent2,
 				 sc_genome * child)
 {
-	/* TODO */
-	return 0;
+	int install_step, p;
+	sc_genome * parent;
+
+	/* check that objects have been allocated */
+	if (population == NULL) return 1;
+	if (parent1 == NULL) return 2;
+	if (parent2 == NULL) return 3;
+	if (child == NULL) return 4;
+
+	/* number of steps in the upgrade sequence inherited from one
+	   parent or the other */
+	child->steps = parent1->steps;
+	if (rand_num(&parent1->random_seed)%100 > 50)
+		child->steps = parent2->steps;
+
+	child->score = 0;
+	child->spawning_probability = 0;
+
+	/* Set random number generator seed */
+	if (rand_num(&parent1->random_seed)%100 > 50)
+		child->random_seed = parent1->random_seed + 1;
+	else
+		child->random_seed = parent2->random_seed + 1;
+
+	/* At every install step */
+	for (install_step = 0; install_step < child->steps; install_step++) {
+
+		/* for each program (gene) in the system */
+		for (p = 0; p < population->sys.no_of_programs; p++) {
+
+			/* choose a parent */
+			parent = parent1;
+			if (rand_num(&child->random_seed)%100 > 50)
+				parent = parent2;
+
+			/* get a program (gene) from this parent */
+			child->change[install_step].version_index[p] =
+				parent->change[install_step].version_index[p];
+			child->change[install_step].installed[p] =
+				parent->change[install_step].installed[p];
+		}
+	}
+
+	return genome_mutate(population, child);
 }
 
 /**
