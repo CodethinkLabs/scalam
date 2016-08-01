@@ -20,6 +20,99 @@
 #include "scalam.h"
 
 /**
+ * @brief returns mutation rate expressed as an integer value
+ * @param population The population in which the genome exists
+ * @returns mutation rate value in the range 0 -> 1000
+ */
+int genome_mutability(sc_population * population)
+{
+	return (int)(population->mutation_rate * 1000);
+}
+
+/**
+ * @brief Mutates existing programs within a genome
+ * @param population The population in which the genome exists
+ * @param individual The genome to be mutated
+ */
+void genome_mutate_existing_programs(sc_population * population, sc_genome * individual)
+{
+	/* mutate a program in an existing install step */
+	int install_step, gene_index, no_of_programs, vindex;
+
+	if (individual->steps > 0) {
+		no_of_programs = population->sys.no_of_programs;
+		install_step = rand_num(&individual->random_seed) % individual->steps;
+		gene_index =
+			rand_num(&individual->random_seed) % no_of_programs;
+
+		if (population->sys.program[gene_index].no_of_versions <= 0) {
+			printf("WARNING: No versions found for program %d\n", gene_index);
+			return;
+		}
+
+		if (rand_num(&individual->random_seed) % 2 == 0) {
+
+			/* commit of version index within versions_file */
+			vindex = individual->change[install_step].version_index[gene_index];
+
+			/* incremental: tweak the version/commit up or down */
+			if (rand_num(&individual->random_seed) % 2 == 0) {
+				/* don't exceed the number of versions in versions_file */
+				if (vindex <
+					population->sys.program[gene_index].no_of_versions - 1) {
+					individual->change[install_step].version_index[gene_index]++;
+				}
+			}
+			else {
+				/* don't index below zero */
+				if (vindex > 0)
+					individual->change[install_step].version_index[gene_index]--;
+			}
+		}
+		else {
+			/* absolute: any version/commit may be selected */
+			individual->change[install_step].version_index[gene_index] =
+				rand_num(&individual->random_seed) %
+				population->sys.program[gene_index].no_of_versions;
+		}
+	}
+}
+
+/**
+ * @brief Mutates a given genome by inserting or removing an upgrade step
+ * @param population The population in which the genome exists
+ * @param individual The genome to be mutated
+ * @returns zero on success
+ */
+void genome_mutate_insertion_deletion(sc_population * population, sc_genome * individual)
+{
+	int upgrade_step, removal_index;
+	int mutation_type = rand_num(&individual->random_seed) % 2;
+	if (mutation_type == 1) {
+		/* add an upgrade step */
+		if (individual->steps < population->sys.no_of_programs-1) {
+			individual->steps++;
+		}
+	}
+	else {
+		if (individual->steps > 0) {
+			/* remove an upgrade step at a random point in the sequence */
+			removal_index = rand_num(&individual->random_seed) % individual->steps;
+
+			/* shuffle the subsequent steps down to fill the gap */
+			for (upgrade_step = removal_index; upgrade_step < individual->steps; upgrade_step++) {
+				memcpy((void*)&individual->change[upgrade_step],
+					   (void*)&individual->change[upgrade_step+1],
+					   sizeof(sc_system_state));
+			}
+
+			/* decrement the number of install steps */
+			individual->steps--;
+		}
+	}
+}
+
+/**
  * @brief Mutates a given genome
  * @param population The population in which the genome exists
  * @param individual The genome to be mutated
@@ -27,26 +120,13 @@
  */
 int genome_mutate(sc_population * population, sc_genome * individual)
 {
-	/* TODO */
+	int mutability = genome_mutability(population);
 
-	/* Depending on the strategy, increment a single or jump to goal */
+	if (rand_num(&individual->random_seed) % 1000 < mutability)
+		genome_mutate_existing_programs(population, individual);
 
-
-	/* Pick a random gene (software) to mutate */
-	int gene_index =
-		rand_num(&individual->random_seed) % population->sys.no_of_programs;
-
-	sc_system_state state = individual->change[individual->steps];
-	/* Increment or decrement the version index */
-	if (rand_num(&individual->random_seed) % 2 == 0)
-		state.version_index[gene_index]++;
-	else
-		state.version_index[gene_index]--;
-
-
-	// state->installed[gene_index]=?
-
-	individual->steps++;
+	if (rand_num(&individual->random_seed) % 1000 < mutability)
+		genome_mutate_insertion_deletion(population, individual);
 
 	return 0;
 }
