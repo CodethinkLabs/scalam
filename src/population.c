@@ -275,6 +275,19 @@ int population_best_index(sc_population * population)
 }
 
 /**
+ * @brief Returns the best score for the given population
+ * @param population The population after individuals have been evaluated
+ * @returns The best score within the population
+ */
+float population_best_score(sc_population * population)
+{
+	int index = population_best_index(population);
+	if (index > -1)
+		return population->individual[index]->score;
+	return 0;
+}
+
+/**
  * @brief Returns the array index of the lowest scoring genome
  * @param population The population after individuals have been evaluated
  * @returns Array index of the lowest scoring genome, or -1 on failure

@@ -219,6 +219,7 @@ int population_set_test_passes(sc_population * population, int index, int test_p
 float population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
+float population_best_score(sc_population * population);
 
 void plot_create_df_slice(sc_dataframe * df, sc_population * population);
 void plot_create_dataframe(sc_dataframe * df, sc_population * population);
