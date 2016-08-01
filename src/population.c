@@ -229,8 +229,11 @@ int population_set_test_passes(sc_population * population, int index, int test_p
  */
 float population_get_score(sc_population * population, int index)
 {
-	if (index < 0) return 1;
-	if (index >= population->size) return 2;
+	if (index < 0)
+		return -1;
+
+	if (index >= population->size)
+		return -2;
 
 	return population->individual[index]->score;
 }
