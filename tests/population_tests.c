@@ -212,21 +212,47 @@ void test_population_next_generation()
 {
 	printf("test_population_next_generation...");
 
-	/* TODO
 	sc_system system_definition;
 	sc_goal goal;
 	sc_population before, after;
+	char * repo_dir;
+	char template[] = "/tmp/scalam.XXXXXX";
+	char commandstr[SC_MAX_STRING];
+	unsigned int random_seed = 63252;
+	int i;
 
-	test_create_goal(&goal);
-	test_create_system(&system_definition);
+	/* create a test directory which will contain repos */
+	repo_dir = mkdtemp(template);
 
+	/* make a test system with some repositories */
+	assert(test_create_system(&system_definition, repo_dir) == 0);
+
+	/* make a goal to get to the latest commits */
+	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
+
+	/* create a starting population */
     assert(population_create(100, &before, &system_definition, &goal) == 0);
-	memcpy(&after, &before, sizeof(sc_population));
-	assert(memcmp(&before, &after, sizeof(sc_population)) == 0);
 
+	/* keep a copy of the before population, so that it can be compared later */
+	assert(population_copy(&after, &before) == 0);
+
+	/* Assign some dummy scores to simulate what we have after evaluation */
+	for (i = 0; i < 100; i++) {
+	    assert(population_set_test_passes(&after, i, rand_num(&random_seed) % 50) == 0);
+	}
+
+	/* create a new generation */
     assert(population_next_generation(&after) == 0);
-	assert(memcmp(&before, &after, sizeof(sc_population)) != 0);
-	*/
+
+	/* TODO compare before with after */
+
+	/* remove the test system */
+	sprintf(commandstr,"rm -rf %s", repo_dir);
+	run_shell_command(commandstr);
+
+	/* free memory allocated */
+	population_free(&before);
+	population_free(&after);
 
 	printf("Ok\n");
 }
