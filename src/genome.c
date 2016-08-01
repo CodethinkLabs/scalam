@@ -30,21 +30,21 @@ int genome_mutate(sc_population * population, sc_genome * individual)
 	/* TODO */
 
 	/* Depending on the strategy, increment a single or jump to goal */
-
+	
 
 	/* Pick a random gene (software) to mutate */
 	int gene_index =
 		rand_num(&individual->random_seed) % population->sys.no_of_programs;
 
-	sc_system_state state = individual->change[individual->steps];
+	sc_system_state *state = &individual->change[individual->steps];
 	/* Increment or decrement the version index */
-	if (rand_num(&individual->random_seed) % 2 == 0)
-		state.version_index[gene_index]++;
+	if (rand_num(&individual->random_seed) % 2 == 0)	//FIXME more weight to increment
+		state->version_index[gene_index]++;
 	else
-		state.version_index[gene_index]--;
+		state->version_index[gene_index]--;
 
-
-	// state->installed[gene_index]=?
+	//Since we have only just changed the version and not tested the build, set to false
+	state->installed[gene_index]=0;
 
 	individual->steps++;
 
@@ -63,7 +63,37 @@ int genome_spawn(sc_population * population,
 				 sc_genome * parent1, sc_genome * parent2,
 				 sc_genome * child)
 {
-	/* TODO */
+	
+	// Take a copy of parent1 and modify inline for crossover
+	memcpy(child, parent1, sizeof(&parent1));
+	
+	//Depending on the strategy, take random programs or ranked somehow
+	
+	//Totally random strategy
+	int i=(population->sys.no_of_programs-1);
+	for (;i>0; i--)
+	{
+		// 50% chance of taking parent2's program
+		if(rand_num(&population->random_seed)%2==0)
+		{
+			child->change[i]=parent2->change[i];
+		}
+	}
+	
+	//Update steps taken. max(p1, p2) +1; (urgh no int max fn?)
+	if (parent1->steps > parent2->steps)
+	{
+		child->steps=parent1->steps + 1;
+	}
+	else
+	{
+		child->steps=parent2->steps + 1;
+	}
+	
+	
+	//Smarter strategy, e.g. rank programs by installed/built pr()
+	// TODO
+	
 	return 0;
 }
 
