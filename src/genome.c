@@ -1,20 +1,20 @@
 /*
-	Smart search for upgrade paths
-	Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
-					   Bob Mottram <bob.mottram@codethink.co.uk>
+  Smart search for upgrade paths
+  Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
+  Bob Mottram <bob.mottram@codethink.co.uk>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "scalam.h"
@@ -39,42 +39,43 @@ void genome_mutate_existing_programs(sc_population * population, sc_genome * ind
 	/* mutate a program in an existing install step */
 	int install_step, gene_index, no_of_programs, vindex;
 
-	if (individual->steps > 0) {
-		no_of_programs = population->sys.no_of_programs;
-		install_step = rand_num(&individual->random_seed) % individual->steps;
-		gene_index =
-			rand_num(&individual->random_seed) % no_of_programs;
+	if (individual->steps <= 0)
+		return;
 
-		if (population->sys.program[gene_index].no_of_versions <= 0) {
-			printf("WARNING: No versions found for program %d\n", gene_index);
-			return;
-		}
+	no_of_programs = population->sys.no_of_programs;
+	install_step = rand_num(&individual->random_seed) % individual->steps;
+	gene_index =
+		rand_num(&individual->random_seed) % no_of_programs;
 
+	if (population->sys.program[gene_index].no_of_versions <= 0) {
+		printf("WARNING: No versions found for program %d\n", gene_index);
+		return;
+	}
+
+	if (rand_num(&individual->random_seed) % 2 == 0) {
+
+		/* commit of version index within versions_file */
+		vindex = individual->change[install_step].version_index[gene_index];
+
+		/* incremental: tweak the version/commit up or down */
 		if (rand_num(&individual->random_seed) % 2 == 0) {
-
-			/* commit of version index within versions_file */
-			vindex = individual->change[install_step].version_index[gene_index];
-
-			/* incremental: tweak the version/commit up or down */
-			if (rand_num(&individual->random_seed) % 2 == 0) {
-				/* don't exceed the number of versions in versions_file */
-				if (vindex <
-					population->sys.program[gene_index].no_of_versions - 1) {
-					individual->change[install_step].version_index[gene_index]++;
-				}
-			}
-			else {
-				/* don't index below zero */
-				if (vindex > 0)
-					individual->change[install_step].version_index[gene_index]--;
+			/* don't exceed the number of versions in versions_file */
+			if (vindex <
+				population->sys.program[gene_index].no_of_versions - 1) {
+				individual->change[install_step].version_index[gene_index]++;
 			}
 		}
 		else {
-			/* absolute: any version/commit may be selected */
-			individual->change[install_step].version_index[gene_index] =
-				rand_num(&individual->random_seed) %
-				population->sys.program[gene_index].no_of_versions;
+			/* don't index below zero */
+			if (vindex > 0)
+				individual->change[install_step].version_index[gene_index]--;
 		}
+	}
+	else {
+		/* absolute: any version/commit may be selected */
+		individual->change[install_step].version_index[gene_index] =
+			rand_num(&individual->random_seed) %
+			population->sys.program[gene_index].no_of_versions;
 	}
 }
 
