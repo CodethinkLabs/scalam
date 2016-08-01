@@ -47,7 +47,9 @@ void test_genome_mutate()
     assert(genome_mutate(&population, &after) == 0);
 
 	// the two genomes should be different
-	assert(memcmp(&after, &before, sizeof(sc_genome)) != 0); */
+	assert(memcmp(&after, &before, sizeof(sc_genome)) != 0);
+
+    population_free(&population); */
 
 	printf("Ok\n");
 }
@@ -81,6 +83,8 @@ void test_genome_spawn()
 	// child should not be exactly like either parent
 	assert(memcmp(&child, &parent1, sizeof(sc_genome)) != 0);
 	assert(memcmp(&child, &parent2, sizeof(sc_genome)) != 0);
+
+    population_free(&population);
 	*/
 
 	printf("Ok\n");
@@ -102,7 +106,9 @@ void test_genome_create()
 
     assert(population_create(100, &population, &system_definition, &goal) == 0);
 
-	assert(genome_create(&population, &individual) == 0); */
+	assert(genome_create(&population, &individual) == 0);
+
+    population_free(&population); */
 
 	printf("Ok\n");
 }
