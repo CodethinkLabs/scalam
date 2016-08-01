@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <math.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -45,7 +46,7 @@
 /* default evolution parameters */
 #define SC_DEFAULT_MUTATION_RATE       0.2
 #define SC_DEFAULT_CROSSOVER           0.5
-#define	SC_DEFAULT_REBELS              0.05
+#define SC_DEFAULT_REBELS              0.05
 
 /* Defines a program and its possible versions */
 typedef struct {
@@ -152,27 +153,27 @@ typedef struct {
 
 /* Partial set of rows in a dataframe, generated per step */
 typedef struct {
-    int cycle_no;
-    float scores[SC_MAX_POPULATION_SIZE];
-    int population_size;
+	int cycle_no;
+	float scores[SC_MAX_POPULATION_SIZE];
+	int population_size;
 
 } sc_dataframe_slice;
 
 typedef struct {
-    /* As score data is only known per iteration, generate a slice per iteration */
-    int slice_no;
-    sc_dataframe_slice slice[SC_MAX_CHANGE_SEQUENCE];
+	/* As score data is only known per iteration, generate a slice per iteration */
+	int slice_no;
+	sc_dataframe_slice slice[SC_MAX_CHANGE_SEQUENCE];
 
-    /* List of params used for the simulation */
+	/* List of params used for the simulation */
 
-    /* Range  0.0 - 1.0 */
-    int population_size;
-    float mutation_rate;
-    float crossover;
-    float rebels;
+	/* Range  0.0 - 1.0 */
+	int population_size;
+	float mutation_rate;
+	float crossover;
+	float rebels;
 
-    /* Seed used for simulation */
-    unsigned int random_seed;
+	/* Seed used for simulation */
+	unsigned int random_seed;
 
 
 } sc_dataframe;
@@ -220,6 +221,7 @@ float population_get_score(sc_population * population, int index);
 int population_best_index(sc_population * population);
 int population_worst_index(sc_population * population);
 float population_best_score(sc_population * population);
+float population_variance(sc_population * population);
 
 void plot_create_df_slice(sc_dataframe * df, sc_population * population);
 void plot_create_dataframe(sc_dataframe * df, sc_population * population);

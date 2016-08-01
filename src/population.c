@@ -43,7 +43,7 @@ int population_create(int size, sc_population * population,
 		return 2;
 
 	/* clear everything to ensure no stray values */
-    memset((void*)population, '\0', sizeof(sc_population));
+	memset((void*)population, '\0', sizeof(sc_population));
 
 	population->size = size;
 	population->individual =
@@ -54,8 +54,8 @@ int population_create(int size, sc_population * population,
 	population->crossover = SC_DEFAULT_CROSSOVER;
 	population->rebels = SC_DEFAULT_REBELS;
 
-    /* Possibly this could be the same as an island index
-       for deterministic islanded runs */
+	/* Possibly this could be the same as an island index
+	   for deterministic islanded runs */
 	population->random_seed = (unsigned int)time(NULL);
 
 	memcpy((void*)&population->goal, (void*)goal, sizeof(sc_goal));
@@ -307,4 +307,25 @@ int population_worst_index(sc_population * population)
 		}
 	}
 	return index;
+}
+
+/**
+ * @brief Returns the RMS variance of scores within the population
+ * @param population The population after individuals have been evaluated
+ * @returns RMS score variance
+ */
+float population_variance(sc_population * population)
+{
+	int i;
+	float average_score = population_average_score(population);
+	float diff, variance = 0;
+
+	if ((population->size <= 0) || (average_score <= 0))
+		return 0;
+
+	for (i = 0; i < population->size; i++) {
+		diff = population->individual[i]->score - average_score;
+		variance += diff*diff;
+	}
+	return (float)sqrt(variance / (float)population->size);
 }
