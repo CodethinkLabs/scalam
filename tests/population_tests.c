@@ -55,7 +55,7 @@ void test_population_create()
 	char commandstr[SC_MAX_STRING];
 	char * repo_dir;
 	char template[] = "/tmp/scalam.XXXXXX";
-	int retval;
+	int retval, population_size = 100;
 
 	printf("test_population_create...");
 
@@ -69,16 +69,16 @@ void test_population_create()
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
 	/* generate the population */
-    retval = population_create(100, &population, &system_definition, &goal);
+	retval = population_create(population_size, &population, &system_definition, &goal);
 	if (retval != 0) {
 		printf("\nDidn't create population: error %d\n", retval);
 	}
 
 	/* check that the size is as expected */
-	if (population.size != 100) {
+	if (population.size != population_size) {
 		population_free(&population);
+		assert(1 == 0);
 	}
-	assert(population.size == 100);
 
 	/* deallocate population */
 	population_free(&population);
@@ -98,6 +98,7 @@ void test_population_copy()
 	sc_system system_definition;
 	sc_population source, destination;
 	char template[] = "/tmp/scalam.XXXXXX";
+	int population_size = 100;
 
 	printf("test_population_copy...");
 
@@ -111,19 +112,18 @@ void test_population_copy()
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
 	/* generate the population */
-    assert(population_create(100, &source, &system_definition, &goal) == 0);
+	assert(population_create(population_size, &source, &system_definition, &goal) == 0);
 
 	/* check that the size is as expected */
-	if (source.size != 100) {
+	if (source.size != population_size) {
 		population_free(&source);
-		assert(1==0);
+		assert(1 == 0);
 	}
-	assert(source.size == 100);
 
 	/* copy to the destination */
-    assert(population_copy(&destination, &source) == 0);
+	assert(population_copy(&destination, &source) == 0);
 
-    /* check that they are the same size */
+	/* check that they are the same size */
 	if (destination.size != source.size) {
 		population_free(&source);
 		population_free(&destination);
@@ -131,7 +131,7 @@ void test_population_copy()
 	}
 	assert(destination.size == source.size);
 
-    /* check same mutation rate */
+	/* check same mutation rate */
 	if ((int)(destination.mutation_rate*1000) != (int)(source.mutation_rate*1000)) {
 		population_free(&source);
 		population_free(&destination);
@@ -139,7 +139,7 @@ void test_population_copy()
 	}
 	assert((int)(destination.mutation_rate*1000) == (int)(source.mutation_rate*1000));
 
-    /* check same crossover */
+	/* check same crossover */
 	if ((int)(destination.crossover*1000) != (int)(source.crossover*1000)) {
 		population_free(&source);
 		population_free(&destination);
@@ -147,7 +147,7 @@ void test_population_copy()
 	}
 	assert(destination.crossover == source.crossover);
 
-    /* check same rebels */
+	/* check same rebels */
 	if ((int)(destination.rebels*1000) != (int)(source.rebels*1000)) {
 		population_free(&source);
 		population_free(&destination);
@@ -155,7 +155,7 @@ void test_population_copy()
 	}
 	assert(destination.rebels == source.rebels);
 
-    /* check same system */
+	/* check same system */
 	if (memcmp((void*)&source.sys,
 			   (void*)&destination.sys,
 			   sizeof(sc_system)) != 0) {
@@ -167,7 +167,7 @@ void test_population_copy()
 				  (void*)&destination.sys,
 				  sizeof(sc_genome)) == 0);
 
-    /* check same goal */
+	/* check same goal */
 	if (memcmp((void*)&source.goal,
 			   (void*)&destination.goal,
 			   sizeof(sc_goal)) != 0) {
@@ -179,7 +179,7 @@ void test_population_copy()
 				  (void*)&destination.goal,
 				  sizeof(sc_goal)) == 0);
 
-    /* check same random seed */
+	/* check same random seed */
 	if (destination.random_seed != source.random_seed) {
 		population_free(&source);
 		population_free(&destination);
@@ -219,7 +219,7 @@ void test_population_next_generation()
 	char template[] = "/tmp/scalam.XXXXXX";
 	char commandstr[SC_MAX_STRING];
 	unsigned int random_seed = 63252;
-	int i;
+	int i, population_size = 100;
 
 	/* create a test directory which will contain repos */
 	repo_dir = mkdtemp(template);
@@ -231,18 +231,20 @@ void test_population_next_generation()
 	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
 
 	/* create a starting population */
-    assert(population_create(100, &before, &system_definition, &goal) == 0);
+	assert(population_create(population_size, &before,
+							 &system_definition, &goal) == 0);
 
 	/* keep a copy of the before population, so that it can be compared later */
 	assert(population_copy(&after, &before) == 0);
 
 	/* Assign some dummy scores to simulate what we have after evaluation */
-	for (i = 0; i < 100; i++) {
-	    assert(population_set_test_passes(&after, i, rand_num(&random_seed) % 50) == 0);
+	for (i = 0; i < population_size; i++) {
+		assert(population_set_test_passes(&after, i,
+										  rand_num(&random_seed) % 50) == 0);
 	}
 
 	/* create a new generation */
-    assert(population_next_generation(&after) == 0);
+	assert(population_next_generation(&after) == 0);
 
 	/* TODO compare before with after */
 
