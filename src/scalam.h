@@ -48,6 +48,9 @@
 #define SC_DEFAULT_CROSSOVER           0.5
 #define SC_DEFAULT_REBELS              0.05
 
+/* when converting probabilities into integer values */
+#define SC_MUTATION_SCALAR             1000
+
 /* Defines a program and its possible versions */
 typedef struct {
 	char name[SC_MAX_STRING];

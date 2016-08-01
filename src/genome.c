@@ -22,11 +22,11 @@
 /**
  * @brief returns mutation rate expressed as an integer value
  * @param population The population in which the genome exists
- * @returns mutation rate value in the range 0 -> 1000
+ * @returns mutation rate value in the range 0 -> SC_MUTATION_SCALAR
  */
 int genome_mutability(sc_population * population)
 {
-	return (int)(population->mutation_rate * 1000);
+	return (int)(population->mutation_rate * SC_MUTATION_SCALAR);
 }
 
 /**
@@ -123,11 +123,13 @@ int genome_mutate(sc_population * population, sc_genome * individual)
 {
 	int mutability = genome_mutability(population);
 
-	if (rand_num(&individual->random_seed) % 1000 < mutability)
+	if (rand_num(&individual->random_seed) %
+		SC_MUTATION_SCALAR < mutability)
 		if (genome_mutate_existing_programs(population, individual) != 0)
 			return 1;
 
-	if (rand_num(&individual->random_seed) % 1000 < mutability)
+	if (rand_num(&individual->random_seed) %
+		SC_MUTATION_SCALAR < mutability)
 		if (genome_mutate_insertion_deletion(population, individual) != 0)
 			return 2;
 
