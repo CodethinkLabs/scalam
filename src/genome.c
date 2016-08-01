@@ -78,6 +78,7 @@ int genome_spawn(sc_population * population,
 	if (rand_num(&parent1->random_seed)%100 > 50)
 		child->steps = parent2->steps;
 
+	/* clear scores */
 	child->score = 0;
 	child->spawning_probability = 0;
 
@@ -97,6 +98,14 @@ int genome_spawn(sc_population * population,
 			parent = parent1;
 			if (rand_num(&child->random_seed)%100 > 50)
 				parent = parent2;
+
+			/* does this install step exceed the number
+			   for the parent? */
+			if (install_step >= parent->steps)
+				if (parent == parent1)
+					parent = parent2;
+				else
+					parent = parent1;
 
 			/* get a program (gene) from this parent */
 			child->change[install_step].version_index[p] =
