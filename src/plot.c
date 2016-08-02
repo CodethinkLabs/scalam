@@ -39,7 +39,8 @@ void plot_create_df_slice(sc_dataframe * df, sc_population * population)
     {
         slice.scores[i]=population_get_score(population, i);
     }
-
+    slice.cycle_no=df->slice_no;
+    
     df->slice[df->slice_no]=slice;
     df->slice_no++;
 }

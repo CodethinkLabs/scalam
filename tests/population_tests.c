@@ -20,6 +20,29 @@
 #include <assert.h>
 #include "../src/scalam.h"
 
+
+/**
+ * @brief Creates a simple population to use in other test functions
+ * @param sys Population object
+ * @returns zero on success
+ */
+int test_population_dummy(sc_population *population)
+{
+    /* Init the system */
+    sc_system sys;
+    test_system_dummy(&sys);
+    
+    /* Create a goal */
+    sc_goal goal; 
+    goal_create_latest_versions(&sys, &goal);
+    
+    /* Population with dummy system and goal */
+    population_create(10, population, &sys, &goal);
+    
+    return 0;
+}
+
+
 int test_create_system(sc_system * system_definition, char * repo_dir)
 {
     int retval, p;

@@ -116,6 +116,7 @@ void run_tests()
     run_population_tests();
     run_genome_tests();
     run_goal_tests();
-
+	run_plot_tests();
+	
     printf("All tests passed\n");
 }
