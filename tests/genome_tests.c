@@ -24,7 +24,7 @@ void test_genome_mutate()
 {
 	printf("test_genome_mutate...");
 
-    /* TODO
+	/* TODO
 	sc_population population;
 	sc_genome before, after;
 	sc_goal goal;
@@ -33,9 +33,9 @@ void test_genome_mutate()
 	test_create_goal(&goal);
 	test_create_system(&system_definition);
 
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
+	assert(population_create(100, &population, &system_definition, &goal) == 0);
 
-    assert(genome_create(&population, &before) == 0);
+	assert(genome_create(&population, &before) == 0);
 
 	// copy before genome to after
 	memcpy(&after, &before, sizeof(sc_genome));
@@ -44,48 +44,61 @@ void test_genome_mutate()
 	assert(memcmp(&after, &before, sizeof(sc_genome)) == 0);
 
 	// now mutate the after genome
-    assert(genome_mutate(&population, &after) == 0);
+	assert(genome_mutate(&population, &after) == 0);
 
 	// the two genomes should be different
 	assert(memcmp(&after, &before, sizeof(sc_genome)) != 0);
 
-    population_free(&population); */
+	population_free(&population); */
 
 	printf("Ok\n");
 }
 
 void test_genome_spawn()
 {
-	printf("test_genome_spawn...");
-
-	/* TODO
 	sc_population population;
-	sc_genome parent1, parent2, child;
 	sc_goal goal;
 	sc_system system_definition;
+	sc_genome parent1, parent2, child;
+	int population_size = 100;
+	char commandstr[SC_MAX_STRING];
+	char * repo_dir;
+	char template[] = "/tmp/scalam.XXXXXX";
+	int retval;
 
-	test_create_goal(&goal);
+	printf("test_genome_spawn...");
 
-	test_create_system(&system_definition);
+	/* create a test directory which will contain repos */
+	repo_dir = mkdtemp(template);
 
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
+	/* make a test system with some repositories */
+	assert(test_create_system(&system_definition, repo_dir) == 0);
 
-	// create the parents
+	/* make a goal to get to the latest commits */
+	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
+
+	/* generate the population */
+	retval = population_create(population_size, &population, &system_definition, &goal);
+	if (retval != 0) {
+		printf("\nDidn't create population: error %d\n", retval);
+	}
+	assert(retval == 0);
+
+	/* create the parents */
 	assert(genome_create(&population, &parent1) == 0);
-    assert(genome_create(&population, &parent2) == 0);
+	assert(genome_create(&population, &parent2) == 0);
 
-	// create a child
+	/* create a child */
 	assert(genome_spawn(&population, &parent1, &parent2, &child) == 0);
 
-	// parents should be different
+	/* parents should be different */
 	assert(memcmp(&parent1, &parent2, sizeof(sc_genome)) != 0);
 
-	// child should not be exactly like either parent
+	/* child should not be exactly like either parent */
 	assert(memcmp(&child, &parent1, sizeof(sc_genome)) != 0);
 	assert(memcmp(&child, &parent2, sizeof(sc_genome)) != 0);
 
-    population_free(&population);
-	*/
+	population_free(&population);
 
 	printf("Ok\n");
 }
@@ -122,7 +135,7 @@ void test_genome_create()
 
 	assert(genome_create(&population, &individual) == 0);
 
-    population_free(&population);
+	population_free(&population);
 
 	printf("Ok\n");
 }
@@ -130,6 +143,6 @@ void test_genome_create()
 void run_genome_tests()
 {
 	test_genome_spawn();
-    test_genome_mutate();
+	test_genome_mutate();
 	test_genome_create();
 }
