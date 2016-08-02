@@ -130,6 +130,7 @@ typedef struct {
     int size;
 
     sc_genome ** individual;
+    sc_genome ** next_generation;
 
     /* in the range 0.0 -> 1.0 */
     float mutation_rate;

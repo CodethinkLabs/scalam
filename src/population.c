@@ -50,6 +50,10 @@ int population_create(int size, sc_population * population,
         (sc_genome**)malloc(population->size*sizeof(sc_genome*));
     if (population->individual == NULL)
         return 3;
+    population->next_generation =
+        (sc_genome**)malloc(population->size*sizeof(sc_genome*));
+    if (population->next_generation == NULL)
+        return 4;
     population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
     population->crossover = SC_DEFAULT_CROSSOVER;
     population->rebels = SC_DEFAULT_REBELS;
@@ -66,11 +70,14 @@ int population_create(int size, sc_population * population,
     for (i = 0; i < population->size; i++) {
         population->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
         if (population->individual[i] == NULL)
-            return 30;
+            return 5;
+        population->next_generation[i] = (sc_genome*)malloc(sizeof(sc_genome));
+        if (population->next_generation[i] == NULL)
+            return 6;
         retval = genome_create(population, population->individual[i]);
         if (retval != 0) {
             population_free(population);
-            return 40 + retval;
+            return 70 + retval;
         }
     }
 
@@ -85,10 +92,13 @@ void population_free(sc_population * population)
 {
     int i;
 
-    for (i = 0; i < population->size; i++)
+    for (i = 0; i < population->size; i++) {
         free(population->individual[i]);
+        free(population->next_generation[i]);
+    }
 
     free(population->individual);
+    free(population->next_generation);
 }
 
 /**
@@ -123,11 +133,16 @@ int population_copy(sc_population * destination, sc_population * source)
     if (destination->individual == NULL)
         return 3;
 
+    destination->next_generation =
+        (sc_genome**)malloc(source->size*sizeof(sc_genome*));
+    if (destination->next_generation == NULL)
+        return 4;
+
     /* copy individuals */
     for (i = 0; i < source->size; i++) {
         destination->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
         if (destination->individual[i] == NULL)
-            return 4;
+            return 5;
         memcpy(destination->individual[i],
                source->individual[i],sizeof(sc_genome));
     }
@@ -194,9 +209,16 @@ int population_spawning_probabilities(sc_population * population)
  */
 int population_next_generation(sc_population * population)
 {
+    sc_genome ** temp_buffer;
+
     if (population_spawning_probabilities(population) != 0) return 1;
 
     /* TODO */
+
+    /* swap the arrays over, so the new generation is now the current one */
+    temp_buffer = population->next_generation;
+    population->next_generation = population->individual;
+    population->individual = temp_buffer;
 
     return 0;
 }
