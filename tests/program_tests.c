@@ -33,11 +33,11 @@ void test_program_repo_get_current_checkout()
 	printf("test_program_repo_get_current_checkout...");
 
 	/* clone a repo into a temporary directory */
-	sprintf(commandstr,"git clone %s %s",repo_url, repo_dir);
+	sprintf(commandstr,"git clone %s %s 2> /dev/null",repo_url, repo_dir);
 	run_shell_command(commandstr);
 
 	/* checkout a particular commit */
-	sprintf(commandstr,"cd %s\ngit checkout %s -b %s", repo_dir, checkout, checkout);
+	sprintf(commandstr,"cd %s\ngit checkout %s -b %s 2> /dev/null", repo_dir, checkout, checkout);
 	run_shell_command(commandstr);
 
 	/* get the current checkout and test that it's the same as the expected */

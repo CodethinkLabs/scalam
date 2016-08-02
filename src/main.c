@@ -46,3 +46,82 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+
+
+void run_simulation()
+{
+	/* Possible fn args */
+	int population_size=100;
+	char * repos_dir = "/path/to/git/";
+	int generation_max=10000;
+	
+	/* Init System */
+	sc_system sys;
+	system_create_from_repos(&sys, repos_dir);
+	
+	/* Init Goal */
+	sc_goal goal;
+	goal_create_latest_versions(&sys, &goal);
+	float goal_score=goal_max_score(&goal);
+	
+	
+	
+	/* Init population */
+	sc_population population;
+	population_create(population_size, &population, &sys, &goal);
+	
+	/* Init Dataframe for recording output */
+	sc_dataframe df;
+	plot_create_dataframe(&df, &population);
+	
+	/* Start simulation */
+	/* TODO init scores already set? */
+	int i;
+	int ret;
+	for(i=0; i<generation_max; i++)
+	{
+		/* Record data about the population before any changes */
+		plot_create_df_slice(&df, &population);
+		
+		int j;
+		for(j=0; j<population.size; j++)
+		{
+			/* TODO
+			 *
+			 * do_crossover
+			 * do_mutate
+			 * do_rebel
+			 */
+			
+			/* TODO
+			 *
+			 * evaluate score
+			 * - Run in container
+			 * - Record which programs instal/run/pass tests
+			 */
+		}
+		
+		float highest_score = population_best_score(&population);
+		if(highest_score == goal_score)	/* FIXME float cmp */
+		{
+			/* TODO
+			 *
+			 * End condition once we have found a successful candidate.
+			 * Exit or keep going?
+			 */
+			printf("A possible solution found");
+		}
+		
+		ret=population_next_generation(&population);
+		if(ret!=0)
+		{
+			/* TODO
+			 *
+			 * Handle the error condition when the next generation fails
+			 */
+		}
+	}
+	
+	/* Make sure we have a copy of the data to analyse */
+	plot_dataframe_save(&df);	
+}
