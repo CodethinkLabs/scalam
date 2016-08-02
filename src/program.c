@@ -142,7 +142,7 @@ int program_get_versions_from_git(char * repos_dir, char * repo_url, sc_program 
     if (program_name_is_valid(prog) != 0)
         return 5;
 
-    sprintf(commandstr, "cd %s && git clone %s \"%s\"", repos_dir, repo_url, prog->name);
+    sprintf(commandstr, "cd %s && git clone %s \"%s\" --quiet", repos_dir, repo_url, prog->name);
 
     if (run_shell_command(commandstr) != 0)
         return 6;
