@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 
-df=pd.DataFrame.from_csv('example_scores.csv');
+df=pd.DataFrame.from_csv('dataframe.csv', index_col=None);
 
 sns.set_style("whitegrid")
 ax=sns.boxplot(df.score, groupby=df.cycle_ix)

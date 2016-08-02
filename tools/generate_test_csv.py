@@ -32,5 +32,5 @@ for i in xrange(50):
         score.append(random.uniform(i*5,200*(i/10.0)))
 
 df=pd.DataFrame({'cycle_ix':c_ix, 'genome_ix':g_ix, 'score':score});
-df.to_csv('example_scores.csv');
+df.to_csv('dataframe.csv');
 

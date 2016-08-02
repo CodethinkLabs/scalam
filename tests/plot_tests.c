@@ -86,8 +86,23 @@ void test_plot_save()
 {
     printf("test_plot_save...");
 
-
-    printf("Ok\n");
+    sc_dataframe df;
+    sc_population population;
+    test_population_dummy(&population);
+    
+    plot_create_dataframe(&df, &population);
+    
+    /* Create 5 slices */
+    plot_create_df_slice(&df, &population);
+    plot_create_df_slice(&df, &population);
+    plot_create_df_slice(&df, &population);
+    plot_create_df_slice(&df, &population);
+    plot_create_df_slice(&df, &population);
+ 
+    plot_dataframe_save(&df);
+    
+    printf("Manual check required\n");
+    printf("\t* run : python tools/generate_plot_generation_scores.py\n");
 }
 
 void run_plot_tests()

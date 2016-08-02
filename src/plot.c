@@ -75,11 +75,11 @@ void plot_dataframe_save(sc_dataframe * df)
 
     FILE * fp;
     char *filename="dataframe.csv";
-    fp = fopen(filename, "r");
+    fp = fopen(filename, "w");
     if (fp)
     {
         /* Dataframe headers */
-        fprintf(fp, "cycle_ix,genome_ix,score");
+        fprintf(fp, "cycle_ix,genome_ix,score\n");
 
         /* Each cycle */
         for( i=0; i< df->slice_no; i++)
