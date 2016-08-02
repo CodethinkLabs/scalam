@@ -92,18 +92,33 @@ void test_genome_spawn()
 
 void test_genome_create()
 {
-	printf("test_genome_create...");
-
 	sc_population population;
 	sc_goal goal;
 	sc_system system_definition;
 	sc_genome individual;
+	int population_size = 100;
+	char commandstr[SC_MAX_STRING];
+	char * repo_dir;
+	char template[] = "/tmp/scalam.XXXXXX";
+	int retval;
 
-	test_create_goal(&goal);
+	printf("test_genome_create...");
 
-	test_create_system(&system_definition);
+	/* create a test directory which will contain repos */
+	repo_dir = mkdtemp(template);
 
-    assert(population_create(100, &population, &system_definition, &goal) == 0);
+	/* make a test system with some repositories */
+	assert(test_create_system(&system_definition, repo_dir) == 0);
+
+	/* make a goal to get to the latest commits */
+	assert(goal_create_latest_versions(&system_definition, &goal) == 0);
+
+	/* generate the population */
+	retval = population_create(population_size, &population, &system_definition, &goal);
+	if (retval != 0) {
+		printf("\nDidn't create population: error %d\n", retval);
+	}
+	assert(retval == 0);
 
 	assert(genome_create(&population, &individual) == 0);
 
