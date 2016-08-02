@@ -73,6 +73,7 @@ void test_population_create()
 	if (retval != 0) {
 		printf("\nDidn't create population: error %d\n", retval);
 	}
+	assert(retval == 0);
 
 	/* check that the size is as expected */
 	if (population.size != population_size) {

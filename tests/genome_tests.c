@@ -94,7 +94,6 @@ void test_genome_create()
 {
 	printf("test_genome_create...");
 
-	/* TODO
 	sc_population population;
 	sc_goal goal;
 	sc_system system_definition;
@@ -108,7 +107,7 @@ void test_genome_create()
 
 	assert(genome_create(&population, &individual) == 0);
 
-    population_free(&population); */
+    population_free(&population);
 
 	printf("Ok\n");
 }
