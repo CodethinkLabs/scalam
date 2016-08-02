@@ -46,3 +46,15 @@ int goal_create_latest_versions(sc_system * sys, sc_goal * goal)
 
 	return 0;
 }
+
+/**
+ * @brief Calculates what the ideal end goal score is
+ * @param goal Goal object
+ * @returns score or negative on error
+ */
+float goal_max_score(sc_goal * goal)
+{
+	/* TODO */
+	
+	return 0.0;
+}
