@@ -241,7 +241,7 @@ void test_population_next_generation()
     /* Assign some dummy scores to simulate what we have after evaluation */
     for (i = 0; i < population_size; i++) {
         assert(population_set_test_passes(&after, i,
-                                          rand_num(&random_seed) % 50) == 0);
+                                          rand_num(&random_seed) % 100) == 0);
     }
 
     /* create a new generation */

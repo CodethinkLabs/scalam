@@ -143,6 +143,11 @@ int population_copy(sc_population * destination, sc_population * source)
         destination->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
         if (destination->individual[i] == NULL)
             return 5;
+
+        destination->next_generation[i] = (sc_genome*)malloc(sizeof(sc_genome));
+        if (destination->next_generation[i] == NULL)
+            return 6;
+
         memcpy(destination->individual[i],
                source->individual[i],sizeof(sc_genome));
     }
@@ -203,6 +208,56 @@ int population_spawning_probabilities(sc_population * population)
 }
 
 /**
+ * @brief sorts the current generation in order of their spawning probability
+ * @param population The population to be updated after evaluation of genomes
+ * @returns zero on success
+ */
+int population_sort(sc_population * population)
+{
+    int i, j, winner;
+    float max;
+    sc_genome * temp_genome;
+
+    for (i = 0; i < population->size-1; i++) {
+        /* look for the highest spawning probability */
+        max = population->individual[i]->spawning_probability;
+        winner = i;
+        for (j = i+1; j < population->size; j++) {
+            if (population->individual[j]->spawning_probability > max) {
+                max = population->individual[j]->spawning_probability;
+                winner = j;
+            }
+        }
+        if (winner != i) {
+            /* genomes swap places */
+            temp_genome = population->individual[winner];
+            population->individual[winner] = population->individual[i];
+            population->individual[i] = temp_genome;
+        }
+    }
+    return 0;
+}
+
+/**
+ * @brief Randomly picks a parent genome with a bias towards
+ *        higher scores
+ * @param population The population to be updated after evaluation of genomes
+ * @returns Pointer to the parent genome
+ */
+sc_genome * population_parent(sc_population * population)
+{
+    /* a random value between 0.0 and 1.0 */
+    float r = (rand_num(&population->random_seed)%100000)/100000.0f;
+
+    /* Get a population array index from this random number,
+       biasing towards small values. Different functions could
+       be used here. */
+    int index = (int)(r*r*(population->size-1));
+
+    return population->individual[index];
+}
+
+/**
  * @brief Creates the next generation
  * @param population The population to be updated after evaluation of genomes
  * @returns zero on success
@@ -210,10 +265,25 @@ int population_spawning_probabilities(sc_population * population)
 int population_next_generation(sc_population * population)
 {
     sc_genome ** temp_buffer;
+    int i, retval;
 
-    if (population_spawning_probabilities(population) != 0) return 1;
+    /* update spawning probabilities */
+    if (population_spawning_probabilities(population) != 0)
+        return 1;
 
-    /* TODO */
+    /* sort the population in order of spawning probability */
+    if (population_sort(population) != 0)
+        return 2;
+
+    /* create the children of the next generation */
+    for (i = 0; i < population->size; i++) {
+        retval = genome_spawn(population,
+                              population_parent(population),
+                              population_parent(population),
+                              population->next_generation[i]);
+        if (retval != 0)
+            return 30 + retval;
+    }
 
     /* swap the arrays over, so the new generation is now the current one */
     temp_buffer = population->next_generation;
