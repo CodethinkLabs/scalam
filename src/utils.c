@@ -1,20 +1,20 @@
 /*
-    Smart search for upgrade paths
-    Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
-                       Bob Mottram <bob.mottram@codethink.co.uk>
+  Smart search for upgrade paths
+  Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
+  Bob Mottram <bob.mottram@codethink.co.uk>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "scalam.h"
@@ -71,8 +71,8 @@ int lines_in_file(char * filename)
  */
 int get_line_number_from_string_in_file(char * filename, char * search_line)
 {
-	int line_number = -1;
-	int i, ctr, index = 0;
+    int line_number = -1;
+    int i, ctr, index = 0;
     FILE * fp;
     char linestr[SC_MAX_STRING];
     char first_entry[SC_MAX_STRING];
@@ -83,26 +83,26 @@ int get_line_number_from_string_in_file(char * filename, char * search_line)
     while (!feof(fp)) {
         if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
             if (linestr == NULL) continue;
-			ctr = 0;
-			for (i = 0; i < strlen(linestr); i++) {
-				if ((linestr[i] == ' ') || (linestr[i] == '\t') ||
-					(linestr[i] == '\n')) {
-					break;
-				}
-				else {
-					first_entry[ctr++] = linestr[i];
-				}
-			}
-			first_entry[ctr] = 0;
-			if (strstr(first_entry, search_line) != NULL) {
-				line_number = index;
-				break;
-			}
-			index++;
-		}
-	}
-	fclose(fp);
-	return line_number;
+            ctr = 0;
+            for (i = 0; i < strlen(linestr); i++) {
+                if ((linestr[i] == ' ') || (linestr[i] == '\t') ||
+                    (linestr[i] == '\n')) {
+                    break;
+                }
+                else {
+                    first_entry[ctr++] = linestr[i];
+                }
+            }
+            first_entry[ctr] = 0;
+            if (strstr(first_entry, search_line) != NULL) {
+                line_number = index;
+                break;
+            }
+            index++;
+        }
+    }
+    fclose(fp);
+    return line_number;
 }
 
 /**
@@ -225,10 +225,10 @@ int software_installed(char * softwarename)
 }
 
 /**
-* @brief Lehmer random number generator
-* @param seed Random number generator seed
-* @return Pseudo-random number
-*/
+ * @brief Lehmer random number generator
+ * @param seed Random number generator seed
+ * @return Pseudo-random number
+ */
 int rand_num(unsigned int * seed)
 {
     unsigned int v =

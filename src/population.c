@@ -1,20 +1,20 @@
 /*
-	Smart search for upgrade paths
-	Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
-					   Bob Mottram <bob.mottram@codethink.co.uk>
+  Smart search for upgrade paths
+  Copyright (C) 2016 Andrew Leeming <andrew.leeming@codethink.co.uk> and
+  Bob Mottram <bob.mottram@codethink.co.uk>
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "scalam.h"
@@ -30,51 +30,51 @@
  * @returns zero on success
  */
 int population_create(int size, sc_population * population,
-					  sc_system * system_definition,
-					  sc_goal * goal)
+                      sc_system * system_definition,
+                      sc_goal * goal)
 {
-	int i, retval;
+    int i, retval;
 
-	if (size < 0)
-		return 1;
+    if (size < 0)
+        return 1;
 
-	/* don't exceed array bounds */
-	if (size > SC_MAX_POPULATION_SIZE)
-		return 2;
+    /* don't exceed array bounds */
+    if (size > SC_MAX_POPULATION_SIZE)
+        return 2;
 
-	/* clear everything to ensure no stray values */
-	memset((void*)population, '\0', sizeof(sc_population));
+    /* clear everything to ensure no stray values */
+    memset((void*)population, '\0', sizeof(sc_population));
 
-	population->size = size;
-	population->individual =
-		(sc_genome**)malloc(population->size*sizeof(sc_genome*));
-	if (population->individual == NULL)
-		return 3;
-	population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
-	population->crossover = SC_DEFAULT_CROSSOVER;
-	population->rebels = SC_DEFAULT_REBELS;
+    population->size = size;
+    population->individual =
+        (sc_genome**)malloc(population->size*sizeof(sc_genome*));
+    if (population->individual == NULL)
+        return 3;
+    population->mutation_rate = SC_DEFAULT_MUTATION_RATE;
+    population->crossover = SC_DEFAULT_CROSSOVER;
+    population->rebels = SC_DEFAULT_REBELS;
 
-	/* Possibly this could be the same as an island index
-	   for deterministic islanded runs */
-	population->random_seed = (unsigned int)time(NULL);
+    /* Possibly this could be the same as an island index
+       for deterministic islanded runs */
+    population->random_seed = (unsigned int)time(NULL);
 
-	memcpy((void*)&population->goal, (void*)goal, sizeof(sc_goal));
-	memcpy((void*)&population->sys, (void*)system_definition,
-		   sizeof(sc_system));
+    memcpy((void*)&population->goal, (void*)goal, sizeof(sc_goal));
+    memcpy((void*)&population->sys, (void*)system_definition,
+           sizeof(sc_system));
 
-	/* Create an initially random population */
-	for (i = 0; i < population->size; i++) {
-		population->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
-		if (population->individual[i] == NULL)
-			return 30;
-		retval = genome_create(population, population->individual[i]);
-		if (retval != 0) {
-			population_free(population);
-			return 40 + retval;
-		}
-	}
+    /* Create an initially random population */
+    for (i = 0; i < population->size; i++) {
+        population->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
+        if (population->individual[i] == NULL)
+            return 30;
+        retval = genome_create(population, population->individual[i]);
+        if (retval != 0) {
+            population_free(population);
+            return 40 + retval;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -83,12 +83,12 @@ int population_create(int size, sc_population * population,
  */
 void population_free(sc_population * population)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < population->size; i++)
-		free(population->individual[i]);
+    for (i = 0; i < population->size; i++)
+        free(population->individual[i]);
 
-	free(population->individual);
+    free(population->individual);
 }
 
 /**
@@ -101,38 +101,38 @@ void population_free(sc_population * population)
  */
 int population_copy(sc_population * destination, sc_population * source)
 {
-	int i;
+    int i;
 
-	if (source->size < 1)
-		return 1;
+    if (source->size < 1)
+        return 1;
 
-	if (source->size > SC_MAX_POPULATION_SIZE)
-		return 2;
+    if (source->size > SC_MAX_POPULATION_SIZE)
+        return 2;
 
-	destination->size = source->size;
-	destination->mutation_rate = source->mutation_rate;
-	destination->crossover = source->crossover;
-	destination->rebels = source->rebels;
-	destination->random_seed = source->random_seed;
-	memcpy((void*)&destination->goal, (void*)&source->goal, sizeof(sc_goal));
-	memcpy((void*)&destination->sys, (void*)&source->sys, sizeof(sc_system));
+    destination->size = source->size;
+    destination->mutation_rate = source->mutation_rate;
+    destination->crossover = source->crossover;
+    destination->rebels = source->rebels;
+    destination->random_seed = source->random_seed;
+    memcpy((void*)&destination->goal, (void*)&source->goal, sizeof(sc_goal));
+    memcpy((void*)&destination->sys, (void*)&source->sys, sizeof(sc_system));
 
-	/* allocate memory for the destination population */
-	destination->individual =
-		(sc_genome**)malloc(source->size*sizeof(sc_genome*));
-	if (destination->individual == NULL)
-		return 3;
+    /* allocate memory for the destination population */
+    destination->individual =
+        (sc_genome**)malloc(source->size*sizeof(sc_genome*));
+    if (destination->individual == NULL)
+        return 3;
 
-	/* copy individuals */
-	for (i = 0; i < source->size; i++) {
-		destination->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
-		if (destination->individual[i] == NULL)
-			return 4;
-		memcpy(destination->individual[i],
-			   source->individual[i],sizeof(sc_genome));
-	}
+    /* copy individuals */
+    for (i = 0; i < source->size; i++) {
+        destination->individual[i] = (sc_genome*)malloc(sizeof(sc_genome));
+        if (destination->individual[i] == NULL)
+            return 4;
+        memcpy(destination->individual[i],
+               source->individual[i],sizeof(sc_genome));
+    }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -144,7 +144,7 @@ int population_copy(sc_population * destination, sc_population * source)
  */
 float population_reproduction_function(float normalised_score)
 {
-	return normalised_score * normalised_score;
+    return normalised_score * normalised_score;
 }
 
 /**
@@ -154,37 +154,37 @@ float population_reproduction_function(float normalised_score)
  */
 int population_spawning_probabilities(sc_population * population)
 {
-	int i, best_index, worst_index;
-	float score_variance, normalised_score;
+    int i, best_index, worst_index;
+    float score_variance, normalised_score;
 
-	/* get the indexes of the best and worst individuals */
-	best_index = population_best_index(population);
-	worst_index = population_worst_index(population);
+    /* get the indexes of the best and worst individuals */
+    best_index = population_best_index(population);
+    worst_index = population_worst_index(population);
 
-	/* variation in score */
-	score_variance =
-		population_get_score(population, best_index) -
-		population_get_score(population, worst_index);
+    /* variation in score */
+    score_variance =
+        population_get_score(population, best_index) -
+        population_get_score(population, worst_index);
 
-	/* if there's no variance then either there's a catastrophic
-	   diversity loss or there have been no evaluations yet */
-	if (score_variance == 0) return 1;
+    /* if there's no variance then either there's a catastrophic
+       diversity loss or there have been no evaluations yet */
+    if (score_variance == 0) return 1;
 
-	for (i = 0; i < population->size; i++) {
-		/* score in the range 0.0 -> 1.0 */
-		normalised_score =
-			(population_get_score(population, i) -
-			 population_get_score(population, worst_index))/
-			score_variance;
+    for (i = 0; i < population->size; i++) {
+        /* score in the range 0.0 -> 1.0 */
+        normalised_score =
+            (population_get_score(population, i) -
+             population_get_score(population, worst_index))/
+            score_variance;
 
-		/* A simple probability of reproduction.
-		   This function could be adjustable, so you could have
-		   different islands with different reproduction strategies */
-		population->individual[i]->spawning_probability =
-			population_reproduction_function(normalised_score);
-	}
+        /* A simple probability of reproduction.
+           This function could be adjustable, so you could have
+           different islands with different reproduction strategies */
+        population->individual[i]->spawning_probability =
+            population_reproduction_function(normalised_score);
+    }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -194,11 +194,11 @@ int population_spawning_probabilities(sc_population * population)
  */
 int population_next_generation(sc_population * population)
 {
-	if (population_spawning_probabilities(population) != 0) return 1;
+    if (population_spawning_probabilities(population) != 0) return 1;
 
-	/* TODO */
+    /* TODO */
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -210,15 +210,15 @@ int population_next_generation(sc_population * population)
  */
 int population_set_test_passes(sc_population * population, int index, int test_passes)
 {
-	if (index < 0) return 1;
-	if (index >= population->size) return 2;
+    if (index < 0) return 1;
+    if (index >= population->size) return 2;
 
-	/* This division biases the score in favour of shorter upgrade sequences */
-	population->individual[index]->score =
-		(float)test_passes /
-		(float)(1 + population->individual[index]->steps);
+    /* This division biases the score in favour of shorter upgrade sequences */
+    population->individual[index]->score =
+        (float)test_passes /
+        (float)(1 + population->individual[index]->steps);
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -229,13 +229,13 @@ int population_set_test_passes(sc_population * population, int index, int test_p
  */
 float population_get_score(sc_population * population, int index)
 {
-	if (index < 0)
-		return -1;
+    if (index < 0)
+        return -1;
 
-	if (index >= population->size)
-		return -2;
+    if (index >= population->size)
+        return -2;
 
-	return population->individual[index]->score;
+    return population->individual[index]->score;
 }
 
 /**
@@ -245,15 +245,15 @@ float population_get_score(sc_population * population, int index)
  */
 float population_average_score(sc_population * population)
 {
-	float score = 0;
-	int i;
+    float score = 0;
+    int i;
 
-	if (population->size <= 0) return 0;
+    if (population->size <= 0) return 0;
 
-	for (i = 0; i < population->size; i++) {
-		score += population->individual[i]->score;
-	}
-	return score  / (float)population->size;
+    for (i = 0; i < population->size; i++) {
+        score += population->individual[i]->score;
+    }
+    return score  / (float)population->size;
 }
 
 /**
@@ -263,18 +263,18 @@ float population_average_score(sc_population * population)
  */
 int population_best_index(sc_population * population)
 {
-	float max_score = 0;
-	int i, index = -1;
+    float max_score = 0;
+    int i, index = -1;
 
-	if (population->size <= 0) return 0;
+    if (population->size <= 0) return 0;
 
-	for (i = 0; i < population->size; i++) {
-		if (population->individual[i]->score > max_score) {
-			max_score = population->individual[i]->score;
-			index = i;
-		}
-	}
-	return index;
+    for (i = 0; i < population->size; i++) {
+        if (population->individual[i]->score > max_score) {
+            max_score = population->individual[i]->score;
+            index = i;
+        }
+    }
+    return index;
 }
 
 /**
@@ -284,10 +284,10 @@ int population_best_index(sc_population * population)
  */
 float population_best_score(sc_population * population)
 {
-	int index = population_best_index(population);
-	if (index > -1)
-		return population->individual[index]->score;
-	return 0;
+    int index = population_best_index(population);
+    if (index > -1)
+        return population->individual[index]->score;
+    return 0;
 }
 
 /**
@@ -297,19 +297,19 @@ float population_best_score(sc_population * population)
  */
 int population_worst_index(sc_population * population)
 {
-	float min_score = 0;
-	int i, index = -1;
+    float min_score = 0;
+    int i, index = -1;
 
-	if (population->size <= 0) return 0;
+    if (population->size <= 0) return 0;
 
-	for (i = 0; i < population->size; i++) {
-		if ((min_score == 0) ||
-			(population->individual[i]->score < min_score)) {
-			min_score = population->individual[i]->score;
-			index = i;
-		}
-	}
-	return index;
+    for (i = 0; i < population->size; i++) {
+        if ((min_score == 0) ||
+            (population->individual[i]->score < min_score)) {
+            min_score = population->individual[i]->score;
+            index = i;
+        }
+    }
+    return index;
 }
 
 /**
@@ -319,16 +319,16 @@ int population_worst_index(sc_population * population)
  */
 float population_variance(sc_population * population)
 {
-	int i;
-	float average_score = population_average_score(population);
-	float diff, variance = 0;
+    int i;
+    float average_score = population_average_score(population);
+    float diff, variance = 0;
 
-	if ((population->size <= 0) || (average_score <= 0))
-		return 0;
+    if ((population->size <= 0) || (average_score <= 0))
+        return 0;
 
-	for (i = 0; i < population->size; i++) {
-		diff = population->individual[i]->score - average_score;
-		variance += diff*diff;
-	}
-	return (float)sqrt(variance / (float)population->size);
+    for (i = 0; i < population->size; i++) {
+        diff = population->individual[i]->score - average_score;
+        variance += diff*diff;
+    }
+    return (float)sqrt(variance / (float)population->size);
 }

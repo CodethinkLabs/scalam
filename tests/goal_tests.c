@@ -24,13 +24,13 @@ void test_goal_create()
 {
     sc_goal goal;
     sc_system sys;
-    
-    
-	printf("test_goal_create...");
-    
+
+
+    printf("test_goal_create...");
+
     //Create system part first
     test_system_dummy(&sys);
-    
+
     /* TODO */
     goal_create_latest_versions(&sys, &goal);
 
@@ -39,11 +39,11 @@ void test_goal_create()
     {
         // All reference programs should be installed
         assert(goal.reference.installed[p] == 1);
-        
+
         // Reference should be an upgraded version
         assert(goal.start.version_index[p] != goal.reference.version_index[p]);
     }
-    
+
     printf("Ok\n");
 }
 
