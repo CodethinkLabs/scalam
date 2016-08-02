@@ -30,17 +30,17 @@ int test_create_system(sc_system * system_definition, char * repo_dir)
 	char commandstr[SC_MAX_STRING];
 
 	/* clone repos into a test directory */
-	sprintf(commandstr,"git clone %s %s/frepo",repo_url1, repo_dir);
+	sprintf(commandstr,"git clone %s %s/frepo 2> /dev/null",repo_url1, repo_dir);
 	run_shell_command(commandstr);
 	/* do a checkout so that we're not at the HEAD of master */
-	sprintf(commandstr,"cd %s/frepo\ngit checkout %s -b %s",
+	sprintf(commandstr,"cd %s/frepo\ngit checkout %s -b %s 2> /dev/null",
 			repo_dir,checkout1,checkout1);
 	run_shell_command(commandstr);
 
-	sprintf(commandstr,"git clone %s %s/firehose",repo_url2, repo_dir);
+	sprintf(commandstr,"git clone %s %s/firehose 2> /dev/null",repo_url2, repo_dir);
 	run_shell_command(commandstr);
 	/* do a checkout so that we're not at the HEAD of master */
-	sprintf(commandstr,"cd %s/firehose\ngit checkout %s -b %s",
+	sprintf(commandstr,"cd %s/firehose\ngit checkout %s -b %s 2> /dev/null",
 			repo_dir,checkout2,checkout2);
 	run_shell_command(commandstr);
 

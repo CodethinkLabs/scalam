@@ -17,8 +17,37 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "scalam.h"
+#include <assert.h>
+#include "../src/scalam.h"
+
+void test_goal_create()
+{
+    sc_goal goal;
+    sc_system sys;
+    
+    
+	printf("test_goal_create...");
+    
+    //Create system part first
+    test_system_dummy(&sys);
+    
+    /* TODO */
+    goal_create_latest_versions(&sys, &goal);
+
+    int p;
+    for (p = 0; p < sys.no_of_programs; p++)
+    {
+        // All reference programs should be installed
+        assert(goal.reference.installed[p] == 1);
+        
+        // Reference should be an upgraded version
+        assert(goal.start.version_index[p] != goal.reference.version_index[p]);
+    }
+    
+    printf("Ok\n");
+}
 
 void run_goal_tests()
 {
+    test_goal_create();
 }
