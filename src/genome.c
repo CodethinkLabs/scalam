@@ -112,6 +112,7 @@ int genome_mutate_existing_programs(sc_population * population, sc_genome * indi
             rand_num(&individual->random_seed) %
             population->sys.program[gene_index].no_of_versions;
     }
+    return 0;
 }
 
 /**
@@ -164,16 +165,22 @@ int genome_mutate_insertion_deletion(sc_population * population, sc_genome * ind
 int genome_mutate(sc_population * population, sc_genome * individual)
 {
     int mutability = genome_mutability(population);
+    int retval;
 
     if (rand_num(&individual->random_seed) %
-        SC_MUTATION_SCALAR < mutability)
-        if (genome_mutate_existing_programs(population, individual) != 0)
-            return 1;
+        SC_MUTATION_SCALAR < mutability) {
+        retval = genome_mutate_existing_programs(population, individual);
+        if (retval != 0)
+            return 50 + retval;
+    }
+
 
     if (rand_num(&individual->random_seed) %
-        SC_MUTATION_SCALAR < mutability)
-        if (genome_mutate_insertion_deletion(population, individual) != 0)
-            return 2;
+        SC_MUTATION_SCALAR < mutability) {
+        retval = genome_mutate_insertion_deletion(population, individual);
+        if (retval != 0)
+            return 60 + retval;
+    }
 
     return 0;
 }
