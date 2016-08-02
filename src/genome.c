@@ -20,6 +20,42 @@
 #include "scalam.h"
 
 /**
+ * @brief Creates a single upgrade step consisting of a set of programs,
+ *        their versions/commits and whether they are installed or not
+ * @param population The population in which the genome exists
+ * @param individual The genome to be mutated
+ * @param upgrade_step The index within the upgrade series
+ * @returns zero on success
+ */
+int genome_create_installation_step(sc_population * population,
+									sc_genome * individual,
+									int upgrade_step)
+{
+	int prog_index;
+
+	/* for each possible program within the system */
+	for (prog_index = 0;
+		 prog_index < population->sys.no_of_programs;
+		 prog_index++) {
+
+		/* check that there are some versions/commits for htis program */
+		if (population->sys.program[prog_index].no_of_versions <= 0)
+			return 2;
+
+		/* assign a random version/commit for this program */
+		individual->change[upgrade_step].version_index[prog_index] =
+			rand_num(&individual->random_seed) %
+			population->sys.program[prog_index].no_of_versions;
+
+		/* assign a random install state for this program, 0 or 1 */
+		individual->change[upgrade_step].installed[prog_index] =
+			rand_num(&individual->random_seed) % 2;
+	}
+
+	return 0;
+}
+
+/**
  * @brief returns mutation rate expressed as an integer value
  * @param population The population in which the genome exists
  * @returns mutation rate value in the range 0 -> SC_MUTATION_SCALAR
@@ -91,6 +127,11 @@ int genome_mutate_insertion_deletion(sc_population * population, sc_genome * ind
 	if (mutation_type == 1) {
 		/* add an upgrade step */
 		if (individual->steps < population->sys.no_of_programs-1) {
+			/* create another installation step */
+			if (genome_create_installation_step(population,
+												individual,
+												individual->steps) != 0)
+				return 1;
 			individual->steps++;
 		}
 	}
@@ -100,7 +141,8 @@ int genome_mutate_insertion_deletion(sc_population * population, sc_genome * ind
 			removal_index = rand_num(&individual->random_seed) % individual->steps;
 
 			/* shuffle the subsequent steps down to fill the gap */
-			for (upgrade_step = removal_index; upgrade_step < individual->steps; upgrade_step++) {
+			for (upgrade_step = removal_index;
+				 upgrade_step < individual->steps; upgrade_step++) {
 				memcpy((void*)&individual->change[upgrade_step],
 					   (void*)&individual->change[upgrade_step+1],
 					   sizeof(sc_system_state));
@@ -244,18 +286,13 @@ int genome_create(sc_population * population, sc_genome * individual)
 			 prog_index < population->sys.no_of_programs;
 			 prog_index++) {
 
-			/* check that there are some versions/commits for htis program */
+			/* check that there are some versions/commits for this program */
 			if (population->sys.program[prog_index].no_of_versions <= 0)
 				return 2;
 
-			/* assign a random version/commit for this program */
-			population->sys.program[prog_index].version_index =
-				rand_num(&individual->random_seed) %
-				population->sys.program[prog_index].no_of_versions;
-
-			/* assign a random install state for this program, 0 or 1 */
-			population->sys.program[prog_index].installed =
-				rand_num(&individual->random_seed) % 2;
+			/* randomly create this upgrade step */
+			if (genome_create_installation_step(population, individual, upgrade_step) != 0)
+				return 3;
 		}
 	}
 
