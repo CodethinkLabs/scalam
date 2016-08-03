@@ -99,6 +99,8 @@ void run_simulation()
              * - Run in container
              * - Record which programs instal/run/pass tests
              */
+            float score=system_build(&population, j);
+			 
         }
 
         float highest_score = population_best_score(&population);

@@ -93,12 +93,12 @@ void test_plot_save()
     plot_create_dataframe(&df, &population);
     
     /* Create 5 slices */
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
- 
+    int i;
+    for(i=0; i<5; i++)
+    {
+        plot_create_df_slice(&df, &population);
+    }
+  
     plot_dataframe_save(&df);
     
     printf("Manual check required\n");
