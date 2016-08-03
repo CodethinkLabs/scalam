@@ -20,6 +20,32 @@
 #include "scalam.h"
 
 /**
+ * @brief Assigns one genome in the population to try going straight
+ *        to the goal, with no intermediate upgrade steps
+ * @param population The population object
+ * @returns The array index of the genome which was selected
+ */
+int population_create_direct_ascent_genome(sc_population * population)
+{
+    int index, ctr = 0;
+
+    /* is there already a genome with zero upgrade steps? */
+    for (index = 0; index < population->size; index++) {
+        if (population->individual[index]->steps == 0) return index;
+    }
+
+    /* Pick a random genome in the population.
+       Possibly this index could be zero if we are evaluating
+       genomes sequentially. */
+    index = rand_num(&population->random_seed) % population->size;
+
+    /* set its steps to zero so that it tries to go straight to the goal */
+    population->individual[index]->steps = 0;
+
+    return index;
+}
+
+/**
  * @brief For a given goal create a population of possible upgrade paths
  * @param size Number of individuals in the population.
  *             It's expected that this will remain constant
@@ -81,6 +107,8 @@ int population_create(int size, sc_population * population,
         }
     }
 
+    population_create_direct_ascent_genome(population);
+
     return 0;
 }
 
@@ -109,16 +137,23 @@ void population_free(sc_population * population)
  * @param genome The genome to be tested
  * @param genome_index Index for the current number of next generation genomes
  *                     which have been created thus far
+ * @param next_generation Use the next generation (1) or the current generation (0)
  * @returns True if the given genome is unique
  */
-int genome_unique(sc_population * population, sc_genome * genome, int genome_index)
+int genome_unique(sc_population * population,
+                  sc_genome * genome, int genome_index,
+                  int next_generation)
 {
     int i;
+    sc_genome ** genome_array = population->next_generation;
+
+    if (next_generation == 0)
+        genome_array = population->individual;
 
     for (i = 0; i < genome_index; i++) {
-        if (population->next_generation[i]->steps != genome->steps)
+        if (genome_array[i]->steps != genome->steps)
             continue;
-        if (memcmp((void*)&population->next_generation[i]->change,
+        if (memcmp((void*)&genome_array[i]->change,
                    genome->change, genome->steps*sizeof(sc_system_state)) == 0)
             return (1 == 0);
     }
@@ -316,7 +351,7 @@ int population_next_generation(sc_population * population)
             if (tries > 1000)
                 return 4;
         } while (!genome_unique(population,
-                                population->next_generation[i], i));
+                                population->next_generation[i], i, 1));
     }
 
     /* swap the arrays over, so the new generation is now
@@ -324,6 +359,9 @@ int population_next_generation(sc_population * population)
     temp_buffer = population->next_generation;
     population->next_generation = population->individual;
     population->individual = temp_buffer;
+
+    /* one genome tries to go straight to the goal */
+    population_create_direct_ascent_genome(population);
 
     return 0;
 }

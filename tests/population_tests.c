@@ -31,14 +31,14 @@ int test_population_dummy(sc_population *population)
     /* Init the system */
     sc_system sys;
     test_system_dummy(&sys);
-    
+
     /* Create a goal */
-    sc_goal goal; 
+    sc_goal goal;
     goal_create_latest_versions(&sys, &goal);
-    
+
     /* Population with dummy system and goal */
     population_create(10, population, &sys, &goal);
-    
+
     return 0;
 }
 
@@ -78,7 +78,7 @@ void test_population_create()
     char commandstr[SC_MAX_STRING];
     char * repo_dir;
     char template[] = "/tmp/scalam.XXXXXX";
-    int retval, population_size = 100;
+    int i, is_unique, ctr, retval, population_size = 100;
 
     printf("test_population_create...");
 
@@ -102,6 +102,26 @@ void test_population_create()
     if (population.size != population_size) {
         population_free(&population);
         assert(1 == 0);
+    }
+
+    /* only one genome goes straight to the goal */
+    ctr = 0;
+    for (i = 0; i < population.size; i++) {
+        if (population.individual[i]->steps == 0)
+            ctr++;
+    }
+    if (ctr != 1)
+        population_free(&population);
+    assert(ctr == 1);
+
+    /* all genomes are unique */
+    for (i = 0; i < population.size-1; i++) {
+        is_unique =
+            genome_unique(&population, population.individual[i], i, 0);
+        if (!is_unique) {
+            population_free(&population);
+            assert(1 == 0);
+        }
     }
 
     /* deallocate population */
@@ -243,7 +263,7 @@ void test_population_next_generation()
     char template[] = "/tmp/scalam.XXXXXX";
     char commandstr[SC_MAX_STRING];
     unsigned int random_seed = 63252;
-    int i, population_size = 100;
+    int i, ctr, is_unique, population_size = 100;
 
     /* create a test directory which will contain repos */
     repo_dir = mkdtemp(template);
@@ -271,6 +291,34 @@ void test_population_next_generation()
     assert(population_next_generation(&after) == 0);
 
     /* TODO compare before with after */
+
+    /* only one genome goes straight to the goal */
+    ctr = 0;
+    for (i = 0; i < after.size; i++) {
+        if (after.individual[i]->steps == 0)
+            ctr++;
+    }
+    if (ctr != 1) {
+        printf("\nctr = %d\n", ctr);
+        for (i = 0; i < after.size; i++) {
+            if (after.individual[i]->steps == 0)
+                printf("%d ", i);
+        }
+        printf("\n");
+        population_free(&before);
+        population_free(&after);
+    }
+    assert(ctr == 1);
+
+    /* all genomes are unique */
+    for (i = 0; i < after.size-1; i++) {
+        is_unique = genome_unique(&after, after.individual[i], i, 0);
+        if (!is_unique) {
+            population_free(&before);
+            population_free(&after);
+            assert(1 == 0);
+        }
+    }
 
     /* remove the test system */
     sprintf(commandstr,"rm -rf %s", repo_dir);

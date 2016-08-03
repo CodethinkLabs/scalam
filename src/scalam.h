@@ -212,6 +212,9 @@ int genome_spawn(sc_population * population,
                  sc_genome * parent1, sc_genome * parent2,
                  sc_genome * child);
 int genome_create(sc_population * population, sc_genome * individual);
+int genome_unique(sc_population * population,
+                  sc_genome * genome, int genome_index,
+                  int next_generation);
 
 int population_create(int size, sc_population * population,
                       sc_system * system_definition,
