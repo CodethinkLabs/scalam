@@ -264,6 +264,7 @@ void test_population_next_generation()
     char commandstr[SC_MAX_STRING];
     unsigned int random_seed = 63252;
     int i, ctr, is_unique, population_size = 100;
+    int gen;
 
     /* create a test directory which will contain repos */
     repo_dir = mkdtemp(template);
@@ -281,42 +282,43 @@ void test_population_next_generation()
     /* keep a copy of the before population, so that it can be compared later */
     assert(population_copy(&after, &before) == 0);
 
-    /* Assign some dummy scores to simulate what we have after evaluation */
-    for (i = 0; i < population_size; i++) {
-        assert(population_set_test_passes(&after, i,
-                                          rand_num(&random_seed) % 100) == 0);
-    }
+    for (gen = 0; gen < 256; gen++) {
+        printf(".");
+        /* Assign some dummy scores to simulate what we have after evaluation */
+        for (i = 0; i < population_size; i++) {
+            assert(population_set_test_passes(&after, i,
+                                              rand_num(&random_seed) % 100) == 0);
+        }
 
-    /* create a new generation */
-    assert(population_next_generation(&after) == 0);
+        /* create a new generation */
+        assert(population_next_generation(&after) == 0);
 
-    /* TODO compare before with after */
-
-    /* only one genome goes straight to the goal */
-    ctr = 0;
-    for (i = 0; i < after.size; i++) {
-        if (after.individual[i]->steps == 0)
-            ctr++;
-    }
-    if (ctr != 1) {
-        printf("\nctr = %d\n", ctr);
+        /* only one genome goes straight to the goal */
+        ctr = 0;
         for (i = 0; i < after.size; i++) {
             if (after.individual[i]->steps == 0)
-                printf("%d ", i);
+                ctr++;
         }
-        printf("\n");
-        population_free(&before);
-        population_free(&after);
-    }
-    assert(ctr == 1);
-
-    /* all genomes are unique */
-    for (i = 0; i < after.size-1; i++) {
-        is_unique = genome_unique(&after, after.individual[i], i, 0);
-        if (!is_unique) {
+        if (ctr != 1) {
+            printf("\nctr = %d\n", ctr);
+            for (i = 0; i < after.size; i++) {
+                if (after.individual[i]->steps == 0)
+                    printf("%d ", i);
+            }
+            printf("\n");
             population_free(&before);
             population_free(&after);
-            assert(0);
+        }
+        assert(ctr == 1);
+
+        /* all genomes are unique */
+        for (i = 0; i < after.size-1; i++) {
+            is_unique = genome_unique(&after, after.individual[i], i, 0);
+            if (!is_unique) {
+                population_free(&before);
+                population_free(&after);
+                assert(0);
+            }
         }
     }
 
