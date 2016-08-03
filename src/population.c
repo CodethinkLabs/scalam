@@ -348,7 +348,7 @@ int population_next_generation(sc_population * population)
             /* if there is repeated failure to create a unique
                child genome */
             tries++;
-            if (tries > 1000)
+            if (tries > SC_MAX_TRIES_FOR_UNIQUE_GENOME)
                 return 4;
         } while (!genome_unique(population,
                                 population->next_generation[i], i, 1));
