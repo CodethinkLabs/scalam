@@ -155,9 +155,9 @@ int genome_unique(sc_population * population,
             continue;
         if (memcmp((void*)&genome_array[i]->change,
                    genome->change, genome->steps*sizeof(sc_system_state)) == 0)
-            return (1 == 0);
+            return 0;
     }
-    return (1 == 1);
+    return 1;
 }
 
 /**

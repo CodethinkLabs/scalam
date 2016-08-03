@@ -101,7 +101,7 @@ void test_population_create()
     /* check that the size is as expected */
     if (population.size != population_size) {
         population_free(&population);
-        assert(1 == 0);
+        assert(0);
     }
 
     /* only one genome goes straight to the goal */
@@ -120,7 +120,7 @@ void test_population_create()
             genome_unique(&population, population.individual[i], i, 0);
         if (!is_unique) {
             population_free(&population);
-            assert(1 == 0);
+            assert(0);
         }
     }
 
@@ -161,7 +161,7 @@ void test_population_copy()
     /* check that the size is as expected */
     if (source.size != population_size) {
         population_free(&source);
-        assert(1 == 0);
+        assert(0);
     }
 
     /* copy to the destination */
@@ -238,7 +238,7 @@ void test_population_copy()
                    sizeof(sc_genome)) != 0) {
             population_free(&source);
             population_free(&destination);
-            assert(1 == 0);
+            assert(0);
         }
     }
 
@@ -316,7 +316,7 @@ void test_population_next_generation()
         if (!is_unique) {
             population_free(&before);
             population_free(&after);
-            assert(1 == 0);
+            assert(0);
         }
     }
 
