@@ -31,9 +31,9 @@ int file_exists(char * filename)
     fp = fopen(filename, "r");
     if (fp) {
         fclose(fp);
-        return (1 == 1);
+        return 1;
     }
-    return (1 == 0);
+    return 0;
 }
 
 /**

@@ -137,7 +137,7 @@ int genome_mutate_insertion_deletion(sc_population * population, sc_genome * ind
         }
     }
     else {
-        if (individual->steps > 0) {
+        if (individual->steps > 1) {
             /* remove an upgrade step at a random point in the sequence */
             removal_index = rand_num(&individual->random_seed) % individual->steps;
 
@@ -274,8 +274,13 @@ int genome_create(sc_population * population, sc_genome * individual)
     individual->random_seed = rand_num(&population->random_seed);
 
     /* Number of steps in the upgrade.
-       Zero means we just go straight to the goal */
-    individual->steps = rand_num(&individual->random_seed) % SC_MAX_CHANGE_SEQUENCE;
+       Zero means we just go straight to the goal.
+       There is a minimum of one here, since only a single genome
+       within a population should evaluate going straight to the goal
+       (i.e. zero steps) */
+    individual->steps =
+        1 +
+        (rand_num(&individual->random_seed) % (SC_MAX_CHANGE_SEQUENCE-1));
 
     /* check that there are some programs in the system */
     if (population->sys.no_of_programs <= 0) {
@@ -298,7 +303,8 @@ int genome_create(sc_population * population, sc_genome * individual)
                 return 2;
 
             /* randomly create this upgrade step */
-            if (genome_create_installation_step(population, individual, upgrade_step) != 0)
+            if (genome_create_installation_step(population, individual,
+                                                upgrade_step) != 0)
                 return 3;
         }
     }
