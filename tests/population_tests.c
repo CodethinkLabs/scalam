@@ -347,8 +347,6 @@ void test_population_next_generation()
     /* TODO plot the csv file */
 
 
-    sprintf(commandstr,"cp %s /home/bashrc/develop/scalam/test.txt", log_file);
-    run_shell_command(commandstr);
 
     /* remove the log file */
     sprintf(commandstr,"rm -f %s", log_file);
