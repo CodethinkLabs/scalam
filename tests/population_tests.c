@@ -261,10 +261,12 @@ void test_population_next_generation()
     sc_population before, after;
     char * repo_dir;
     char template[] = "/tmp/scalam.XXXXXX";
+    char template_file[] = "/tmp/scalamfile.XXXXXX";
     char commandstr[SC_MAX_STRING];
     unsigned int random_seed = 63252;
     int i, ctr, is_unique, population_size = 100;
-    int gen;
+    int gen, fd;
+    char log_file[SC_MAX_STRING], str[SC_MAX_STRING];
 
     /* create a test directory which will contain repos */
     repo_dir = mkdtemp(template);
@@ -282,16 +284,31 @@ void test_population_next_generation()
     /* keep a copy of the before population, so that it can be compared later */
     assert(population_copy(&after, &before) == 0);
 
+    /* create a temporary file to store average scores within */
+    strcpy(log_file, template_file);
+    fd = mkstemp(log_file);
+    printf("\nFilename is: %s\n", log_file);
+
+    /* assign some initial scores */
+    for (i = 0; i < population_size; i++) {
+        assert(population_set_test_passes(&after, i,
+                                          rand_num(&random_seed) % 100) == 0);
+    }
+
+    /* itterate through a few generations */
     for (gen = 0; gen < 256; gen++) {
         printf(".");
-        /* Assign some dummy scores to simulate what we have after evaluation */
+
+        /* create a new generation */
+        assert(population_next_generation(&after) == 0);
+
+        /* Assign some dummy scores to simulate what we have after evaluation.
+           This is completely contrived and so perhaps should be replaced with
+           something better */
         for (i = 0; i < population_size; i++) {
             assert(population_set_test_passes(&after, i,
                                               rand_num(&random_seed) % 100) == 0);
         }
-
-        /* create a new generation */
-        assert(population_next_generation(&after) == 0);
 
         /* only one genome goes straight to the goal */
         ctr = 0;
@@ -320,7 +337,22 @@ void test_population_next_generation()
                 assert(0);
             }
         }
+
+        /* log to csv file */
+        sprintf(str, "%f,", population_average_score(&after));
+        write(fd, str, strlen(str));
     }
+    close(fd);
+
+    /* TODO plot the csv file */
+
+
+    sprintf(commandstr,"cp %s /home/bashrc/develop/scalam/test.txt", log_file);
+    run_shell_command(commandstr);
+
+    /* remove the log file */
+    sprintf(commandstr,"rm -f %s", log_file);
+    run_shell_command(commandstr);
 
     /* remove the test system */
     sprintf(commandstr,"rm -rf %s", repo_dir);
