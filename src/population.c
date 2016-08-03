@@ -102,6 +102,30 @@ void population_free(sc_population * population)
 }
 
 /**
+ * @brief Returns true if the given genome is unique.
+ *        This is used during creation of the next generation to ensure that the
+ *        same upgrade hypothesis doesn't get evaluated more than once
+ * @param population The population object
+ * @param genome The genome to be tested
+ * @param genome_index Index for the current number of next generation genomes
+ *                     which have been created thus far
+ * @returns True if the given genome is unique
+ */
+int genome_unique(sc_population * population, sc_genome * genome, int genome_index)
+{
+    int i;
+
+    for (i = 0; i < genome_index; i++) {
+        if (population->next_generation[i]->steps != genome->steps)
+            continue;
+        if (memcmp((void*)&population->next_generation[i]->change,
+                   genome->change, genome->steps*sizeof(sc_system_state)) == 0)
+            return (1 == 0);
+    }
+    return (1 == 1);
+}
+
+/**
  * @brief Copies a population object
  *        Note that the destination populaion should *not* have
  *        been previously created
@@ -265,7 +289,7 @@ sc_genome * population_parent(sc_population * population)
 int population_next_generation(sc_population * population)
 {
     sc_genome ** temp_buffer;
-    int i, retval;
+    int i, retval, tries;
 
     /* update spawning probabilities */
     if (population_spawning_probabilities(population) != 0)
@@ -277,15 +301,26 @@ int population_next_generation(sc_population * population)
 
     /* create the children of the next generation */
     for (i = 0; i < population->size; i++) {
-        retval = genome_spawn(population,
-                              population_parent(population),
-                              population_parent(population),
-                              population->next_generation[i]);
-        if (retval != 0)
-            return 30 + retval;
+        tries = 0;
+        do {
+            retval = genome_spawn(population,
+                                  population_parent(population),
+                                  population_parent(population),
+                                  population->next_generation[i]);
+            if (retval != 0)
+                return 30 + retval;
+
+            /* if there is repeated failure to create a unique
+               child genome */
+            tries++;
+            if (tries > 1000)
+                return 4;
+        } while (!genome_unique(population,
+                                population->next_generation[i], i));
     }
 
-    /* swap the arrays over, so the new generation is now the current one */
+    /* swap the arrays over, so the new generation is now
+       the current one */
     temp_buffer = population->next_generation;
     population->next_generation = population->individual;
     population->individual = temp_buffer;
