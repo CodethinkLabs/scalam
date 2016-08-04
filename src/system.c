@@ -98,6 +98,10 @@ int system_create_dependency_matrix(sc_system * sys)
             (double*)malloc(sizeof(double)*SC_MAX_SYSTEM_SIZE);
         if (sys->dependency_probability[i] == NULL)
             return 2;
+
+        /* clear the array */
+        memset((void*)sys->dependency_probability[i], '\0',
+               sizeof(double)*SC_MAX_SYSTEM_SIZE);
     }
 
     return 0;
@@ -285,43 +289,74 @@ void system_free(sc_system * sys)
  * @brief Extracts program names from morph files
  * @param sys System object to be updated
  * @param linestr The line of text currently being read within the morph file
- * @param program_names Temporary array storing program names extracted so far
+ * @param name Returned program name
  * @returns zero on success
  */
 int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
-                                          char *program_names[])
+                                          char * name)
 {
     /* this is what to look for in the morph file to indicate a program name */
     char * definition_name = "- name:";
 
-    char prog_name[SC_MAX_STRING];
     int i;
 
-    /* program name */
     if (strncmp(linestr, definition_name,
                 strlen(definition_name)) == 0) {
 
         /* extract the program name */
         for (i = 0; i < strlen(linestr)-strlen(definition_name)-1; i++) {
-            prog_name[i] = linestr[i+strlen(definition_name)];
+            name[i] = linestr[i+strlen(definition_name)];
         }
-        prog_name[i] = 0;
-
-        /* does the program already exist within the temporary list? */
-        for (i = 0; i < sys->no_of_programs; i++) {
-            if (strcmp(program_names[i], prog_name) == 0)
-                break;
-        }
-
-        /* add the program to the temporary list */
-        if (i == sys->no_of_programs) {
-            program_names[sys->no_of_programs] =
-                (char*)malloc(sizeof(prog_name));
-            strcpy(program_names[sys->no_of_programs++], prog_name);
-        }
+        name[i] = 0;
     }
 
     return 0;
+}
+
+/**
+ * @brief Extracts program names from morph files
+ * @param sys System object to be updated
+ * @param linestr The line of text currently being read within the morph file
+ * @param dependency Returned program name which is a dependency
+ * @returns zero on success
+ */
+int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
+                                                char * dependency)
+{
+    /* this is what to look for in the morph file to indicate a program dependency */
+    char * definition_name = "  - ";
+
+    int i;
+
+    dependency[0] = 0;
+    if (strncmp(linestr, definition_name,
+                strlen(definition_name)) == 0) {
+
+        /* extract the dependency name */
+        for (i = 0; i < strlen(linestr)-strlen(definition_name)-1; i++) {
+            dependency[i] = linestr[i+strlen(definition_name)];
+        }
+        dependency[i] = 0;
+    }
+
+    return 0;
+}
+
+/**
+ * @brief Given the name of a program return its array index within a system
+ * @param sys System object
+ * @param name The program name to search for
+ * @returns Array index of the program, or -1 if not found
+ */
+int system_program_index_from_name(sc_system * sys, char * name)
+{
+    int i;
+
+    for (i = 0; i < sys->no_of_programs; i++) {
+        if (strcmp(sys->program[i].name, name) == 0)
+            return i;
+    }
+    return -1;
 }
 
 /**
@@ -332,11 +367,16 @@ int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
  */
 int system_from_baserock_update_dependencies(char * definitions_dir, sc_system * sys)
 {
+    /* this is how a dependency is detected */
+    char * dependency_prefix = "  - ";
+
     DIR * dirp;
     struct dirent * dp;
     char search_dir[SC_MAX_STRING], linestr[SC_MAX_STRING];
     char morph_filename[SC_MAX_STRING];
+    char name[SC_MAX_STRING], dependency[SC_MAX_STRING];
     FILE * fp;
+    int program_index, dependency_index;
 
     /* create directory string */
     sprintf(search_dir, "%s/strata", definitions_dir);
@@ -357,13 +397,30 @@ int system_from_baserock_update_dependencies(char * definitions_dir, sc_system *
         if (!fp)
             continue;
 
+        name[0] = 0;
         while (!feof(fp)) {
             if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
                 if (linestr == NULL) continue;
                 if (strlen(linestr) < 3) continue;
 
-                /* TODO */
+                system_from_baserock_get_program_name(sys, (char*)linestr,
+                                                      name);
+                if (name[0] == 0) continue;
 
+                program_index = system_program_index_from_name(sys, name);
+                if (program_index == -1) continue;
+
+                system_from_baserock_get_program_dependency(sys, (char*)linestr,
+                                                            dependency);
+                if (dependency[0] == 0) continue;
+
+                dependency_index = system_program_index_from_name(sys, dependency);
+                /* NOTE: some dependencies are not found.
+                   This could mean that baserock definitions are inconsistent or have bugs */
+                if (dependency_index == -1) continue;
+
+                /* update the matrix */
+                sys->dependency_probability[program_index][dependency_index] = 1.0;
             }
         }
 
@@ -390,6 +447,7 @@ int system_from_baserock(char * definitions_dir, sc_system * sys)
     int i, j;
     char * temp = NULL;
     char *program_names[SC_MAX_SYSTEM_SIZE];
+    char prog_name[SC_MAX_STRING];
 
     /* clear the system object */
     sys->no_of_programs = 0;
@@ -420,8 +478,9 @@ int system_from_baserock(char * definitions_dir, sc_system * sys)
                 if (linestr == NULL) continue;
                 if (strlen(linestr) < 3) continue;
 
+                prog_name[0] = 0;
                 if (system_from_baserock_get_program_name(sys, (char*)linestr,
-                                                          program_names) != 0) {
+                                                          prog_name) != 0) {
                     /* free allocated program name strings */
                     for (i = 0; i < sys->no_of_programs; i++)
                         free(program_names[i]);
@@ -431,6 +490,21 @@ int system_from_baserock(char * definitions_dir, sc_system * sys)
                     (void)closedir(dirp);
 
                     return 1;
+                }
+
+                if (prog_name[0] != 0) {
+                    /* does the program already exist within the temporary list? */
+                    for (i = 0; i < sys->no_of_programs; i++) {
+                        if (strcmp(program_names[i], prog_name) == 0)
+                            break;
+                    }
+
+                    /* add the program to the temporary list */
+                    if (i == sys->no_of_programs) {
+                        program_names[sys->no_of_programs] =
+                            (char*)malloc(sizeof(prog_name));
+                        strcpy(program_names[sys->no_of_programs++], prog_name);
+                    }
                 }
             }
         }

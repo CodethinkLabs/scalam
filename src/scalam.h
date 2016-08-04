@@ -251,6 +251,7 @@ void run_population_tests();
 void run_system_tests();
 
 int system_create_from_repos(sc_system * sys, char * repos_dir);
+int system_create_dependency_matrix(sc_system * sys);
 void system_free(sc_system * sys);
 int system_copy(sc_system * destination, sc_system * source);
 int system_cmp(sc_system * sys1, sc_system * sys2);

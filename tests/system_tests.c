@@ -174,8 +174,13 @@ void test_system_from_baserock()
     char * definitions_dir = "/home/bashrc/develop/definitions";
     sc_system sys;
 
-    assert(system_from_baserock(definitions_dir, &sys) == 0);
+    printf("test_system_from_baserock...");
 
+    assert(system_create_dependency_matrix(&sys) == 0);
+    assert(system_from_baserock(definitions_dir, &sys) == 0);
+    system_free(&sys);
+
+    printf("Ok\n");
 }
 
 void run_system_tests()
