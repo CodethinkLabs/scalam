@@ -143,3 +143,49 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 
     return 0;
 }
+
+/**
+ * @brief Tries to build each component of the system in a container.
+ *        Scores for each program/genome are set based on build success
+ *        and number of automated tests passed
+ * @param population Population definition
+ * @param pop_ix The index of the population
+ * @returns float total score of this system
+ */
+float system_build(sc_population *population, int pop_ix)
+{
+    sc_program * program;
+    sc_system_state * state;
+    float score_sum=0;
+    /* TODO */
+    
+
+    state=population->individual[pop_ix]->change;
+    
+    /* Cycle through all programs in system */
+    int i;
+    for(i=0; i<population->sys.no_of_programs; i++)
+    {
+        program=&population->sys.program[i];
+        
+        /* If marked to install, attempt it */
+        if(state->installed[i])
+        {
+            /*
+             * TODO
+             *
+             * Do some install
+             * state->version_index[j]
+             */
+        }
+        
+        /* Do some scoring based on build/tests */
+        population->individual[i]->score=0.0;    /* TODO */
+        
+        
+        score_sum+=population->individual[i]->score;
+    }
+
+    
+    return score_sum;
+}

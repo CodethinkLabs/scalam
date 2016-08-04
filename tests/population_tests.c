@@ -23,7 +23,7 @@
 
 /**
  * @brief Creates a simple population to use in other test functions
- * @param sys Population object
+ * @param population Population object
  * @returns zero on success
  */
 int test_population_dummy(sc_population *population)

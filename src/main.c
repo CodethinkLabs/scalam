@@ -42,6 +42,11 @@ int main(int argc, char **argv)
             run_tests();
             return 0;
         }
+        if ((strcmp(argv[i],"-r")==0) ||
+            (strcmp(argv[i],"--run")==0)) {
+            run_simulation();
+            return 0;
+        }
     }
 
     return 0;
@@ -52,7 +57,7 @@ void run_simulation()
 {
     /* Possible fn args */
     int population_size=100;
-    char * repos_dir = "/path/to/git/";
+    char * repos_dir = "../test-sys";
     int generation_max=10000;
 
     /* Init System */
@@ -88,17 +93,14 @@ void run_simulation()
         {
             /* TODO
              *
-             * do_crossover
-             * do_mutate
-             * do_rebel
-             */
-
-            /* TODO
-             *
              * evaluate score
              * - Run in container
              * - Record which programs instal/run/pass tests
              */
+            float score=system_build(&population, j);
+            printf("[%d,%d] Score = %f",i,j,score);
+            
+			plot_create_df_slice(&df, &population);
         }
 
         float highest_score = population_best_score(&population);

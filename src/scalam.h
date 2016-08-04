@@ -189,6 +189,8 @@ typedef struct {
 
 void show_help();
 void run_tests();
+void run_simulation();
+
 int run_shell_command(char * commandstr);
 int run_shell_command_with_output(char * commandstr, char * output);
 int file_exists(char * filename);
