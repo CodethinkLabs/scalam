@@ -180,8 +180,10 @@ float system_build(sc_population *population, int pop_ix)
         }
         
         /* Do some scoring based on build/tests */
-        float program_score=0.0;    /* TODO */
-        score_sum+=program_score;
+        population->individual[i]->score=0.0;    /* TODO */
+        
+        
+        score_sum+=population->individual[i]->score;
     }
 
     

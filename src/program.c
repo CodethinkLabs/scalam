@@ -335,7 +335,7 @@ int program_repo_get_commits(char * repo_dir, sc_program * prog)
     prog->no_of_versions = 0;
     sprintf(prog->versions_file, "%s/versions.txt", repo_dir);
 
-    sprintf(commandstr, "cd \"%s\" && git log --pretty=tformat:\"%H\" --all --first-parent master > %s",
+    sprintf(commandstr, "git -C %s log --pretty=tformat:\"%H\" --all --first-parent master > %s",
             repo_dir, prog->versions_file);
 
     if (run_shell_command(commandstr) != 0)
