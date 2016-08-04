@@ -169,7 +169,17 @@ void test_system_create_from_repos()
     printf("Ok\n");
 }
 
+void test_system_from_baserock()
+{
+    char * definitions_dir = "/home/bashrc/develop/definitions";
+    sc_system sys;
+
+    assert(system_from_baserock(definitions_dir, &sys) == 0);
+
+}
+
 void run_system_tests()
 {
     test_system_create_from_repos();
+    test_system_from_baserock();
 }

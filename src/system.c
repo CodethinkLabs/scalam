@@ -280,3 +280,183 @@ void system_free(sc_system * sys)
 
     free(sys->dependency_probability);
 }
+
+/**
+ * @brief Extracts program names from morph files
+ * @param sys System object to be updated
+ * @param linestr The line of text currently being read within the morph file
+ * @param program_names Temporary array storing program names extracted so far
+ * @returns zero on success
+ */
+int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
+                                          char *program_names[])
+{
+    /* this is what to look for in the morph file to indicate a program name */
+    char * definition_name = "- name:";
+
+    char prog_name[SC_MAX_STRING];
+    int i;
+
+    /* program name */
+    if (strncmp(linestr, definition_name,
+                strlen(definition_name)) == 0) {
+
+        /* extract the program name */
+        for (i = 0; i < strlen(linestr)-strlen(definition_name)-1; i++) {
+            prog_name[i] = linestr[i+strlen(definition_name)];
+        }
+        prog_name[i] = 0;
+
+        /* does the program already exist within the temporary list? */
+        for (i = 0; i < sys->no_of_programs; i++) {
+            if (strcmp(program_names[i], prog_name) == 0)
+                break;
+        }
+
+        /* add the program to the temporary list */
+        if (i == sys->no_of_programs) {
+            program_names[sys->no_of_programs] =
+                (char*)malloc(sizeof(prog_name));
+            strcpy(program_names[sys->no_of_programs++], prog_name);
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * @brief Updates the dependency matrix for a system from baserock definitions
+ * @brief definitions_dir The directory where baserock definitions exist
+ * @param sys System object
+ * @returns zero on success
+ */
+int system_from_baserock_update_dependencies(char * definitions_dir, sc_system * sys)
+{
+    DIR * dirp;
+    struct dirent * dp;
+    char search_dir[SC_MAX_STRING], linestr[SC_MAX_STRING];
+    char morph_filename[SC_MAX_STRING];
+    FILE * fp;
+
+    /* create directory string */
+    sprintf(search_dir, "%s/strata", definitions_dir);
+
+    /* search through the directory for morph files
+       and extract program names */
+    dirp = opendir(search_dir);
+    while ((dp = readdir(dirp)) != NULL) {
+        /* is this a morph file ? */
+        if (strstr(dp->d_name, ".morph") == NULL)
+            continue;
+
+        /* construct the full path for the file */
+        sprintf(morph_filename, "%s/strata/%s", definitions_dir, dp->d_name);
+
+        /* search through the morph file for program names */
+        fp = fopen(morph_filename, "r");
+        if (!fp)
+            continue;
+
+        while (!feof(fp)) {
+            if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
+                if (linestr == NULL) continue;
+                if (strlen(linestr) < 3) continue;
+
+                /* TODO */
+
+            }
+        }
+
+        fclose(fp);
+    }
+    (void)closedir(dirp);
+
+    return 0;
+}
+
+/**
+ * @brief Extracts programs and their dependencies from baserock strata files
+ * @brief definitions_dir The directory where baserock definitions exist
+ * @param sys System object
+ * @returns zero on success
+ */
+int system_from_baserock(char * definitions_dir, sc_system * sys)
+{
+    DIR * dirp;
+    struct dirent * dp;
+    char search_dir[SC_MAX_STRING], linestr[SC_MAX_STRING];
+    char morph_filename[SC_MAX_STRING];
+    FILE * fp;
+    int i, j;
+    char * temp = NULL;
+    char *program_names[SC_MAX_SYSTEM_SIZE];
+
+    /* clear the system object */
+    sys->no_of_programs = 0;
+
+    /* create directory string */
+    sprintf(search_dir, "%s/strata", definitions_dir);
+
+    memset((void*)program_names, '\0', sizeof(char*)*SC_MAX_SYSTEM_SIZE);
+
+    /* search through the directory for morph files
+       and extract program names */
+    dirp = opendir(search_dir);
+    while ((dp = readdir(dirp)) != NULL) {
+        /* is this a morph file ? */
+        if (strstr(dp->d_name, ".morph") == NULL)
+            continue;
+
+        /* construct the full path for the file */
+        sprintf(morph_filename, "%s/strata/%s", definitions_dir, dp->d_name);
+
+        /* search through the morph file for program names */
+        fp = fopen(morph_filename, "r");
+        if (!fp)
+            continue;
+
+        while (!feof(fp)) {
+            if (fgets(linestr , SC_MAX_STRING-1 , fp) != NULL) {
+                if (linestr == NULL) continue;
+                if (strlen(linestr) < 3) continue;
+
+                if (system_from_baserock_get_program_name(sys, (char*)linestr,
+                                                          program_names) != 0) {
+                    /* free allocated program name strings */
+                    for (i = 0; i < sys->no_of_programs; i++)
+                        free(program_names[i]);
+
+                    /* close files */
+                    fclose(fp);
+                    (void)closedir(dirp);
+
+                    return 1;
+                }
+            }
+        }
+
+        fclose(fp);
+    }
+    (void)closedir(dirp);
+
+    /* sort the temporary list of programs */
+    for (i = 0; i < sys->no_of_programs; i++) {
+
+        for (j = i+1; j < sys->no_of_programs; j++) {
+            if (strcmp(program_names[i], program_names[j]) > 0) {
+                /* swap */
+                temp = program_names[i];
+                program_names[i] = program_names[j];
+                program_names[j] = temp;
+                temp = NULL;
+            }
+        }
+        sprintf(sys->program[i].name, "%s", program_names[i]);
+    }
+
+    /* free the temporary programs list */
+    for (i = 0; i < sys->no_of_programs; i++)
+        free(program_names[i]);
+
+    return system_from_baserock_update_dependencies(definitions_dir, sys);
+}

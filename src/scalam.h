@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <dirent.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -253,6 +254,7 @@ int system_create_from_repos(sc_system * sys, char * repos_dir);
 void system_free(sc_system * sys);
 int system_copy(sc_system * destination, sc_system * source);
 int system_cmp(sc_system * sys1, sc_system * sys2);
+int system_from_baserock(char * definitions_dir, sc_system * sys);
 
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 
