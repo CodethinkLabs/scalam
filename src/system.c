@@ -80,6 +80,30 @@ int system_add_program_from_repo_directory(sc_system * sys, char * repos_dir,
 }
 
 /**
+ * @brief Create a dependency matrix for a system
+ * @param sys System definition
+ * @returns zero on success
+ */
+int system_create_dependency_matrix(sc_system * sys)
+{
+    int i;
+
+    sys->dependency_probability =
+        (double**)malloc(sizeof(double*)*SC_MAX_SYSTEM_SIZE);
+    if (sys->dependency_probability ==  NULL)
+        return 1;
+
+    for (i = 0; i < SC_MAX_SYSTEM_SIZE; i++) {
+        sys->dependency_probability[i] =
+            (double*)malloc(sizeof(double)*SC_MAX_SYSTEM_SIZE);
+        if (sys->dependency_probability[i] == NULL)
+            return 2;
+    }
+
+    return 0;
+}
+
+/**
  * @brief Creates a system definition from a set of git repos within
  *        a given directory
  * @param sys System definition
@@ -113,6 +137,8 @@ int system_create_from_repos(sc_system * sys, char * repos_dir)
 
     /* clear the system so that it's initial state is consistent */
     memset((void*)sys, '\0', sizeof(sc_system));
+
+    system_create_dependency_matrix(sys);
 
     /* scan the directories string extracting individual subdirectories */
     for (i = 0; i < strlen(directories); i++) {
@@ -158,16 +184,16 @@ float system_build(sc_population *population, int pop_ix)
     sc_system_state * state;
     float score_sum=0;
     /* TODO */
-    
+
 
     state=population->individual[pop_ix]->change;
-    
+
     /* Cycle through all programs in system */
     int i;
     for(i=0; i<population->sys.no_of_programs; i++)
     {
         program=&population->sys.program[i];
-        
+
         /* If marked to install, attempt it */
         if(state->installed[i])
         {
@@ -178,14 +204,79 @@ float system_build(sc_population *population, int pop_ix)
              * state->version_index[j]
              */
         }
-        
+
         /* Do some scoring based on build/tests */
         population->individual[i]->score=0.0;    /* TODO */
-        
-        
+
+
         score_sum+=population->individual[i]->score;
     }
 
-    
+
     return score_sum;
+}
+
+/** @brief Copies from one system object to another
+ * @param destination Location to copy to
+ * @param source Location to copy from
+ * @returns zero on success
+ */
+int system_copy(sc_system * destination, sc_system * source)
+{
+    int i;
+
+    destination->no_of_programs = source->no_of_programs;
+
+    memcpy((void*)&destination->program, (void*)&source->program,
+           sizeof(sc_program)*SC_MAX_SYSTEM_SIZE);
+
+    if (system_create_dependency_matrix(destination) != 0)
+        return 1;
+
+    for (i = 0; i < SC_MAX_SYSTEM_SIZE; i++)
+        memcpy((void*)destination->dependency_probability[i],
+               (void*)source->dependency_probability[i],
+               sizeof(double)*SC_MAX_SYSTEM_SIZE);
+
+    return 0;
+}
+
+/**
+ * @brief Compares two systems
+ * @param sys1 The first system object
+ * @param sys2 The second system object
+ * @returns zero is the systems are the same
+ */
+int system_cmp(sc_system * sys1, sc_system * sys2)
+{
+    int i;
+
+    if (sys1->no_of_programs != sys2->no_of_programs)
+        return 1;
+
+    if (memcmp((void*)&sys1->program, (void*)&sys2->program,
+               sizeof(sc_program)*SC_MAX_SYSTEM_SIZE) != 0)
+        return 2;
+
+    for (i = 0; i < SC_MAX_SYSTEM_SIZE; i++)
+        if (memcmp((void*)sys1->dependency_probability[i],
+                   (void*)sys2->dependency_probability[i],
+                   sizeof(double)*SC_MAX_SYSTEM_SIZE) != 0)
+            return 3;
+
+    return 0;
+}
+
+/**
+ * @brief Frees memory for a system
+ * @param sys System object
+ */
+void system_free(sc_system * sys)
+{
+    int i;
+
+    for (i = 0; i < SC_MAX_SYSTEM_SIZE; i++)
+        free(sys->dependency_probability[i]);
+
+    free(sys->dependency_probability);
 }

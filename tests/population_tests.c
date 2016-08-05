@@ -171,45 +171,37 @@ void test_population_copy()
     if (destination.size != source.size) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(destination.size == source.size);
 
     /* check same mutation rate */
     if ((int)(destination.mutation_rate*1000) != (int)(source.mutation_rate*1000)) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert((int)(destination.mutation_rate*1000) == (int)(source.mutation_rate*1000));
 
     /* check same crossover */
     if ((int)(destination.crossover*1000) != (int)(source.crossover*1000)) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(destination.crossover == source.crossover);
 
     /* check same rebels */
     if ((int)(destination.rebels*1000) != (int)(source.rebels*1000)) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(destination.rebels == source.rebels);
 
     /* check same system */
-    if (memcmp((void*)&source.sys,
-               (void*)&destination.sys,
-               sizeof(sc_system)) != 0) {
+    if (system_cmp((void*)&source.sys,
+                   (void*)&destination.sys) != 0) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(memcmp((void*)&source.sys,
-                  (void*)&destination.sys,
-                  sizeof(sc_genome)) == 0);
 
     /* check same goal */
     if (memcmp((void*)&source.goal,
@@ -217,19 +209,15 @@ void test_population_copy()
                sizeof(sc_goal)) != 0) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(memcmp((void*)&source.goal,
-                  (void*)&destination.goal,
-                  sizeof(sc_goal)) == 0);
 
     /* check same random seed */
     if (destination.random_seed != source.random_seed) {
         population_free(&source);
         population_free(&destination);
-        assert(1==0);
+        assert(0);
     }
-    assert(destination.random_seed == source.random_seed);
 
     /* check that the genomes are the same */
     for (i = 0; i < source.size; i++) {

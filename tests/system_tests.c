@@ -159,6 +159,9 @@ void test_system_create_from_repos()
         assert(file_exists(sys.program[p].versions_file));
     }
 
+    /* deallocate */
+    system_free(&sys);
+
     /* remove the test directory */
     sprintf(commandstr,"rm -rf %s", repo_dir);
     run_shell_command(commandstr);

@@ -81,7 +81,12 @@ typedef struct {
 /* A collection of programs defines the state of a system */
 typedef struct {
     int no_of_programs;
+
+    /* details for each program */
     sc_program program[SC_MAX_SYSTEM_SIZE];
+
+    /* log probabilities for dependencies between programs */
+    double **dependency_probability;
 } sc_system;
 
 /* A minimal description of a change to a system.
@@ -245,6 +250,9 @@ void run_population_tests();
 void run_system_tests();
 
 int system_create_from_repos(sc_system * sys, char * repos_dir);
+void system_free(sc_system * sys);
+int system_copy(sc_system * destination, sc_system * source);
+int system_cmp(sc_system * sys1, sc_system * sys2);
 
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 
