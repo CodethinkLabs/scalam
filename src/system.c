@@ -286,18 +286,17 @@ void system_free(sc_system * sys)
 }
 
 /**
- * @brief Extracts program names from morph files
+ * @brief Extracts a string from a line of a baserock morph file
  * @param sys System object to be updated
  * @param linestr The line of text currently being read within the morph file
- * @param name Returned program name
+ * @param definition_line_prefix What we're looking for at the beginning of the line
+ * @param foundstr Returned found string
  * @returns zero on success
  */
-int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
-                                          char * name)
+int system_from_baserock_get_string(sc_system * sys, char * linestr,
+                                    char * definition_line_prefix,
+                                    char * foundstr)
 {
-    /* this is what to look for in the morph file to indicate a program name */
-    char * definition_line_prefix = "- name:";
-
     int i;
 
     if (strncmp(linestr, definition_line_prefix,
@@ -305,38 +304,9 @@ int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
 
         /* extract the program name */
         for (i = 0; i < strlen(linestr)-strlen(definition_line_prefix)-1; i++) {
-            name[i] = linestr[i+strlen(definition_line_prefix)];
+            foundstr[i] = linestr[i+strlen(definition_line_prefix)];
         }
-        name[i] = 0;
-    }
-
-    return 0;
-}
-
-/**
- * @brief Extracts program names from morph files
- * @param sys System object to be updated
- * @param linestr The line of text currently being read within the morph file
- * @param dependency Returned program name which is a dependency
- * @returns zero on success
- */
-int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
-                                                char * dependency)
-{
-    /* this is what to look for in the morph file to indicate a program dependency */
-    char * definition_line_prefix = "  - ";
-
-    int i;
-
-    dependency[0] = 0;
-    if (strncmp(linestr, definition_line_prefix,
-                strlen(definition_line_prefix)) == 0) {
-
-        /* extract the dependency name */
-        for (i = 0; i < strlen(linestr)-strlen(definition_line_prefix)-1; i++) {
-            dependency[i] = linestr[i+strlen(definition_line_prefix)];
-        }
-        dependency[i] = 0;
+        foundstr[i] = 0;
     }
 
     return 0;
@@ -403,15 +373,16 @@ int system_from_baserock_update_dependencies(char * definitions_dir, sc_system *
                 if (linestr == NULL) continue;
                 if (strlen(linestr) < 3) continue;
 
-                system_from_baserock_get_program_name(sys, (char*)linestr,
-                                                      name);
+
+                system_from_baserock_get_string(sys, (char*)linestr,
+                                                "- name:", name);
                 if (name[0] == 0) continue;
 
                 program_index = system_program_index_from_name(sys, name);
                 if (program_index == -1) continue;
 
-                system_from_baserock_get_program_dependency(sys, (char*)linestr,
-                                                            dependency);
+                dependency[0] = 0;
+                system_from_baserock_get_string(sys, (char*)linestr, "  - ", dependency);
                 if (dependency[0] == 0) continue;
 
                 dependency_index = system_program_index_from_name(sys, dependency);
@@ -479,8 +450,8 @@ int system_from_baserock(char * definitions_dir, sc_system * sys)
                 if (strlen(linestr) < 3) continue;
 
                 prog_name[0] = 0;
-                if (system_from_baserock_get_program_name(sys, (char*)linestr,
-                                                          prog_name) != 0) {
+                if (system_from_baserock_get_string(sys, (char*)linestr,
+                                                    "- name:", prog_name) != 0) {
                     /* free allocated program name strings */
                     for (i = 0; i < sys->no_of_programs; i++)
                         free(program_names[i]);

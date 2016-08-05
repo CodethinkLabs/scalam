@@ -239,18 +239,9 @@ void test_system_cmp()
     printf("Ok\n");
 }
 
-void test_system_from_baserock_get_program_name()
+void test_system_from_baserock_get_string()
 {
-    printf("test_system_from_baserock_get_program_name...");
-
-    /* TODO */
-
-    printf("Ok\n");
-}
-
-void test_system_from_baserock_get_program_dependency()
-{
-    printf("test_system_from_baserock_get_program_dependency...");
+    printf("test_system_from_baserock_get_string...");
 
     /* TODO */
 
@@ -288,8 +279,7 @@ void run_system_tests()
 {
     test_system_copy();
     test_system_cmp();
-    test_system_from_baserock_get_program_name();
-    test_system_from_baserock_get_program_dependency();
+    test_system_from_baserock_get_string();
     test_system_program_index_from_name();
     test_system_create_from_repos();
     test_system_from_baserock_update_dependencies();

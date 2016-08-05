@@ -259,10 +259,9 @@ int system_copy(sc_system * destination, sc_system * source);
 int system_cmp(sc_system * sys1, sc_system * sys2);
 int system_from_baserock_update_dependencies(char * definitions_dir, sc_system * sys);
 int system_from_baserock(char * definitions_dir, sc_system * sys);
-int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
-                                          char * name);
-int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
-                                                char * dependency);
+int system_from_baserock_get_string(sc_system * sys, char * linestr,
+                                    char * definition_line_prefix,
+                                    char * foundstr);
 int system_program_index_from_name(sc_system * sys, char * name);
 int system_program_install_sequence_probability(sc_system * sys,
                                                 char * program_name,
