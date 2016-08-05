@@ -24,4 +24,10 @@ void show_help()
     printf("%s version %s\n\n", (char*)APPNAME, (char*)VERSION);
 
     printf(" -v --version             Show version number\n");
+    printf(" -r --run                 Run a simulation\n");
+    
+    printf("\nSimulation mode:\n");
+    printf(" %s -r|--run repos_dir max_generation\n", (char*)APPNAME);
+    printf("  repos_dir               Directory where repo is located\n");
+    printf("  max_generation          Maximum number of generations to simulate\n");
 }

@@ -42,23 +42,31 @@ int main(int argc, char **argv)
             run_tests();
             return 0;
         }
-        if ((strcmp(argv[i],"-r")==0) ||
-            (strcmp(argv[i],"--run")==0)) {
-            run_simulation();
+        if (((strcmp(argv[i],"-r")==0) ||
+            (strcmp(argv[i],"--run")==0)) &&
+            argc == 4) {
+            
+            
+            char * repos_dir;
+            int generation_max;
+            
+            repos_dir=argv[i+1];
+            generation_max=atoi(argv[i+2]);
+            run_simulation(repos_dir, generation_max);
             return 0;
         }
     }
 
+    printf("Error: Unexpected arguments\n\n");
+    printf("%d passed\n",argc);
+    show_help();
+    
     return 0;
 }
 
 
-void run_simulation()
+void run_simulation(char * repos_dir, int generation_max)
 {
-    /* Possible fn args */
-    char * repos_dir = "../test-sys";
-    int generation_max=50;
-
     /* Init System */
     sc_system sys;
     system_create_from_repos(&sys, repos_dir);
