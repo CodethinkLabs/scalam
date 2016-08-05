@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -81,7 +83,12 @@ typedef struct {
 /* A collection of programs defines the state of a system */
 typedef struct {
     int no_of_programs;
+
+    /* details for each program */
     sc_program program[SC_MAX_SYSTEM_SIZE];
+
+    /* log probabilities for dependencies between programs */
+    double **dependency_probability;
 } sc_system;
 
 /* A minimal description of a change to a system.
@@ -194,6 +201,7 @@ void run_simulation();
 int run_shell_command(char * commandstr);
 int run_shell_command_with_output(char * commandstr, char * output);
 int file_exists(char * filename);
+int directory_exists(char * filename);
 int lines_in_file(char * filename);
 int get_line_number_from_string_in_file(char * filename, char * line);
 int program_name_is_valid(sc_program * prog);
@@ -245,6 +253,19 @@ void run_population_tests();
 void run_system_tests();
 
 int system_create_from_repos(sc_system * sys, char * repos_dir);
+int system_create_dependency_matrix(sc_system * sys);
+void system_free(sc_system * sys);
+int system_copy(sc_system * destination, sc_system * source);
+int system_cmp(sc_system * sys1, sc_system * sys2);
+int system_from_baserock_update_dependencies(char * definitions_dir, sc_system * sys);
+int system_from_baserock(char * definitions_dir, sc_system * sys);
+int system_from_baserock_get_string(sc_system * sys, char * linestr,
+                                    char * definition_line_prefix,
+                                    char * foundstr);
+int system_program_index_from_name(sc_system * sys, char * name);
+int system_program_install_sequence_probability(sc_system * sys,
+                                                char * program_name,
+                                                double * probability);
 
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 

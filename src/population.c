@@ -120,6 +120,7 @@ void population_free(sc_population * population)
 {
     int i;
 
+    /* free the individual genomes */
     for (i = 0; i < population->size; i++) {
         free(population->individual[i]);
         free(population->next_generation[i]);
@@ -127,6 +128,9 @@ void population_free(sc_population * population)
 
     free(population->individual);
     free(population->next_generation);
+
+    /* free the system */
+    system_free(&population->sys);
 }
 
 /**
@@ -184,7 +188,7 @@ int population_copy(sc_population * destination, sc_population * source)
     destination->rebels = source->rebels;
     destination->random_seed = source->random_seed;
     memcpy((void*)&destination->goal, (void*)&source->goal, sizeof(sc_goal));
-    memcpy((void*)&destination->sys, (void*)&source->sys, sizeof(sc_system));
+    system_copy(&destination->sys, &source->sys);
 
     /* allocate memory for the destination population */
     destination->individual =

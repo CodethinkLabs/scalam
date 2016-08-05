@@ -159,6 +159,9 @@ void test_system_create_from_repos()
         assert(file_exists(sys.program[p].versions_file));
     }
 
+    /* deallocate */
+    system_free(&sys);
+
     /* remove the test directory */
     sprintf(commandstr,"rm -rf %s", repo_dir);
     run_shell_command(commandstr);
@@ -166,7 +169,120 @@ void test_system_create_from_repos()
     printf("Ok\n");
 }
 
+void test_system_from_baserock()
+{
+    char * temp_dir;
+    char definitions_dir[SC_MAX_STRING];
+    char * definitions_url = "http://git.baserock.org/git/baserock/baserock/definitions.git";
+    sc_system sys;
+    char commandstr[SC_MAX_STRING];
+    char template[] = "/tmp/scalam.XXXXXX";
+    int retval = 0;
+
+    printf("test_system_from_baserock...");
+
+    /* temporary location for cloning definitions */
+    temp_dir = mkdtemp(template);
+
+    /* create the temporary directory */
+    sprintf(commandstr,"mkdir -p %s", temp_dir);
+    run_shell_command(commandstr);
+    if (!directory_exists(temp_dir)) {
+        printf("\nDirectory %s not found\n", temp_dir);
+        assert(0);
+    }
+
+    /* path where definitions will exist */
+    sprintf(definitions_dir,"%s/definitions", temp_dir);
+
+    /* get the baserock definitions */
+    sprintf(commandstr, "git clone %s %s --quiet",
+            definitions_url, definitions_dir);
+    run_shell_command(commandstr);
+
+    if (!directory_exists(definitions_dir)) {
+        printf("\nDirectory %s not found\n", definitions_dir);
+        retval = 100;
+    }
+    else {
+        retval = system_create_dependency_matrix(&sys);
+        system_free(&sys);
+    }
+
+    /* remove the definitions directory */
+    sprintf(commandstr,"rm -rf %s", definitions_dir);
+    run_shell_command(commandstr);
+
+    /* did the test work? */
+    if (retval != 0)
+        printf("\nretval = %d\n", retval);
+    assert(retval == 0);
+
+    printf("Ok\n");
+}
+
+void test_system_copy()
+{
+    printf("test_system_copy...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_cmp()
+{
+    printf("test_system_cmp...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_from_baserock_get_string()
+{
+    printf("test_system_from_baserock_get_string...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_program_index_from_name()
+{
+    printf("test_system_program_index_from_name...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_from_baserock_update_dependencies()
+{
+    printf("test_system_from_baserock_update_dependencies...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_program_install_sequence_probability()
+{
+    printf("test_system_program_install_sequence_probability...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
 void run_system_tests()
 {
+    test_system_copy();
+    test_system_cmp();
+    test_system_from_baserock_get_string();
+    test_system_program_index_from_name();
     test_system_create_from_repos();
+    test_system_from_baserock_update_dependencies();
+    test_system_from_baserock();
+    test_system_program_install_sequence_probability();
 }
