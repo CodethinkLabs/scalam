@@ -171,14 +171,52 @@ void test_system_create_from_repos()
 
 void test_system_from_baserock()
 {
-    char * definitions_dir = "/home/bashrc/develop/definitions";
+    char * temp_dir;
+    char definitions_dir[SC_MAX_STRING];
+    char * definitions_url = "http://git.baserock.org/git/baserock/baserock/definitions.git";
     sc_system sys;
+    char commandstr[SC_MAX_STRING];
+    char template[] = "/tmp/scalam.XXXXXX";
+    int retval = 0;
 
     printf("test_system_from_baserock...");
 
-    assert(system_create_dependency_matrix(&sys) == 0);
-    assert(system_from_baserock(definitions_dir, &sys) == 0);
-    system_free(&sys);
+    /* temporary location for cloning definitions */
+    temp_dir = mkdtemp(template);
+
+    /* create the temporary directory */
+    sprintf(commandstr,"mkdir -p %s", temp_dir);
+    run_shell_command(commandstr);
+    if (!directory_exists(temp_dir)) {
+        printf("\nDirectory %s not found\n", temp_dir);
+        assert(0);
+    }
+
+    /* path where definitions will exist */
+    sprintf(definitions_dir,"%s/definitions", temp_dir);
+
+    /* get the baserock definitions */
+    sprintf(commandstr, "git clone %s %s --quiet",
+            definitions_url, definitions_dir);
+    run_shell_command(commandstr);
+
+    if (!directory_exists(definitions_dir)) {
+        printf("\nDirectory %s not found\n", definitions_dir);
+        retval = 100;
+    }
+    else {
+        retval = system_create_dependency_matrix(&sys);
+        system_free(&sys);
+    }
+
+    /* remove the definitions directory */
+    sprintf(commandstr,"rm -rf %s", definitions_dir);
+    run_shell_command(commandstr);
+
+    /* did the test work? */
+    if (retval != 0)
+        printf("\nretval = %d\n", retval);
+    assert(retval == 0);
 
     printf("Ok\n");
 }

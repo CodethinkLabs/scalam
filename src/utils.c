@@ -37,6 +37,22 @@ int file_exists(char * filename)
 }
 
 /**
+ * @brief Returns non-zero value if the given directory exists
+ * @param directory Name of the directory
+ * @returns True if the directory exists
+ */
+int directory_exists(char * directory)
+{
+    struct stat sb;
+
+    if (stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+/**
  * @brief Returns the total number of lines in a file
  * @param filename Name of the file
  * @returns Number of lines in the file

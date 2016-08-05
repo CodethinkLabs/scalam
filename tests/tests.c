@@ -40,6 +40,26 @@ void test_file_exists()
     printf("Ok\n");
 }
 
+void test_directory_exists()
+{
+    char * test_directory = "/tmp/scalam_test_directory_exists";
+    char cmdstr[SC_MAX_STRING];
+
+    printf("test_directory_exists...");
+
+    sprintf(cmdstr, "mkdir -p %s", test_directory);
+    run_shell_command(cmdstr);
+
+    assert(directory_exists(test_directory));
+
+    sprintf(cmdstr, "rm -rf %s", test_directory);
+    run_shell_command(cmdstr);
+
+    assert(!directory_exists(test_directory));
+
+    printf("Ok\n");
+}
+
 void test_software_exists()
 {
     char * test_software = "nano";
@@ -106,8 +126,11 @@ void run_tests()
     printf("Running unit tests for %s version %s\n",
            (char*)APPNAME, (char*)VERSION);
 
+    run_shell_command("rm -rf /tmp/scalam.*");
+
     test_rand_num();
     test_file_exists();
+    test_directory_exists();
     test_software_exists();
     test_run_shell_command_with_output();
     test_get_line_number_from_string_in_file();
@@ -116,7 +139,9 @@ void run_tests()
     run_population_tests();
     run_genome_tests();
     run_goal_tests();
-	run_plot_tests();
-	
+    run_plot_tests();
+
+    run_shell_command("rm -rf /tmp/scalam.*");
+
     printf("All tests passed\n");
 }

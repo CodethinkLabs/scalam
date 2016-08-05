@@ -27,6 +27,7 @@
 #include <time.h>
 #include <math.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #define APPNAME "scalam"
 #define VERSION "0.1"
@@ -200,6 +201,7 @@ void run_simulation();
 int run_shell_command(char * commandstr);
 int run_shell_command_with_output(char * commandstr, char * output);
 int file_exists(char * filename);
+int directory_exists(char * filename);
 int lines_in_file(char * filename);
 int get_line_number_from_string_in_file(char * filename, char * line);
 int program_name_is_valid(sc_program * prog);
