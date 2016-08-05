@@ -183,8 +183,68 @@ void test_system_from_baserock()
     printf("Ok\n");
 }
 
+void test_system_copy()
+{
+    printf("test_system_copy...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_cmp()
+{
+    printf("test_system_cmp...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_from_baserock_get_program_name()
+{
+    printf("test_system_from_baserock_get_program_name...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_from_baserock_get_program_dependency()
+{
+    printf("test_system_from_baserock_get_program_dependency...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_program_index_from_name()
+{
+    printf("test_system_program_index_from_name...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
+void test_system_from_baserock_update_dependencies()
+{
+    printf("test_system_from_baserock_update_dependencies...");
+
+    /* TODO */
+
+    printf("Ok\n");
+}
+
 void run_system_tests()
 {
+    test_system_copy();
+    test_system_cmp();
+    test_system_from_baserock_get_program_name();
+    test_system_from_baserock_get_program_dependency();
+    test_system_program_index_from_name();
     test_system_create_from_repos();
+    test_system_from_baserock_update_dependencies();
     test_system_from_baserock();
 }

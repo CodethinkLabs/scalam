@@ -255,7 +255,13 @@ int system_create_dependency_matrix(sc_system * sys);
 void system_free(sc_system * sys);
 int system_copy(sc_system * destination, sc_system * source);
 int system_cmp(sc_system * sys1, sc_system * sys2);
+int system_from_baserock_update_dependencies(char * definitions_dir, sc_system * sys);
 int system_from_baserock(char * definitions_dir, sc_system * sys);
+int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
+                                          char * name);
+int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
+                                                char * dependency);
+int system_program_index_from_name(sc_system * sys, char * name);
 
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 
