@@ -24,21 +24,24 @@ void test_plot_create_dataframe()
 {
     printf("test_plot_create_dataframe...");
 
-    sc_dataframe df;
+    sc_dataframe *df=(sc_dataframe *)malloc(sizeof(sc_dataframe));
     sc_population population;
     test_population_dummy(&population);
     
-    plot_create_dataframe(&df, &population);
+    plot_create_dataframe(df, &population);
 
     /* Check that there are no slices yet */
-    assert(df.slice_no == 0);
+    assert(df->slice_no == 0);
     
     /* Check that simulation params were copied correctly */
-    assert(df.population_size == population.size);
-    assert(df.mutation_rate == population.mutation_rate);
-    assert(df.crossover == population.crossover);
-    assert(df.rebels == population.rebels);
-    assert(df.random_seed == population.random_seed);
+    assert(df->population_size == population.size);
+    assert(df->mutation_rate == population.mutation_rate);
+    assert(df->crossover == population.crossover);
+    assert(df->rebels == population.rebels);
+    assert(df->random_seed == population.random_seed);
+    
+    
+    plot_dataframe_free(df);
     
     printf("Ok\n");
 }
@@ -47,38 +50,38 @@ void test_plot_dataframe_slice()
 {
     printf("test_plot_dataframe_slice...");
 
-    sc_dataframe df;
+    sc_dataframe *df=(sc_dataframe *)malloc(sizeof(sc_dataframe));
     sc_population population;
     test_population_dummy(&population);
     
-    plot_create_dataframe(&df, &population);
+    plot_create_dataframe(df, &population);
     
     /* Create 5 slices */
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    plot_create_df_slice(&df, &population);
-    
-    assert(df.slice_no==5);
-    
     int i;
+    for (i=0; i<5; i++)
+    {
+        plot_create_df_slice(df, &population);
+    }
+    assert(df->slice_no==5);
+    
     for(i=0; i<5; i++)
     {
         /* Cycle number corresponds to generation index */
-        assert(df.slice[i].cycle_no==i);
+        assert(df->slice[i]->cycle_no==i);
         
         /* Population should remain the same as before */
-        assert(df.slice[i].population_size==population.size);
+        assert(df->slice[i]->population_size==population.size);
         
         /* Check that all the scores are correct */
         int j;
         for(j=0; j<population.size; j++)
         {
-            assert(df.slice[i].scores[j]==population_get_score(&population, j));
+            assert(df->slice[i]->scores[j]==population_get_score(&population, j));
         }
     }
 
+    plot_dataframe_free(df);
+    
     printf("Ok\n");
 }
 
@@ -86,20 +89,21 @@ void test_plot_save()
 {
     printf("test_plot_save...");
 
-    sc_dataframe df;
+    sc_dataframe *df=(sc_dataframe *)malloc(sizeof(sc_dataframe));
     sc_population population;
     test_population_dummy(&population);
     
-    plot_create_dataframe(&df, &population);
+    plot_create_dataframe(df, &population);
     
     /* Create 5 slices */
     int i;
     for(i=0; i<5; i++)
     {
-        plot_create_df_slice(&df, &population);
+        plot_create_df_slice(df, &population);
     }
   
-    plot_dataframe_save(&df);
+    plot_dataframe_save(df);
+    plot_dataframe_free(df);
     
     printf("Manual check required\n");
     printf("\t* run : python tools/generate_plot_generation_scores.py\n");
