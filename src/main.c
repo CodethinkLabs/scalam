@@ -42,24 +42,31 @@ int main(int argc, char **argv)
             run_tests();
             return 0;
         }
-        if ((strcmp(argv[i],"-r")==0) ||
-            (strcmp(argv[i],"--run")==0)) {
-            run_simulation();
+        if (((strcmp(argv[i],"-r")==0) ||
+            (strcmp(argv[i],"--run")==0)) &&
+            argc == 4) {
+            
+            
+            char * repos_dir;
+            int generation_max;
+            
+            repos_dir=argv[i+1];
+            generation_max=atoi(argv[i+2]);
+            run_simulation(repos_dir, generation_max);
             return 0;
         }
     }
 
+    printf("Error: Unexpected arguments\n\n");
+    printf("%d passed\n",argc);
+    show_help();
+    
     return 0;
 }
 
 
-void run_simulation()
+void run_simulation(char * repos_dir, int generation_max)
 {
-    /* Possible fn args */
-    int population_size=100;
-    char * repos_dir = "../test-sys";
-    int generation_max=10000;
-
     /* Init System */
     sc_system sys;
     system_create_from_repos(&sys, repos_dir);
@@ -72,12 +79,12 @@ void run_simulation()
 
 
     /* Init population */
-    sc_population population;
-    population_create(population_size, &population, &sys, &goal);
+    sc_population *population=(sc_population *)malloc(sizeof(sc_population));
+    population_create(sys.no_of_programs, population, &sys, &goal);
 
     /* Init Dataframe for recording output */
-    sc_dataframe df;
-    plot_create_dataframe(&df, &population);
+    sc_dataframe *df = (sc_dataframe *)malloc(sizeof(sc_dataframe));
+    plot_create_dataframe(df, population);
 
     /* Start simulation */
     /* TODO init scores already set? */
@@ -86,10 +93,10 @@ void run_simulation()
     for(i=0; i<generation_max; i++)
     {
         /* Record data about the population before any changes */
-        plot_create_df_slice(&df, &population);
+        plot_create_df_slice(df, population);
 
         int j;
-        for(j=0; j<population.size; j++)
+        for(j=0; j<population->size; j++)
         {
             /* TODO
              *
@@ -97,13 +104,13 @@ void run_simulation()
              * - Run in container
              * - Record which programs instal/run/pass tests
              */
-            float score=system_build(&population, j);
-            printf("[%d,%d] Score = %f",i,j,score);
+            float score=system_build(population, j);
+            //printf("[%d,%d] Score = %f\n",i,j,score);
             
-			plot_create_df_slice(&df, &population);
+			plot_create_df_slice(df, population);
         }
 
-        float highest_score = population_best_score(&population);
+        float highest_score = population_best_score(population);
         if(highest_score == goal_score) /* FIXME float cmp */
         {
             /* TODO
@@ -111,10 +118,10 @@ void run_simulation()
              * End condition once we have found a successful candidate.
              * Exit or keep going?
              */
-            printf("A possible solution found");
+            printf("A possible solution found\n");
         }
 
-        ret=population_next_generation(&population);
+        ret=population_next_generation(population);
         if(ret!=0)
         {
             /* TODO
@@ -125,5 +132,8 @@ void run_simulation()
     }
 
     /* Make sure we have a copy of the data to analyse */
-    plot_dataframe_save(&df);
+    plot_dataframe_save(df);
+    
+    free(population);
+    plot_dataframe_free(df);
 }

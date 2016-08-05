@@ -29,12 +29,14 @@ import matplotlib.ticker as ticker
 df=pd.DataFrame.from_csv('dataframe.csv', index_col=None);
 
 sns.set_style("whitegrid")
+
 ax=sns.boxplot(df.score, groupby=df.cycle_ix)
+
 ax.set_xlabel("Generation iteration")
 ax.set_ylabel("Score")
 ax.set_title("Distribution of scores over x generations (mutation=??, rebel=??, ...)")
 
-majorLocator   = ticker.MultipleLocator(5)
+majorLocator   = ticker.MultipleLocator(10)
 majorFormatter = ticker.FormatStrFormatter('%d')
 minorLocator   = ticker.MultipleLocator(1)
 

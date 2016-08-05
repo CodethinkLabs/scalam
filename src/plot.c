@@ -27,19 +27,19 @@
  */
 void plot_create_df_slice(sc_dataframe * df, sc_population * population)
 {
-    sc_dataframe_slice slice;
+    sc_dataframe_slice *slice=(sc_dataframe_slice *)malloc(sizeof(sc_dataframe_slice));
 
     /* Dataframe Fields */
-    slice.population_size=population->size;
+    slice->population_size=population->size;
     /*slice.cycle_no=population->history_index;*/
 
     int i;
     /* Get the current scores for all the genomes */
     for (i=0; i<population->size; i++)
     {
-        slice.scores[i]=population_get_score(population, i);
+        slice->scores[i]=population_get_score(population, i);
     }
-    slice.cycle_no=df->slice_no;
+    slice->cycle_no=df->slice_no;
     
     df->slice[df->slice_no]=slice;
     df->slice_no++;
@@ -61,6 +61,10 @@ void plot_create_dataframe(sc_dataframe * df, sc_population * population)
     df->crossover=population->crossover;
     df->rebels=population->rebels;
     df->random_seed=population->random_seed;
+    
+    /* Allocate space for all the slices */
+    df->slice = (sc_dataframe_slice **)
+                    malloc(sizeof(sc_dataframe_slice *)*SC_MAX_DF_SIZE);
 }
 
 
@@ -85,9 +89,9 @@ void plot_dataframe_save(sc_dataframe * df)
         for( i=0; i< df->slice_no; i++)
         {
             /* Each genome score for this cycle */
-            for( j=0; j< df->slice[i].population_size; j++)
+            for( j=0; j< df->slice[i]->population_size; j++)
             {
-                fprintf(fp, "%d,%d,%f\n", i, j, df->slice[i].scores[j]);
+                fprintf(fp, "%d,%d,%f\n", i, j, df->slice[i]->scores[j]);
             }
         }
 
@@ -95,4 +99,22 @@ void plot_dataframe_save(sc_dataframe * df)
     }
 
 
+}
+
+/**
+ * @brief Frees the memory used within the dataframe
+ * @param df The dataframe to free
+ * @returns
+ */
+void plot_dataframe_free(sc_dataframe * df)
+{
+    /* Free all the df slices */
+    int i;
+    for( i=0; i< df->slice_no; i++)
+    {
+        free(df->slice[i]);
+    }
+    
+    /* Free up main df object */
+    free(df);
 }

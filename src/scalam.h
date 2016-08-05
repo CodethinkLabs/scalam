@@ -176,7 +176,7 @@ typedef struct {
 typedef struct {
     /* As score data is only known per iteration, generate a slice per iteration */
     int slice_no;
-    sc_dataframe_slice slice[SC_MAX_CHANGE_SEQUENCE];
+    sc_dataframe_slice **slice;
 
     /* List of params used for the simulation */
 
