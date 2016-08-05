@@ -534,3 +534,29 @@ int system_from_baserock(char * definitions_dir, sc_system * sys)
 
     return system_from_baserock_update_dependencies(definitions_dir, sys);
 }
+
+/**
+ * @brief Given a program name what is the probability of it being installed
+ *        where zero indicates close to the start of the install sequence and 1.0
+ *        indicates close to the end.
+ *        This can be used as a bias when selecting possible programs to install
+ *        at a given install step (specified within sc_genome)
+ * @param sys System object
+ * @param program_name Name of the program
+ * @returns zero on success
+ */
+int system_program_install_sequence_probability(sc_system * sys, char * program_name,
+                                                double * probability)
+{
+    int index = system_program_index_from_name(sys, program_name);
+
+    /* check that the program exists within the system */
+    if (index < 0)
+        return 1;
+
+    *probability = 0.0;
+
+    /* TODO */
+
+    return 0;
+}

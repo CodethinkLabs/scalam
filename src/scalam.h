@@ -262,6 +262,9 @@ int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
 int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
                                                 char * dependency);
 int system_program_index_from_name(sc_system * sys, char * name);
+int system_program_install_sequence_probability(sc_system * sys,
+                                                char * program_name,
+                                                double * probability);
 
 int goal_create_latest_versions(sc_system * sys, sc_goal * goal);
 
