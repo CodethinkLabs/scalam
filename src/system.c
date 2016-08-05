@@ -296,16 +296,16 @@ int system_from_baserock_get_program_name(sc_system * sys, char * linestr,
                                           char * name)
 {
     /* this is what to look for in the morph file to indicate a program name */
-    char * definition_name = "- name:";
+    char * definition_line_prefix = "- name:";
 
     int i;
 
-    if (strncmp(linestr, definition_name,
-                strlen(definition_name)) == 0) {
+    if (strncmp(linestr, definition_line_prefix,
+                strlen(definition_line_prefix)) == 0) {
 
         /* extract the program name */
-        for (i = 0; i < strlen(linestr)-strlen(definition_name)-1; i++) {
-            name[i] = linestr[i+strlen(definition_name)];
+        for (i = 0; i < strlen(linestr)-strlen(definition_line_prefix)-1; i++) {
+            name[i] = linestr[i+strlen(definition_line_prefix)];
         }
         name[i] = 0;
     }
@@ -324,17 +324,17 @@ int system_from_baserock_get_program_dependency(sc_system * sys, char * linestr,
                                                 char * dependency)
 {
     /* this is what to look for in the morph file to indicate a program dependency */
-    char * definition_name = "  - ";
+    char * definition_line_prefix = "  - ";
 
     int i;
 
     dependency[0] = 0;
-    if (strncmp(linestr, definition_name,
-                strlen(definition_name)) == 0) {
+    if (strncmp(linestr, definition_line_prefix,
+                strlen(definition_line_prefix)) == 0) {
 
         /* extract the dependency name */
-        for (i = 0; i < strlen(linestr)-strlen(definition_name)-1; i++) {
-            dependency[i] = linestr[i+strlen(definition_name)];
+        for (i = 0; i < strlen(linestr)-strlen(definition_line_prefix)-1; i++) {
+            dependency[i] = linestr[i+strlen(definition_line_prefix)];
         }
         dependency[i] = 0;
     }
