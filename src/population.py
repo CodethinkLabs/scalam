@@ -18,7 +18,7 @@
 '''
 
 class Population:
-    def __init__(self):
+    def __init__(self, size, sys, goal):
         '''
         * @brief For a given goal create a population of possible upgrade paths
         * @param size Number of individuals in the population.
@@ -30,6 +30,20 @@ class Population:
         * @returns zero on success
         int population_create()
         '''
+        
+        ##Type checking params
+        if not isinstance(size, (int, long)):
+            raise TypeError("Population size expects an int");
+         
+        if not isinstance(sys, System):
+            raise TypeError("Population sys expects a System instance");
+           
+        if not isinstance(goal, Goal):
+            raise TypeError("Population goal expects a Goal instance");
+          
+        self.size=size
+        self.sys=sys
+        self.goal=goal
         pass
     
     def createDirectAscentGenome(self):
