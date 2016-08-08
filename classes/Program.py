@@ -1,40 +1,34 @@
 class Program:
+    ## Constructor
+    # @param name Name of the program
+    # @param repoUrl Optional repository URL
     def __init__(self, name, repoUrl=""):
         self.name = name
 
-        """ Where is the repo? """
+        ## Where is the repo?
         self.repoUrl = repoUrl
 
-        """
-        List of versions/commits
-        """
+        ## List of versions/commits
         self.versions = []
 
-        """
-        Index within the list of the current version
-        which this program is on
-        """
+        ## Index within the list of the current version
+        ## which this program is on
         self.versionIndex = 0
 
-        """
-        Is the program installed or not
-        """
+        ## Is the program installed or not
         self.installed = False
 
+    ## Create from a repo
+    # @param repoURL Repository URL to create from
     def FromRepo(repoUrl):
-        """
-        Create from a repo
-        """
 
         this.repoUrl = repoUrl
 
-        """ TODO """
+        ## TODO
 
+    ## Get the current commit or version number as a string
+    # @returns Current commit or version number
     def GetCurrent():
-        """
-        Get the current version or commit
-        """
-
         if self.versionsIndex < 0:
             return ""
 
@@ -43,10 +37,9 @@ class Program:
 
         return self.versions[self.versionsIndex]
 
+    ## Get the current version or commit
+    # @param index index number within the versions list
     def SetCurrent(index):
-        """
-        Get the current version or commit
-        """
 
         if index >= len(self.versions):
             return False
