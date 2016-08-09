@@ -16,16 +16,19 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
+import sys
+sys.path.insert(0, "../src/")
 
-def unify(somestr, encoding='utf-8'):
-    '''
-    Makes a unicode version of a (byte) string.
-    '''
+from utils import *
+
+def test_unify():
+    byte_array="Hello world!"
     
-    #Checks to see if already unicode
-    if isinstance(somestr, unicode):
-        return somestr
+    resp=unify(byte_array)
     
-    somestr.decode('utf-8')
+    # resp should be encoded correctly here
+    assert(isinstance(resp,unicode))
     
-    return somestr.decode(encoding)
+    ##assert(resp is u"Hello world!")
+    
+    return

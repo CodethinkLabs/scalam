@@ -17,6 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import os
 from utils import unify
 
 # https://github.com/gitpython-developers/GitPython
@@ -50,22 +51,14 @@ class Program:
         self.directory=directory
         self.installed=installed
     
+    
+    
     def getCurrentHead(self):
         '''
         Returns the latest version or commit for the software
         '''
         
         return self.repo_ref.getHead()
-    
-    @staticMethod
-    def isValidName():
-        '''
-        * @brief Checks whether the name of the given program is valid
-        * @param prog Program object
-        * @returns Zero on success
-        int program_name_is_valid()
-        '''
-        pass
     
     def getName(self):
         '''
@@ -156,6 +149,22 @@ class Program:
         '''
         return self.git_ref.getVersions()
     
+    
+    @staticmethod
+    def isValidName(name):
+        '''
+        Checks whether the name of the given program is valid
+        @return bool
+        '''
+ 
+        if not isinstance(name,(str,unicode)):
+            raise TypeError(u"Program.isValidName 'name' expects a string")
+        
+        # TODO do we only care if the first char is a letter?
+        if not name[0].isalpha():
+            return False
+        
+        return True
 
 class AbsRepoType:
     def assertValidDirectory(self, directory):
@@ -166,13 +175,13 @@ class AbsRepoType:
         if not os.path.exists(directory):
             raise IOError(u"%s 'path' given does not exist"%self.__class__.__name__)
     
-    @abstractmethod
+
     def getVersions(self):
-        pass
+        raise NotImplementedError
     
-    @abstractmethod
+
     def getHead(self):
-        pass
+        raise NotImplementedError
     
     
 class DirType(AbsRepoType):
@@ -183,7 +192,7 @@ class GitType(AbsRepoType):
         if not isinstance(url,(str,unicode)):
             raise TypeError(u"GitType 'url' expects a string")  
         
-        assertValidDirectory(clone_path)
+        self.assertValidDirectory(clone_path)
         
         self.url=url
         self.path=clone_path
