@@ -17,79 +17,62 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import os
+from utils import unify
+
+# https://github.com/gitpython-developers/GitPython
+try:
+    import git
+except ImportError:
+    assert("GitPython libary missing. For installation instructions "
+           "see: https://github.com/gitpython-developers/GitPython")
+
+
 class Program:
-    def __init__(self):
-        pass
+    def __init__(self, repo, name=None, installed=False):
+        '''
+        @param name (String) Name of the program
+        @param installed (bool) If the program is installed or not
+        '''
+        
+        ##Type checking params
+        if not isinstance(repo, AbsRepoType):
+            raise TypeError(u"Program 'repo' expects a repo type e.g. GitType")
+        
+        # TODO name could be obmitted and recovered from directory/repo?
+        if not isinstance(name,(str,unicode)):
+            raise TypeError(u"Program 'name' expects a string")
+
+        if not isinstance(installed,bool):
+            raise TypeError(u"Program 'installed' expects a bool")       
+
+        self.repo_ref=repo
+        self.name=unify(name)
+        self.directory=directory
+        self.installed=installed
     
-    def getCurrentCheckout(self):
-        '''
-        * @brief for a cloned program git repo return the current checkout point
-        * @param repo_dir Directory containing the git repo
-        * @param commit The returned commit, or an empty string
-        * @returns zero on success
-        */
-        int program_repo_get_current_checkout()
-        '''
-        pass
+    
     
     def getCurrentHead(self):
         '''
-        * @brief for a cloned program git repo return the HEAD commit
-        * @param repo_dir Directory containing the git repo
-        * @param commit The returned HEAD commit, or an empty string
-        * @returns zero on success
-        */
-        int program_repo_get_head()
+        Returns the latest version or commit for the software
         '''
-        pass
-    
-    @staticMethod
-    def isValidName():
-        '''
-        * @brief Checks whether the name of the given program is valid
-        * @param prog Program object
-        * @returns Zero on success
-        int program_name_is_valid()
-        '''
-        pass
+        
+        return self.repo_ref.getHead()
     
     def getName(self):
         '''
-        * @brief Sets the program name from the repo information
-        * @param prog Program object
-        * @param repos_dir Directory where the git repo will be checked out
-        * @returns Zero on success
-        */
-        int program_name_from_repo()
+        Gets the name of the repo/program
         '''
-        pass
+        
+        return self.name
     
-    def getVersionFromIndex(self):
-        '''
-        * @brief Returns the commit or version number for the given index number.
-        *        Within sc_program an index number indicates what version the program
-        *        is currently on.
-        * @paam prog Program object
-        * @param version_index The desired version index. This could be the same as
-        *                      prog->version_index, or might be different
-        * @param version The returned commit or version number string
-        * @returns zero on success
-        */
-        int program_version_from_index()
-        '''
-        pass
     
-    def getVersionFromGit(self):
-        '''
-        * @brief Gets a list of commits from a git repo as a file called versions.txt
-        * @param repos_dir Directory where the git repo will be checked out
-        * @param repo_url URL of the git repo
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_git()
-        '''
-        pass
+    
+    
+    ##
+    # TODO - Includes renaming/re-factoring into current code
+    ##
     
     def getVersionFromChangelog(self):
         '''
@@ -160,13 +143,87 @@ class Program:
         '''
         pass
     
-    def getCommits(self):
+    def getVersions(self):
         '''
-        * @brief Gets a list of commits from a repo directory
-        * @param repo_dir Directory where the git repo exists
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_repo_get_commits(
+        Gets a list of version/commits from a repo
         '''
-        pass
+        return self.git_ref.getVersions()
+    
+    
+    @staticmethod
+    def isValidName(name):
+        '''
+        Checks whether the name of the given program is valid
+        @return bool
+        '''
+ 
+        if not isinstance(name,(str,unicode)):
+            raise TypeError(u"Program.isValidName 'name' expects a string")
+        
+        # TODO do we only care if the first char is a letter?
+        if not name[0].isalpha():
+            return False
+        
+        return True
+
+class AbsRepoType:
+    def assertValidDirectory(self, directory):
+        if not isinstance(directory,(str,unicode)):
+            raise TypeError(u"%s 'directory' expects a string"%self.__class__.__name__)
+        
+        #TODO check if exists, fail or create? currently fails
+        if not os.path.exists(directory):
+            raise IOError(u"%s 'path' given does not exist"%self.__class__.__name__)
+    
+
+    def getVersions(self):
+        raise NotImplementedError
+    
+
+    def getHead(self):
+        raise NotImplementedError
+    
+    
+class DirType(AbsRepoType):
+    pass
+class GitType(AbsRepoType):
+    def __init__(self, url, clone_path):
+        
+        if not isinstance(url,(str,unicode)):
+            raise TypeError(u"GitType 'url' expects a string")  
+        
+        self.assertValidDirectory(clone_path)
+        
+        self.url=url
+        self.path=clone_path
+        
+        #Do the git clone
+        self.git_ref=git.Repo.clone_from(url=url, to_path=clone_path)
+        
+    def getVersions(self):
+        '''
+        Grab all of the version shas of this git repo
+        
+        @return List of versions
+        '''
+        
+        versions=[]
+        #Grab all of the shas from this repo
+        for commits in self.git_ref.iter_commits():
+            versions.append(commits.hexsha)
+        
+        return versions
+    
+    def getHead(self):
+        '''
+        Grabs the commit sha of HEAD
+        '''
+        
+        return self.git_ref.head.ref.commit.hexsha
+
+class TarType(AbsRepoType):
+    pass
+class DebType(AbsRepoType):
+    pass
+class RpmType(AbsRepoType):
+    pass

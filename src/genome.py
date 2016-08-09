@@ -18,7 +18,16 @@
 '''
 
 class Genome:
-    def __init__(self):
+    def __init__(self, seed=None):
+        
+        # If no seed given, generate a new random seed
+        #if seed is None:
+        #   seed= 
+            
+        skip
+        
+    @staticMethod
+    def createRandom():
         '''
         * @brief Ahistorically create a new individual.
         *        This creates a completely random upgrade sequence.
@@ -29,7 +38,11 @@ class Genome:
         * @returns zero on success
         genome_create()
         '''
-        skip
+        
+        genome=Genome()
+        
+        
+        pass
         
     def createInstallationStep(self):
         '''
