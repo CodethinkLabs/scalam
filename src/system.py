@@ -17,122 +17,81 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import copy
+
 class System:
-    def __init__(self):
+    def __init__(self, repo_dir=None, definitions=None, programs=None):
         '''
-        * @brief Creates a system definition from a set of git repos within
-        *        a given directory
-        * @param sys System definition
-        * @param repos_dir The directory where the repos exist
-        * @returns zero on success
-        */
-        int system_create_from_repos
+        A system (collection of programs) can be created in at least 4 ways
         
-        * @brief Extracts programs and their dependencies from baserock strata files
-        * @brief definitions_dir The directory where baserock definitions exist
-        * @param sys System object
-        * @returns zero on success
-        */
-        int system_from_baserock()
+        - (repo_dir) Local directory containing git checkouts of programs
+        - (definitions) Baserock stratam file
+        - (programs) List of Program instances
+        - () There was another way honest
         '''
-        pass
+        
+        # Check that more than one entry has been given
+        if [repo_dir, definitions, programs].count(None) is not 2:
+            raise TypeError(u"System expects ONLY a repo_dir, definitions or programs, parameter")
+        
+        # Scan directory for programs (git)
+        if repo_dir is not None:
+            #TODO
+            self.programs=[]
+        # Parse definitions
+        elif definitions is not None:
+            #TODO
+            self.programs=[]
+        # List of program instances given
+        elif programs is not None:
+            #TODO check that this is a list and all members are Programs
+            self.programs=programs
     
-    def addProgram(self):
+    def addProgram(self, program):
         '''
-        * @brief Adds a program to a system from a directory containing repos
-        * @param sys System object
-        * @param repos_dir The directory which contains the repos
-        * @param subdirectory The subdirectory of repos_dir currently being scanned
-        * @param ctr Character position during scan of the returned directories
-        * @returns zero on success
-        */
-        int system_add_program_from_repo_directory(
+        Adds a program to a system
         '''
-        pass
+        
+        ##Type checking params
+        if not isinstance(program, Program):
+            raise TypeError(u"System.addProgram 'program' expects a Program instance")
+        
+        self.programs.append(program)
     
     def dependencyMatrix(self):
         '''
-        * @brief Create a dependency matrix for a system
-        * @param sys System definition
-        * @returns zero on success
-        */
-        int system_create_dependency_matrix(
+        Create a dependency matrix for a system
+        
+        TODO
         '''
         pass
     
     def build(self):
         '''
-        * @brief Tries to build each component of the system in a container.
-        *        Scores for each program/genome are set based on build success
-        *        and number of automated tests passed
-        * @param population Population definition
-        * @param pop_ix The index of the population
-        * @returns float total score of this system
-        */
-        float system_build(
-        '''
-        pass
-    
-    def getBaserockString(self):
-        '''
-        * @brief Extracts a string from a line of a baserock morph file
-        * @param sys System object to be updated
-        * @param linestr The line of text currently being read within the morph file
-        * @param definition_line_prefix What we're looking for at the beginning of the line
-        * @param foundstr Returned found string
-        * @returns zero on success
-        */
-        int system_from_baserock_get_string
-        
-        TODO ?
-        '''
-        pass
-    
-    def getBaserockUpdateDepenedencies(self):
-        '''
-        * @brief Updates the dependency matrix for a system from baserock definitions
-        * @brief definitions_dir The directory where baserock definitions exist
-        * @param sys System object
-        * @returns zero on success
-        */
-        int system_from_baserock_update_dependencies()
-        
-        TODO Have a feeling this shouldn't be here. New class/use existing baserock code?
+        Tries to build each component of the system. Scores for each program/genome
+        are set based on build success and number of automated tests passed
+
+        TODO
         '''
         
-    
-    
-    def getIndexFromName(self):
+        for prog in self.programs:
+            #TODO do something
+            pass
+        
+        
+    def clone(self):
         '''
-        * @brief Given the name of a program return its array index within a system
-        * @param sys System object
-        * @param name The program name to search for
-        * @returns Array index of the program, or -1 if not found
-        */
-        int system_program_index_from_name()
+        Makes a copy of the current System instance
         '''
-        pass
+        
+        #TODO shallow or deep copy? Does it matter?
+        
+        # Make a shallow copy
+        return copy.copy(self)
     
-    
-    
-    def __clone__(self):
-        '''
-        * @brief Copies from one system object to another
-        * @param destination Location to copy to
-        * @param source Location to copy from
-        * @returns zero on success
-        */
-        int system_copy(
-        '''
-        pass
-    
-    def __cmp__(self, sys):
-        '''
-        * @brief Compares two systems
-        * @param sys1 The first system object
-        * @param sys2 The second system object
-        * @returns zero is the systems are the same
-        */
-        int system_cmp
-        '''
-        pass
+    def __eq__(self, sys):
+        # If sys isn't a System, then it is clearly not equal
+        if not isinstance(sys, System):
+            return False
+        
+        return self.programs == sys.programs

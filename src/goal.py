@@ -17,12 +17,19 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from system import System
+
 class Goal:
-    def __init__(self):
-        pass
+    def __init__(self, system):
+        
+        ##Type checking params
+        if not isinstance(system, System):
+            raise TypeError(u"Goal 'system' expects a System instance")
     
-    @staticMethod
-    def latestVersion():
+        self.system=system
+    
+    @staticmethod
+    def latestVersion(system):
         '''
         * @brief Creates a goal to try to get to the latest versions
         * @param sys System object
@@ -30,7 +37,16 @@ class Goal:
         * @returns zero on success
         int goal_create_latest_versions()
         '''
-        pass
+ 
+        ##Type checking params
+        if not isinstance(system, System):
+            raise TypeError(u"Goal 'system' expects a System instance")       
+        
+        goal=Goal(system)
+        
+        # TODO cycle through system and select the highest commit
+        
+        return goal
     
     def getMax(self):
         '''

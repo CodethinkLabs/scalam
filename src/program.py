@@ -31,6 +31,7 @@ except ImportError:
 class Program:
     def __init__(self, repo, name="", installed=False):
         '''
+        @param repo (AbsRepoType) Instance of
         @param name (String) Name of the program
         @param installed (bool) If the program is installed or not
         '''

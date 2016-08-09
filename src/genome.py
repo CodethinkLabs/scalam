@@ -26,7 +26,7 @@ class Genome:
             
         skip
         
-    @staticMethod
+    @staticmethod
     def createRandom():
         '''
         * @brief Ahistorically create a new individual.
