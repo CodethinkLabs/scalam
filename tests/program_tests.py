@@ -92,4 +92,22 @@ class TestProgram(unittest.TestCase):
         self.assertTrue(versions[3] == u"a02b369a75fbb20bb79908cbb64447538c2fedec")
 
     def test_valid_name(self):
-        self.assertTrue(True)
+        expected_head="5b2a7bffd0a7f564f55977a72429f36d0cdc9eaa"
+        repo_dir=tempfile.mkdtemp('.scalam')
+        repo_url="https://github.com/CodethinkLabs/frepo"
+        repo_name="frepo"
+
+        # Create the git instance and clone
+        gtype=GitType(repo_url,repo_dir)
+
+        # Missing name param
+        try:
+            program=Program(repo=gtype)
+        except TypeError:
+            self.assertTrue(False)
+
+        program=Program(repo=gtype,name=repo_name)
+
+        self.assertTrue(program.isValidName(repo_name))
+        self.assertFalse(program.isValidName("123"))
+        self.assertFalse(program.isValidName(""))
