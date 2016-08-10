@@ -154,7 +154,7 @@ class Program:
         '''
         Gets a list of version/commits from a repo
         '''
-        return self.git_ref.getVersions()
+        return self.repo_ref.getVersions()
 
 
     @staticmethod
