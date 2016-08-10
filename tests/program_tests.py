@@ -37,7 +37,7 @@ class TestProgram(unittest.TestCase):
         try:
             program=Program(repo=gtype)
         except TypeError:
-            pass
+            self.assertTrue(False)
 
         program=Program(repo=gtype,name=repo_name)
 
@@ -55,7 +55,7 @@ class TestProgram(unittest.TestCase):
         try:
             program=Program(repo=gtype)
         except TypeError:
-            pass
+            self.assertTrue(False)
 
         program=Program(repo=gtype,name=repo_name)
 
