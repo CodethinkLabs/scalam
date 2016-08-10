@@ -17,18 +17,20 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import sys
+import unittest
+
 sys.path.insert(0, "../src/")
 
 from utils import *
 
-def test_unify():
-    byte_array="Hello world!"
-    
-    resp=unify(byte_array)
-    
-    # resp should be encoded correctly here
-    assert(isinstance(resp,unicode))
-    
-    ##assert(resp is u"Hello world!")
-    
-    return
+class TestUtils(unittest.TestCase):
+
+    def test_unify(self):
+        byte_array="Hello world!"
+
+        resp=unify(byte_array)
+
+        # resp should be encoded correctly here
+        self.assertTrue(isinstance(resp,unicode))
+
+        ##self.assertTrue(resp is u"Hello world!")

@@ -18,50 +18,35 @@
 '''
 import sys
 import tempfile
+import unittest
 
 sys.path.insert(0, "../src/")
 from program import *
 
-def test_basic_create():
-    
-    # Empty constructors
-    try:
-        program=Program()
-    except TypeError:
-        pass
-    
-    try:
-        gtype=GitType()
-    except TypeError:
-        pass
+class TestProgram(unittest.TestCase):
 
-    return
+    def test_init(self):
+        repo_dir=tempfile.mkdtemp('.scalam')
+        repo_url="https://github.com/CodethinkLabs/frepo"
+        repo_name="frepo"
 
-def test_init():
-    repo_dir=tempfile.mkdtemp('.scalam')
-    repo_url="https://github.com/CodethinkLabs/frepo"
-    repo_name="frepo"
-    
-    # Create the git instance and clone
-    gtype=GitType(repo_url,repo_dir)
-    
-    # Missing name param
-    try:
-        program=Program(repo=gtype)    
-    except TypeError:
-        pass
-    
-    program=Program(repo=gtype,name=repo_name)
-    
-    return
+        # Create the git instance and clone
+        gtype=GitType(repo_url,repo_dir)
 
-def test_head():
-    
-    expected_head="36bd65546b7d6b64b69b163c4afdfa726f752033"
-    pass
+        # Missing name param
+        try:
+            program=Program(repo=gtype)
+        except TypeError:
+            pass
 
-def test_versions_from_git():
-    pass
+        program=Program(repo=gtype,name=repo_name)
 
-def test_valid_name():
-    pass
+    def test_head(self):
+        expected_head="36bd65546b7d6b64b69b163c4afdfa726f752033"
+        self.assertTrue(True)
+
+    def test_versions_from_git(self):
+        self.assertTrue(True)
+
+    def test_valid_name(self):
+        self.assertTrue(True)
