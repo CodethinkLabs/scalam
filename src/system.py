@@ -18,6 +18,19 @@
 '''
 
 import copy
+import os
+
+from logger import logger
+from utils import list_dirs
+from program import *
+from repo_type import *
+
+
+try:
+    import git
+except ImportError:
+    assert("GitPython libary missing. For installation instructions "
+           "see: https://github.com/gitpython-developers/GitPython")
 
 class System:
     def __init__(self, repo_dir=None, definitions=None, programs=None):
@@ -36,16 +49,48 @@ class System:
         
         # Scan directory for programs (git)
         if repo_dir is not None:
-            #TODO
-            self.programs=[]
+            logger.debug("Creating System from repo_dir")
+            self.programs=System.programsFromGitDirectory(repo_dir)
+            
         # Parse definitions
         elif definitions is not None:
             #TODO
+            logger.debug("Creating System from baserock definitions")
             self.programs=[]
+            
         # List of program instances given
         elif programs is not None:
             #TODO check that this is a list and all members are Programs
+            logger.debug("Creating System from list")
             self.programs=programs
+    
+        logger.debug("Program list for this system: %s"%list2str(self.programs))
+    
+    @staticmethod
+    def programsFromGitDirectory(repo_dir):
+        '''
+        Get a list of Programs from a base directory that contains Git repos
+        '''
+        
+        program_list=[]
+        
+        #Scan all the directories for git repos
+        #print("Searching inside %s"%repo_dir)
+        for d in list_dirs(repo_dir):
+            
+            program_name=d
+            program_path=os.path.join(repo_dir, d)
+            #print("-%s : %s"%(program_name,program_path))
+            
+            try:
+                program=Program(repo=DirType(program_path), name=program_name)
+                program_list.append(program)
+            except git.InvalidGitRepositoryError:
+                #Not a git repo so skip over it
+                continue
+        
+        
+        return program_list
     
     def addProgram(self, program):
         '''
