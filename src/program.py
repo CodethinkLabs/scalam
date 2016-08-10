@@ -167,6 +167,9 @@ class Program:
         if not isinstance(name,(str,unicode)):
             raise TypeError(u"Program.isValidName 'name' expects a string")
 
+        if len(name) == 0:
+            return False
+
         # TODO do we only care if the first char is a letter?
         if not name[0].isalpha():
             return False
