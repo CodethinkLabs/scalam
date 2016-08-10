@@ -52,6 +52,13 @@ class Program:
         self.installed=installed
 
 
+    def checkout(self,commit):
+        '''
+        checks out to the given commit
+        '''
+
+        return self.repo_ref.checkout(commit)
+
 
     def getCurrentHead(self):
         '''
@@ -220,6 +227,17 @@ class GitType(AbsRepoType):
         '''
 
         return self.git_ref.head.ref.commit.hexsha
+
+    def checkout(self, commit):
+        '''
+        checks out to the given commit
+        '''
+
+        past_branch = self.git_ref.create_head(commit, commit)
+        self.git_ref.head.reference = past_branch
+        assert not self.git_ref.head.is_detached
+        # reset the index and working tree to match the pointed-to commit
+        self.git_ref.head.reset(index=True, working_tree=True)
 
 class TarType(AbsRepoType):
     pass

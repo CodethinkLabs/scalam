@@ -42,8 +42,28 @@ class TestProgram(unittest.TestCase):
         program=Program(repo=gtype,name=repo_name)
 
     def test_head(self):
-        expected_head="36bd65546b7d6b64b69b163c4afdfa726f752033"
-        self.assertTrue(True)
+        expected_head="5b2a7bffd0a7f564f55977a72429f36d0cdc9eaa"
+
+        repo_dir=tempfile.mkdtemp('.scalam')
+        repo_url="https://github.com/CodethinkLabs/frepo"
+        repo_name="frepo"
+
+        # Create the git instance and clone
+        gtype=GitType(repo_url,repo_dir)
+
+        # Missing name param
+        try:
+            program=Program(repo=gtype)
+        except TypeError:
+            pass
+
+        program=Program(repo=gtype,name=repo_name)
+
+        # checkout to the expected head
+        program.checkout(expected_head)
+
+        # get the head commit
+        self.assertTrue(program.getCurrentHead() == expected_head)
 
     def test_versions_from_git(self):
         self.assertTrue(True)
