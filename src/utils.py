@@ -54,4 +54,7 @@ def list_dirs(path, abs_path=False):
     return dir_list            
     
 def list2str(lst):
+    '''
+    Simple helper function to convert a list of objects to a string
+    '''
     return "[" + (", ".join([unicode(l) for l in lst])) + "]"

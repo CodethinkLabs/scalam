@@ -21,7 +21,7 @@ import copy
 import os
 
 from logger import logger
-from utils import list_dirs
+from utils import *
 from program import *
 from repo_type import *
 
@@ -75,20 +75,20 @@ class System:
         program_list=[]
         
         #Scan all the directories for git repos
-        #print("Searching inside %s"%repo_dir)
+        logger.debug("Searching inside %s"%repo_dir)
         for d in list_dirs(repo_dir):
             
             program_name=d
             program_path=os.path.join(repo_dir, d)
-            #print("-%s : %s"%(program_name,program_path))
+            logger.debug("-%s : %s"%(program_name,program_path))
             
             try:
                 program=Program(repo=DirType(program_path), name=program_name)
                 program_list.append(program)
             except git.InvalidGitRepositoryError:
                 #Not a git repo so skip over it
+                logger.debug("Not a valid git repo")
                 continue
-        
         
         return program_list
     
@@ -101,6 +101,7 @@ class System:
         if not isinstance(program, Program):
             raise TypeError(u"System.addProgram 'program' expects a Program instance")
         
+        logger.debug("Adding %s to the system list"%program)
         self.programs.append(program)
     
     def dependencyMatrix(self):
