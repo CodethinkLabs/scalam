@@ -17,6 +17,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import os
+
 def unify(somestr, encoding='utf-8'):
     '''
     Makes a unicode version of a (byte) string.
@@ -29,3 +31,30 @@ def unify(somestr, encoding='utf-8'):
     somestr.decode('utf-8')
     
     return somestr.decode(encoding)
+
+def list_dirs(path, abs_path=False):
+    '''
+    Fetches the list of sub-directories in a path. Only 1 level is searched
+    '''
+    
+    dir_list=[]
+    
+    #Search the current path. Add any directories to the dir_list
+    for f in os.listdir(path):
+        if f in ['.','..']:
+            continue
+        if os.path.isdir(path):
+            #If absolute paths are wanted
+            if abs_path:
+                dir_list.append(os.path.join(os.getcwd(),f))
+            #else just record the relative path/directory name
+            else:
+                dir_list.append(f)
+    
+    return dir_list            
+    
+def list2str(lst):
+    '''
+    Simple helper function to convert a list of objects to a string
+    '''
+    return "[" + (", ".join([unicode(l) for l in lst])) + "]"

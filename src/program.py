@@ -19,18 +19,14 @@
 
 import os
 from utils import unify
+from repo_type import *
 
-# https://github.com/gitpython-developers/GitPython
-try:
-    import git
-except ImportError:
-    assert("GitPython libary missing. For installation instructions "
-           "see: https://github.com/gitpython-developers/GitPython")
 
 
 class Program:
     def __init__(self, repo, name="", installed=False):
         '''
+        @param repo (AbsRepoType) Instance of
         @param name (String) Name of the program
         @param installed (bool) If the program is installed or not
         '''
@@ -48,7 +44,6 @@ class Program:
 
         self.repo_ref=repo
         self.name=unify(name)
-        #self.directory=directory
         self.installed=installed
 
 
@@ -74,88 +69,12 @@ class Program:
 
         return self.name
 
-
-
-
-    ##
-    # TODO - Includes renaming/re-factoring into current code
-    ##
-
-    def getVersionFromChangelog(self):
-        '''
-        * @brief Gets a list of versions from a changelog
-        * @param changelog_filename Filename of the changelog
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_changelog()
-        '''
-        pass
-
-    def getVersionFromTarball(self):
-        '''
-        * @brief Gets a list of versions from a changelog within a tarball
-        * @param repos_dir Directory where the git repo will be checked out
-        * @param tarball_url URL of the tarball
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_tarball()
-        '''
-        pass
-
-    def getVersionFromDeb(self):
-        '''
-        * @brief Gets a list of versions from a debian package
-        * @param repos_dir Directory where the git repo will be checked out
-        * @param deb_url URL where the debian package can be downloaded from
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_deb_package()
-        '''
-        pass
-
-    def getVersionFromRpm(self):
-        '''
-        * @brief Gets a list of versions from a RPM package
-        * @param repos_dir Directory where the git repo will be checked out
-        * @param rpm_url URL where the debian package can be downloaded from
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_rpm_package(
-        '''
-        pass
-
-    def getVersionFromRepo(self):
-        '''
-        * @brief Gets a list of versions from a repo as a file valled versions.txt
-        * @param repos_dir Directory where the git repo will be checked out
-        * @param repo_url URL of the git repo or tarball
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_repo(
-        '''
-        pass
-
-    def getVersionFromAptitude(self):
-        '''
-        * @brief Gets a list of versions provided by aptitude
-        * @param prog Program object
-        * @returns zero on success
-        */
-        int program_get_versions_from_aptitude()
-        '''
-        pass
-
     def getVersions(self):
         '''
-        Gets a list of version/commits from a repo
+        Gets a list of versions/commits for this piece of software
         '''
+        
         return self.repo_ref.getVersions()
-
 
     @staticmethod
     def isValidName(name):
@@ -175,76 +94,8 @@ class Program:
             return False
 
         return True
-
-class AbsRepoType:
-    def assertValidDirectory(self, directory):
-        if not isinstance(directory,(str,unicode)):
-            raise TypeError(u"%s 'directory' expects a string"%self.__class__.__name__)
-
-        #TODO check if exists, fail or create? currently fails
-        if not os.path.exists(directory):
-            raise IOError(u"%s 'path' given does not exist"%self.__class__.__name__)
-
-
-    def getVersions(self):
-        raise NotImplementedError
-
-
-    def getHead(self):
-        raise NotImplementedError
-
-
-class DirType(AbsRepoType):
-    pass
-class GitType(AbsRepoType):
-    def __init__(self, url, clone_path):
-
-        if not isinstance(url,(str,unicode)):
-            raise TypeError(u"GitType 'url' expects a string")
-
-        self.assertValidDirectory(clone_path)
-
-        self.url=url
-        self.path=clone_path
-
-        #Do the git clone
-        self.git_ref=git.Repo.clone_from(url=url, to_path=clone_path)
-
-    def getVersions(self):
-        '''
-        Grab all of the version shas of this git repo
-
-        @return List of versions
-        '''
-
-        versions=[]
-        #Grab all of the shas from this repo
-        for commits in self.git_ref.iter_commits():
-            versions.append(commits.hexsha)
-
-        return versions
-
-    def getHead(self):
-        '''
-        Grabs the commit sha of HEAD
-        '''
-
-        return self.git_ref.head.ref.commit.hexsha
-
-    def checkout(self, commit):
-        '''
-        checks out to the given commit
-        '''
-
-        past_branch = self.git_ref.create_head(commit, commit)
-        self.git_ref.head.reference = past_branch
-        assert not self.git_ref.head.is_detached
-        # reset the index and working tree to match the pointed-to commit
-        self.git_ref.head.reset(index=True, working_tree=True)
-
-class TarType(AbsRepoType):
-    pass
-class DebType(AbsRepoType):
-    pass
-class RpmType(AbsRepoType):
-    pass
+    
+    def __str__(self):
+        return unicode(self)
+    def __unicode__(self):
+        return "%s"%(self.getName(),)
