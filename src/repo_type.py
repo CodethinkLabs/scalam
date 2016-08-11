@@ -18,17 +18,19 @@
 '''
 
 import os
+import sys
 
 # https://github.com/gitpython-developers/GitPython
 try:
     import git
 except ImportError:
-    assert("GitPython libary missing. For installation instructions "
+    print("Error: GitPython libary missing. For installation instructions "
            "see: https://github.com/gitpython-developers/GitPython")
+    sys.exit()
 
 class AbsRepoType:
     def assertValidDirectory(self, directory):
-        if not isinstance(directory,(str,unicode)):
+        if not isinstance(directory,str):
             raise TypeError(u"%s 'directory' expects a string"%self.__class__.__name__)
 
         #TODO check if exists, fail or create? currently fails
@@ -64,7 +66,7 @@ class AbsRepoType:
 class GitType(AbsRepoType):
     def __init__(self, url, clone_path):
 
-        if not isinstance(url,(str,unicode)):
+        if not isinstance(url,str):
             raise TypeError(u"GitType 'url' expects a string")
 
         self.assertValidDirectory(clone_path)

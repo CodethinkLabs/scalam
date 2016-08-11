@@ -26,11 +26,17 @@ from utils import *
 class TestUtils(unittest.TestCase):
 
     def test_unify(self):
+        # If running in python 2.7
         byte_array="Hello world!"
 
         resp=unify(byte_array)
 
         # resp should be encoded correctly here
-        self.assertTrue(isinstance(resp,unicode))
+        self.assertTrue(isinstance(resp,str))
 
-        ##self.assertTrue(resp is u"Hello world!")
+        self.assertTrue(resp=="Hello world!")
+        
+        # Check that higher valued unicode char survive
+        unicode_snowman=u"☃"
+        self.assertTrue(unify(unicode_snowman)==u"☃")
+        
