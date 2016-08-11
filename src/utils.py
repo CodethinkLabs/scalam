@@ -18,11 +18,17 @@
 '''
 
 import os
+import sys
 
 def unify(somestr, encoding='utf-8'):
     '''
     Makes a unicode version of a (byte) string.
     '''
+    
+    #If we are running python3.x this shouldn't matter
+    if python_version() is 3:
+        return somestr
+    
     
     #Checks to see if already unicode
     if isinstance(somestr, unicode):
@@ -57,4 +63,45 @@ def list2str(lst):
     '''
     Simple helper function to convert a list of objects to a string
     '''
+    
     return "[" + (", ".join([unicode(l) for l in lst])) + "]"
+
+# Lifted from http://stackoverflow.com/a/5377051
+def running_inside_ipython():
+    '''
+    Checks if we are running inside an iPython instance
+    '''
+    
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return False
+    
+def python_version():
+    '''
+    Helper function to get the major version of pyther, i.e. 2 or 3
+    '''
+    return sys.version_info[0]
+    
+def dump_system_info():
+    '''
+    Dumps information about the system. Helpful for debugging
+    '''
+    
+    to_dump={}
+    env_whitelist=['LANGUAGE', 'GDM_LANG', 'PATH', 'PWD', 'LOGNAME', 'DESKTOP_SESSION']
+
+    to_dump['PID']=os.getpid()
+    to_dump['argv']=sys.argv
+    to_dump['python_version']=sys.version
+    to_dump['python_path']=sys.path
+    to_dump['iPython']=running_inside_ipython()
+    
+    #Populate envrironment details from the whitelist
+    to_dump['env']={}
+    for en in env_whitelist:
+        if en in os.environ:
+            to_dump['env'][en]=os.environ[en]
+
+    return to_dump
