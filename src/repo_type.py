@@ -59,7 +59,7 @@ class AbsRepoType:
         checks out to the given commit
         '''
 
-        return self.repo_ref.checkout(commit)
+        raise NotImplementedError
 
 class GitType(AbsRepoType):
     def __init__(self, url, clone_path):
