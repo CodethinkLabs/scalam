@@ -18,6 +18,7 @@
 '''
 
 import logging
+from utils import *
 
 #Set up loggers
 logger = logging.getLogger(__name__)
@@ -40,3 +41,4 @@ logger.addHandler(ch)
 #Set minimum level for the global setting.
 logger.setLevel(logging.DEBUG)
 logger.debug("Logger init")
+logger.debug(dump_system_info())

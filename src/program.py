@@ -45,16 +45,27 @@ class Program:
         self.repo_ref=repo
         self.name=unify(name)
         self.installed=installed
-
+        
+        # Version is mutable
+        #TODO how to seed version? HEAD?
+        self.version=repo.getHead()   
 
     def checkout(self,commit):
         '''
         checks out to the given commit
         '''
 
+        self.version=commit
         return self.repo_ref.checkout(commit)
-
-
+        
+    def getVersion(self):
+        '''
+        Fetches the current version the program is at/checked out
+        '''
+        
+        return self.version
+    
+    
     def getCurrentHead(self):
         '''
         Returns the latest version or commit for the software
