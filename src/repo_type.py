@@ -40,7 +40,7 @@ class AbsRepoType:
         '''
         Get a list of software version or commits.
         Needs to be implemented by extending class.
-        
+
         Returns list(strings)
         '''
         raise NotImplementedError
@@ -49,13 +49,18 @@ class AbsRepoType:
         '''
         Gets the latest version or commit for this software
         Needs to be implemented by extending class.
-        
+
         Returns String
         '''
         raise NotImplementedError
-    
-    
-    
+
+    def checkout(self,commit):
+        '''
+        checks out to the given commit
+        '''
+
+        raise NotImplementedError
+
 class GitType(AbsRepoType):
     def __init__(self, url, clone_path):
 
@@ -91,17 +96,28 @@ class GitType(AbsRepoType):
 
         return self.git_ref.head.ref.commit.hexsha
 
+    def checkout(self, commit):
+        '''
+        checks out to the given commit
+        '''
+
+        past_branch = self.git_ref.create_head(commit, commit)
+        self.git_ref.head.reference = past_branch
+        assert not self.git_ref.head.is_detached
+        # reset the index and working tree to match the pointed-to commit
+        self.git_ref.head.reset(index=True, working_tree=True)
+
 
 class DirType(GitType):
     '''
     Sets up the git referencing given a local path with a repo checked out to it
     '''
-    
+
     def __init__(self, path):
-        
+
         #Make sure that the path is valid
         self.assertValidDirectory(path)
-  
+
         #If path is not a valid git repo, this will throw an InvalidGitRepositoryError
         self.git_ref=git.Repo(path)
         self.path=path
