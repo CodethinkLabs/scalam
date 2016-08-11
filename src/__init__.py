@@ -19,8 +19,10 @@
 
 import genome
 import goal
+import logger
 import population
 import program
+import repo_type
 import system
 import system_state
 import utils
