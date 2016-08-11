@@ -29,8 +29,9 @@ from repo_type import *
 try:
     import git
 except ImportError:
-    assert("GitPython libary missing. For installation instructions "
+    print("Error: GitPython libary missing. For installation instructions "
            "see: https://github.com/gitpython-developers/GitPython")
+    sys.exit()
 
 class System:
     def __init__(self, repo_dir=None, definitions=None, programs=None):
@@ -43,7 +44,7 @@ class System:
         - () There was another way honest
         '''
         
-        # Check that more than one entry has been given
+        # Check that more than one entry hasn't been given
         if [repo_dir, definitions, programs].count(None) is not 2:
             raise TypeError(u"System expects ONLY a repo_dir, definitions or programs, parameter")
         
@@ -63,6 +64,11 @@ class System:
             #TODO check that this is a list and all members are Programs
             logger.debug("Creating System from list")
             self.programs=programs
+        
+        # Empty system, expected to use addProgram() after creation
+        else:
+            logger.debug("Creating an empty System")
+            self.programs=[]
     
         logger.debug("Program list for this system: %s"%list2str(self.programs))
     
@@ -103,6 +109,13 @@ class System:
         
         logger.debug("Adding %s to the system list"%program)
         self.programs.append(program)
+        
+    def getPrograms(self):
+        '''
+        Getter for the list of programs
+        '''
+        
+        return self.programs
     
     def dependencyMatrix(self):
         '''

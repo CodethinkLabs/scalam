@@ -41,10 +41,18 @@ class Goal:
         ##Type checking params
         if not isinstance(system, System):
             raise TypeError(u"Goal 'system' expects a System instance")       
-        
-        goal=Goal(system)
-        
-        # TODO cycle through system and select the highest commit
+
+        #Create an empty system and popululate one by one with highest version
+        #of each software
+        goal_system=System()  
+        for prog in system.getPrograms():
+            latest_version=prog.getCurrentHead()
+            
+            
+            prog.checkout(latest_version)
+           
+                
+        goal=Goal(goal_system)
         
         return goal
     

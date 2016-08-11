@@ -36,7 +36,7 @@ class Program:
             raise TypeError(u"Program 'repo' expects a repo type e.g. GitType")
 
         # TODO name could be obmitted and recovered from directory/repo?
-        if not isinstance(name,(str,unicode)):
+        if not isinstance(name,str):
             raise TypeError(u"Program 'name' expects a string")
 
         if not isinstance(installed,bool):
@@ -94,7 +94,7 @@ class Program:
         @return bool
         '''
 
-        if not isinstance(name,(str,unicode)):
+        if not isinstance(name,str):
             raise TypeError(u"Program.isValidName 'name' expects a string")
 
         if len(name) == 0:
