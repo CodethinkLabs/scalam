@@ -23,11 +23,11 @@ class RandNum:
 
     Why not use Python's built-in random module?
 
-    In this case each genome needs its own random seed, so that
-    evaluations can be carried out in parallel while maintaining
-    determinism. The built-in random module appears to use a global
-    seed, which would mean that parallel test runs would not
-    return consistent results
+    In this case although Python's random module can generate numbers
+    from different seeds in parallel, in tests on different machines
+    using the same seed the sequences appear different. Having an
+    independent implementation at least ensures consistent results
+    regardless of python versions or operating system.
     '''
 
     def __init__(self, seed=111):
