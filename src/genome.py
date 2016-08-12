@@ -17,14 +17,19 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import random
+from randnum import *
+
 class Genome:
     def __init__(self, seed=None):
 
         # If no seed given, generate a new random seed
-        #if seed is None:
-        #   seed=
-
-        skip
+        if seed is None:
+            self.seed=randint(1,9999999)
+        else:
+            if not isinstance(seed,int):
+                raise TypeError(u"Genome 'seed' expects an int")
+            self.seed=seed
 
     @staticmethod
     def createRandom():
