@@ -61,6 +61,10 @@ class AbsRepoType:
         checks out to the given commit
         '''
 
+    def getPath(self):
+        raise NotImplementedError
+
+    def setPath(self, path):
         raise NotImplementedError
 
 class GitType(AbsRepoType):
@@ -72,7 +76,7 @@ class GitType(AbsRepoType):
         self.assertValidDirectory(clone_path)
 
         self.url=url
-        self.path=clone_path
+        self.setPath(clone_path)
 
         #Do the git clone
         self.git_ref=git.Repo.clone_from(url=url, to_path=clone_path)
@@ -108,6 +112,12 @@ class GitType(AbsRepoType):
         assert not self.git_ref.head.is_detached
         # reset the index and working tree to match the pointed-to commit
         self.git_ref.head.reset(index=True, working_tree=True)
+
+    def getPath(self):
+        return self.path
+
+    def setPath(self, path):
+        self.path = path
 
 
 class DirType(GitType):
