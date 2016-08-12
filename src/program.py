@@ -90,7 +90,7 @@ class Program:
         '''
         Gets a list of versions/commits for this piece of software
         '''
-        
+
         return self.repo_ref.getVersions()
 
     @staticmethod
@@ -111,8 +111,15 @@ class Program:
             return False
 
         return True
-    
+
     def __str__(self):
         return unicode(self)
     def __unicode__(self):
         return "%s"%(self.getName(),)
+
+    def getPath(self):
+        '''
+        Returns the path where the repo exists
+        @return String
+        '''
+        return self.repo_ref.getPath(self)
