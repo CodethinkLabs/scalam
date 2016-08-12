@@ -86,11 +86,16 @@ class TestProgram(unittest.TestCase):
         # checkout to the expected head
         program.checkout(expected_head)
 
-        versions = program.getVersions()
-        self.assertTrue(versions[0] == u"5b2a7bffd0a7f564f55977a72429f36d0cdc9eaa")
-        self.assertTrue(versions[1] == u"618e913171d2cf8e731bc0c4ab4516f395dddba0")
-        self.assertTrue(versions[2] == u"7e251622aaf6bfb85fad018985671c185ceccdd8")
-        self.assertTrue(versions[3] == u"a02b369a75fbb20bb79908cbb64447538c2fedec")
+        commits = program.getCommits()
+        self.assertTrue(commits,"There were no commits in the repo")
+        self.assertTrue(commits[0] == u"b2fae77a55689afdc416a63259a5690e970c2c43")
+        self.assertTrue(commits[1] == u"5983a7a2e259f9af698c8bc7b51b58445fac2eef")
+        self.assertTrue(commits[2] == u"6818c65c58d066299d582b91de052d846788dcdb")
+        self.assertTrue(commits[3] == u"fa928730540c2911f5228d899a86472ac28adee3")
+
+        self.assertTrue(program.versionIndexFromCommit(u'6818c65c58d066299d582b91de052d846788dcdb') == 2)
+        self.assertTrue(program.versionIndexFromCommit(u'b2fae77a55689afdc416a63259a5690e970c2c43') == 0)
+        self.assertTrue(program.getNoOfCommits() == 59)
 
     def test_valid_name(self):
         expected_head="5b2a7bffd0a7f564f55977a72429f36d0cdc9eaa"

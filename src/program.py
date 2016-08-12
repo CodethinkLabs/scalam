@@ -47,10 +47,8 @@ class Program:
         self.repo_ref=repo
         self.name=unify(name)
         self.installed=installed
-
-        # Version is mutable
-        #TODO how to seed version? HEAD?
-        self.version=repo.getHead()
+        self.versions_list=[]
+        self.versionIndex=-1
 
     def checkout(self,commit):
         '''
@@ -60,10 +58,40 @@ class Program:
         @return git.Checkout?
         '''
 
-        self.version=commit
+        if not isinstance(commit,str):
+            raise TypeError(u"Program 'commit' expects a string")
+
+        self.versionIndex=self.versionIndexFromString(commit)
         #FIXME do we need to return the git object here?
         #FIXME what if program isn't a git repo?
         return self.repo_ref.checkout(commit)
+
+    def versionIndexFromString(self,versionString):
+        '''
+        Returns the index of a given version number or commit
+
+        @param String Version or commit as a string
+        @returns integer Index of the version or commit, or -1 if not found
+        '''
+
+        if not isinstance(versionString,str):
+            raise TypeError(u"Program 'commit' expects a string")
+
+        versions_list = self.getVersions();
+        if not versions_list:
+            return -1
+        if not versionString in versions_list:
+            return -1
+        return versions_list.index(versionString)
+
+    def versionIndexFromCommit(self,commit):
+        '''
+        This is just to make calls to the method from elsewhere more readable
+
+        @param String Commit as a string
+        @returns integer Index of the commit or -1 if not found
+        '''
+        return self.versionIndexFromString(commit)
 
     def getVersion(self):
         '''
@@ -72,16 +100,24 @@ class Program:
         @return String Current version program instance is on
         '''
 
-        return self.version
-    def setVersion(self, version):
-        '''
-        Setter for version
+        versions_list = self.getVersions()
+        return versions_list[self.versionIndex]
 
-        @param version (String) Version to set
+    def setVersion(self, commit):
+        '''
+        Setter for version or commit
+
+        @param commit (String) Version or commit to set
         '''
 
-        #TODO do sanity check that version is valid
-        self.version=version
+        if not isinstance(commit,str):
+            raise TypeError(u"Program 'commit' expects a string")
+
+        newVersionIndex = self.versionIndexFromString(commit)
+        if newVersionIndex == -1:
+            return False
+        self.versionIndex=newVersionIndex
+        return True
 
     def getCurrentHead(self):
         '''
@@ -105,10 +141,48 @@ class Program:
         '''
         Gets a list of versions/commits for this piece of software
 
-        @return String Version name
+        @return List of strings containing versions/commits
+                with index zero being the first version/commit
         '''
 
-        return self.repo_ref.getVersions()
+        # if the list has been created previously
+        if self.versions_list:
+            return self.versions_list
+
+        # get the list of commits
+        possible_versions_list = self.repo_ref.getVersions()
+        if possible_versions_list:
+            possible_versions_list.reverse()
+            self.versions_list = possible_versions_list
+        else:
+            self.versions_list = []
+
+        return self.versions_list
+
+    def getCommits(self):
+        '''
+        Makes subsequent calls more readable
+
+        @return List of strings containing commits
+                with index zero being the first version/commit
+        '''
+
+        return self.getVersions()
+
+    def getNoOfVersions(self):
+        '''
+        Returns the number of versions of commits in the series
+        @returns Integer Number of versions or commits
+        '''
+        return len(self.getVersions())
+
+    def getNoOfCommits(self):
+        '''
+        This is just to make calls from elsewhere more readable
+
+        @returns Integer Number of versions or commits
+        '''
+        return self.getNoOfVersions()
 
     @staticmethod
     def isValidName(name):
