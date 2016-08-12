@@ -31,11 +31,9 @@ class Goal:
     @staticmethod
     def latestVersion(system):
         '''
-        * @brief Creates a goal to try to get to the latest versions
-        * @param sys System object
-        * @param goal Returned goal object
-        * @returns zero on success
-        int goal_create_latest_versions()
+        Creates a goal based on the latest versions of software in the System
+        @param system (System) Set of programs to upgrade
+        @returns Goal instance
         '''
  
         ##Type checking params
@@ -46,17 +44,18 @@ class Goal:
         #of each software
         goal_system=System()  
         for prog in system.getPrograms():
-            latest_version=prog.getCurrentHead()
+            #Make a copy of the object and set version to the max
+            max_version=prog.clone()
+            latest_version=max_version.getCurrentHead()
+            max_version.setVersion(latest_version)
+            
+            #Add this to our goal system
+            goal_system.addProgram(max_version)
             
             
-            prog.checkout(latest_version)
-           
-                
-        goal=Goal(goal_system)
-        
-        return goal
+        return Goal(goal_system)
     
-    def getMax(self):
+    def getMaxScore(self):
         '''
         * @brief Calculates what the ideal end goal score is
         * @param goal Goal object

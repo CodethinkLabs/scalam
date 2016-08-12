@@ -64,7 +64,13 @@ class Program:
         '''
         
         return self.version
-    
+    def setVersion(self, version):
+        '''
+        Setter for version
+        '''
+        
+        #TODO do sanity check that version is valid
+        self.version=version
     
     def getCurrentHead(self):
         '''

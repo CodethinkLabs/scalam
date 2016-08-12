@@ -41,11 +41,11 @@ class System:
         - (repo_dir) Local directory containing git checkouts of programs
         - (definitions) Baserock stratam file
         - (programs) List of Program instances
-        - () There was another way honest
+        - Empty system - Programs to add later
         '''
         
         # Check that more than one entry hasn't been given
-        if [repo_dir, definitions, programs].count(None) is not 2:
+        if [repo_dir, definitions, programs].count(None) <= 2:
             raise TypeError(u"System expects ONLY a repo_dir, definitions or programs, parameter")
         
         # Scan directory for programs (git)
