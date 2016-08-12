@@ -42,6 +42,10 @@ class System:
         - (definitions) Baserock stratam file
         - (programs) List of Program instances
         - Empty system - Programs to add later
+        
+        @param repo_dir String Path to the directory that contains the system
+        @param definitions String Path to definitions file that describes the system
+        @param program Program[] List of programs in a system
         '''
         
         # Check that more than one entry hasn't been given
@@ -76,6 +80,9 @@ class System:
     def programsFromGitDirectory(repo_dir):
         '''
         Get a list of Programs from a base directory that contains Git repos
+        
+        @param repo_dir String Path to the directory where git checkouts are
+        @return Program[]
         '''
         
         program_list=[]
@@ -101,6 +108,8 @@ class System:
     def addProgram(self, program):
         '''
         Adds a program to a system
+        
+        @param program Program The proram you wish to add to the System
         '''
         
         ##Type checking params
@@ -113,6 +122,8 @@ class System:
     def getPrograms(self):
         '''
         Getter for the list of programs
+        
+        @return Program[]
         '''
         
         return self.programs
@@ -141,6 +152,8 @@ class System:
     def clone(self):
         '''
         Makes a copy of the current System instance
+        
+        @return System
         '''
         
         #TODO shallow or deep copy? Does it matter?
