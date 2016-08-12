@@ -20,14 +20,14 @@
 import os
 from utils import unify
 from repo_type import *
-
+from logger import logger
 
 
 class Program:
     def __init__(self, repo, name="", installed=False):
         '''
         Program constructor
-        
+
         @param repo (AbsRepoType) Instance of
         @param name (String) Name of the program
         @param installed (bool) If the program is installed or not
@@ -47,15 +47,15 @@ class Program:
         self.repo_ref=repo
         self.name=unify(name)
         self.installed=installed
-        
+
         # Version is mutable
         #TODO how to seed version? HEAD?
-        self.version=repo.getHead()   
+        self.version=repo.getHead()
 
     def checkout(self,commit):
         '''
         Checks out to the given commit
-        
+
         @param commit (String) Commit string you wish to checkout
         @return git.Checkout?
         '''
@@ -64,29 +64,29 @@ class Program:
         #FIXME do we need to return the git object here?
         #FIXME what if program isn't a git repo?
         return self.repo_ref.checkout(commit)
-        
+
     def getVersion(self):
         '''
         Fetches the current version the program is at/checked out
-        
+
         @return String Current version program instance is on
         '''
-        
+
         return self.version
     def setVersion(self, version):
         '''
         Setter for version
-        
+
         @param version (String) Version to set
         '''
-        
+
         #TODO do sanity check that version is valid
         self.version=version
-    
+
     def getCurrentHead(self):
         '''
         Returns the latest version or commit for the software
-        
+
         @return String version sha
         '''
 
@@ -95,7 +95,7 @@ class Program:
     def getName(self):
         '''
         Gets the name of the repo/program
-        
+
         @return String Program name
         '''
 
@@ -104,7 +104,7 @@ class Program:
     def getVersions(self):
         '''
         Gets a list of versions/commits for this piece of software
-        
+
         @return String Version name
         '''
 
@@ -114,7 +114,7 @@ class Program:
     def isValidName(name):
         '''
         Checks whether the name of the given program is valid
-        
+
         @param name String Name to check if valid
         @return bool
         '''
