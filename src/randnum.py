@@ -18,13 +18,38 @@
 '''
 
 class RandNum:
+    '''
+    Random number generator.
+
+    Why not use Python's built-in random module?
+
+    In this case each genome needs its own random seed, so that
+    evaluations can be carried out in parallel while maintaining
+    determinism. The built-in random module appears to use a global
+    seed, which would mean that parallel test runs would not
+    return consistent results
+    '''
+
     def __init__(self, seed=111):
+        '''
+        Initialise with a given seed
+        '''
         self.seed = seed
 
     def _lehmer(self, v):
+        '''
+        The Lehmer PRNG
+
+        @returns Random integer
+        '''
         return v * 279470273 % 4294967291
 
     def next(self):
+        '''
+        Get the next random number in the sequence
+
+        @returns Random integer
+        '''
         v = self._lehmer(self.seed)
 
         if v == 0:
