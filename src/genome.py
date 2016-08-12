@@ -19,13 +19,13 @@
 
 class Genome:
     def __init__(self, seed=None):
-        
+
         # If no seed given, generate a new random seed
         #if seed is None:
-        #   seed= 
-            
+        #   seed=
+
         skip
-        
+
     @staticmethod
     def createRandom():
         '''
@@ -38,12 +38,12 @@ class Genome:
         * @returns zero on success
         genome_create()
         '''
-        
+
         genome=Genome()
-        
-        
+
+
         pass
-        
+
     def createInstallationStep(self):
         '''
         genome_create_installation_step()
@@ -55,7 +55,7 @@ class Genome:
         * @returns zero on success
        '''
         skip
-        
+
     def getMutability(self):
         '''
         genome_mutability()
@@ -64,7 +64,7 @@ class Genome:
         * @returns mutation rate value in the range 0 -> SC_MUTATION_SCALAR
         '''
         skip
-        
+
     def mutate(self):
         '''
         genome_mutate_existing_programs()
@@ -79,7 +79,7 @@ class Genome:
         * @returns zero on success
         '''
         skip
-        
+
     def insert(self):
         '''
         genome_mutate_insertion_deletion()
@@ -98,7 +98,7 @@ class Genome:
         * @returns zero on success
         '''
         skip
-        
+
     def spawn(self):
         '''
         * @brief create a child from two parents
@@ -110,5 +110,3 @@ class Genome:
         int genome_spawn()
         '''
         pass
-    
-    
