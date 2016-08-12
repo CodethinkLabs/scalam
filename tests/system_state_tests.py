@@ -16,16 +16,17 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
+import sys
+import unittest
+from system import System
+from system_state import SystemState
 
-class SystemState:
-    def __init__(self, system):
+sys.path.insert(0, "../src/")
 
-        ##Type checking params
-        if not isinstance(system, System):
-            raise TypeError(u"SystemState  'system' expects a System instance")
+from utils import *
 
-        self.system=system;
+class TestSystemState(unittest.TestCase):
 
-        noOfPrograms=len(self.system.getPrograms())
-        self.versionIndex = [0] * noOfPrograms
-        self.installed = [False] * noOfPrograms
+    def test_init(self):
+        #TODO
+        pass
