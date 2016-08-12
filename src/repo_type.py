@@ -19,6 +19,7 @@
 
 import os
 import sys
+from logger import logger
 
 # https://github.com/gitpython-developers/GitPython
 try:
@@ -59,7 +60,7 @@ class AbsRepoType:
     def checkout(self,commit):
         '''
         checks out to the given commit
-        
+
         @param commit String Commit or version to fetch
         '''
 
@@ -105,8 +106,8 @@ class GitType(AbsRepoType):
     def getHead(self):
         '''
         Grabs the commit sha of HEAD
-        
-        @return String 
+
+        @return String
         '''
 
         return self.git_ref.head.ref.commit.hexsha
@@ -114,7 +115,7 @@ class GitType(AbsRepoType):
     def checkout(self, commit):
         '''
         checks out to the given commit
-        
+
         @param commit String
         '''
 

@@ -22,6 +22,7 @@ import unittest
 
 sys.path.insert(0, "../src/")
 from program import *
+from logger import logger
 
 class TestProgram(unittest.TestCase):
 
