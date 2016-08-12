@@ -21,6 +21,9 @@ from system import System
 
 class Goal:
     def __init__(self, system):
+        '''
+        @param  system (System) The system to set as the goal
+        '''
         
         ##Type checking params
         if not isinstance(system, System):
@@ -32,6 +35,7 @@ class Goal:
     def latestVersion(system):
         '''
         Creates a goal based on the latest versions of software in the System
+        
         @param system (System) Set of programs to upgrade
         @returns Goal instance
         '''
@@ -57,9 +61,8 @@ class Goal:
     
     def getMaxScore(self):
         '''
-        * @brief Calculates what the ideal end goal score is
-        * @param goal Goal object
-        * @returns score or negative on error
-        float goal_max_score()
+        Calculates what the ideal end goal score is
+        
+        @returns float
         '''
-        pass
+        return 1.0

@@ -20,15 +20,11 @@
 class Population:
     def __init__(self, size, sys, goal):
         '''
-        * @brief For a given goal create a population of possible upgrade paths
-        * @param size Number of individuals in the population.
-        *             It's expected that this will remain constant
-        * @param population The population to be created
-        * @param system_definition Defines all of the programs within the system
-        *                          and their possible versions/commits
-        * @param goal The given goal
-        * @returns zero on success
-        int population_create()
+        @param size (int) Number of individuals in the population. It's
+            expected that this will remain constant.
+        @param sys (System) Defines all of the programs within the system and
+            their possible versions/commits.
+        @param goal (Goal) The given goal
         '''
         
         ##Type checking params
