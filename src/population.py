@@ -18,7 +18,10 @@
 '''
 
 class Population:
-    def __init__(self, size, sys, goal):
+    '''maximum number of genomes to have in a population'''
+    MAX_POPULATION_SIZE=256
+    
+    def __init__(self, size, sys, goal, seed=None):
         '''
         @param size (int) Number of individuals in the population. It's
             expected that this will remain constant.
@@ -28,8 +31,11 @@ class Population:
         '''
         
         ##Type checking params
-        if not isinstance(size, (int, long)):
+        if not isinstance(size, int):
             raise TypeError("Population size expects an int");
+        if size > MAX_POPULATION_SIZE:
+            raise TypeError("Population size larger than MAX_POPULATION_SIZE (%d)"
+                            %MAX_POPULATION_SIZE)
          
         if not isinstance(sys, System):
             raise TypeError("Population sys expects a System instance");
@@ -37,10 +43,31 @@ class Population:
         if not isinstance(goal, Goal):
             raise TypeError("Population goal expects a Goal instance");
           
+        # If no seed given, generate a new random seed
+        if seed is None:
+            self.seed=randint(1,9999999)
+        else:
+            if not isinstance(seed,int):
+                raise TypeError(u"Population 'seed' expects an int")
+            self.seed=seed  
+          
         self.size=size
         self.sys=sys
         self.goal=goal
-        pass
+        
+        self.individuals=self._createInitGenomes(self.seed)
+    
+    def _createInitGenomes(self, seed):
+        '''
+        Creates the initial set of Genomes in the population
+        
+        @return Genome[]
+        '''
+        
+        genomes=[]
+        for i in range(self.size):
+            genomes.append(Genome.createRandom(system,seed))
+        #TODO anything else?
     
     def createDirectAscentGenome(self):
         '''
@@ -206,3 +233,4 @@ class Population:
         
         TODO Check that this is the correct syntax for cloning/copying
         '''
+        pass

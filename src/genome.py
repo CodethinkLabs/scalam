@@ -21,7 +21,13 @@ import random
 from randnum import *
 
 class Genome:
-    def __init__(self, seed=None):
+    MAX_CHANGE_SEQUENCE=32
+    DEFAULT_MUTATION_RATE=0.2
+    DEFAULT_CROSSOVER=0.5
+    DEFAULT_REBELS=0.05
+    
+    
+    def __init__(self, system, seed=None):
 
         # If no seed given, generate a new random seed
         if seed is None:
@@ -30,24 +36,40 @@ class Genome:
             if not isinstance(seed,int):
                 raise TypeError(u"Genome 'seed' expects an int")
             self.seed=seed
+        
+        if not isinstance(system,System):
+                raise TypeError(u"Genome 'system' expects a System instance")    
+        
+        self.rand=RandNum(seed=self.seed)
+        
+        
+        self.system=system
+        
+        #TODO add option to pass argument in constructor?
+        self.mutation_rate=DEFAULT_MUTATION_RATE
+        self.crossover=DEFAULT_CROSSOVER
+        self.rebels=DEFAULT_REBELS
+        
+        self.spawning_probability=0.0
+        self.steps= 1 + (self.rand.next() % (MAX_CHANGE_SEQUENCE-1))
+        
 
     @staticmethod
-    def createRandom():
+    def createRandom(system, seed=None):
         '''
-        * @brief Ahistorically create a new individual.
-        *        This creates a completely random upgrade sequence.
-        *        There's no attempt to ratchet through versions/commits and the
-        *        scoring function should take care of long redundant sequences.
-        * @param population The population in which the genome exists
-        * @param individual The genome to be mutated
-        * @returns zero on success
-        genome_create()
+        Ahistorically create a new individual. This creates a completely
+        random upgrade sequence. There's no attempt to ratchet through
+        versions/commits and the scoring function should take care of long
+        redundant sequences.
+        
+        @param system (System) System to base genome off of
+        @param seed (int) Random seed to use
+        @returns Genome
         '''
 
-        genome=Genome()
-
-
-        pass
+        #TODO
+        genome=Genome(seed=seed)
+        return genome
 
     def createInstallationStep(self):
         '''
@@ -63,12 +85,12 @@ class Genome:
 
     def getMutability(self):
         '''
-        genome_mutability()
-        * @brief returns mutation rate expressed as an integer value
-        * @param population The population in which the genome exists
-        * @returns mutation rate value in the range 0 -> SC_MUTATION_SCALAR
+        Getter for mutation rate
+        
+        @returns float
         '''
-        skip
+        
+        return self.mutation_rate
 
     def mutate(self):
         '''
@@ -115,3 +137,7 @@ class Genome:
         int genome_spawn()
         '''
         pass
+
+    def __eq__(self, genome):
+        #TODO Criteria for comparing genomes for the unique property
+        return False
