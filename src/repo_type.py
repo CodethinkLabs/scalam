@@ -43,7 +43,7 @@ class AbsRepoType:
         Get a list of software version or commits.
         Needs to be implemented by extending class.
 
-        Returns list(strings)
+        @return String[]
         '''
         raise NotImplementedError
 
@@ -52,13 +52,15 @@ class AbsRepoType:
         Gets the latest version or commit for this software
         Needs to be implemented by extending class.
 
-        Returns String
+        @return String
         '''
         raise NotImplementedError
 
     def checkout(self,commit):
         '''
         checks out to the given commit
+        
+        @param commit String Commit or version to fetch
         '''
 
     def getPath(self):
@@ -69,12 +71,17 @@ class AbsRepoType:
 
 class GitType(AbsRepoType):
     def __init__(self, url, clone_path):
+        '''
+        @param url String URL of the git repo
+        @param clone_path String Location of where to clone repo to
+        '''
 
         if not isinstance(url,str):
             raise TypeError(u"GitType 'url' expects a string")
 
         self.assertValidDirectory(clone_path)
 
+        logger.debug("GitType(%s,%s)"%(url,clone_path))
         self.url=url
         self.setPath(clone_path)
 
@@ -98,6 +105,8 @@ class GitType(AbsRepoType):
     def getHead(self):
         '''
         Grabs the commit sha of HEAD
+        
+        @return String 
         '''
 
         return self.git_ref.head.ref.commit.hexsha
@@ -105,6 +114,8 @@ class GitType(AbsRepoType):
     def checkout(self, commit):
         '''
         checks out to the given commit
+        
+        @param commit String
         '''
 
         past_branch = self.git_ref.create_head(commit, commit)
@@ -126,6 +137,9 @@ class DirType(GitType):
     '''
 
     def __init__(self, path):
+        '''
+        @param path String Path to the directory
+        '''
 
         #Make sure that the path is valid
         self.assertValidDirectory(path)

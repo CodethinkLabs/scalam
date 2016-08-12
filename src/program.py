@@ -26,6 +26,8 @@ from repo_type import *
 class Program:
     def __init__(self, repo, name="", installed=False):
         '''
+        Program constructor
+        
         @param repo (AbsRepoType) Instance of
         @param name (String) Name of the program
         @param installed (bool) If the program is installed or not
@@ -52,21 +54,30 @@ class Program:
 
     def checkout(self,commit):
         '''
-        checks out to the given commit
+        Checks out to the given commit
+        
+        @param commit (String) Commit string you wish to checkout
+        @return git.Checkout?
         '''
 
         self.version=commit
+        #FIXME do we need to return the git object here?
+        #FIXME what if program isn't a git repo?
         return self.repo_ref.checkout(commit)
         
     def getVersion(self):
         '''
         Fetches the current version the program is at/checked out
+        
+        @return String Current version program instance is on
         '''
         
         return self.version
     def setVersion(self, version):
         '''
         Setter for version
+        
+        @param version (String) Version to set
         '''
         
         #TODO do sanity check that version is valid
@@ -75,6 +86,8 @@ class Program:
     def getCurrentHead(self):
         '''
         Returns the latest version or commit for the software
+        
+        @return String version sha
         '''
 
         return self.repo_ref.getHead()
@@ -82,6 +95,8 @@ class Program:
     def getName(self):
         '''
         Gets the name of the repo/program
+        
+        @return String Program name
         '''
 
         return self.name
@@ -89,6 +104,8 @@ class Program:
     def getVersions(self):
         '''
         Gets a list of versions/commits for this piece of software
+        
+        @return String Version name
         '''
 
         return self.repo_ref.getVersions()
@@ -97,6 +114,8 @@ class Program:
     def isValidName(name):
         '''
         Checks whether the name of the given program is valid
+        
+        @param name String Name to check if valid
         @return bool
         '''
 
