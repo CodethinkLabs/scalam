@@ -5,7 +5,7 @@ import system_state_tests
 import util_tests
 import random_tests
 
-if __name__ == '__main__':
+def run_tests():
     programTestSuite = unittest.TestLoader().loadTestsFromTestCase(program_tests.TestProgram)
     utilTestSuite = unittest.TestLoader().loadTestsFromTestCase(util_tests.TestUtils)
     systemTestSuite = unittest.TestLoader().loadTestsFromTestCase(system_tests.TestSystem)
@@ -17,3 +17,8 @@ if __name__ == '__main__':
     unittest.TextTestRunner(verbosity=2).run(systemTestSuite)
     unittest.TextTestRunner(verbosity=2).run(systemStateTestSuite)
     unittest.TextTestRunner(verbosity=2).run(randomTestSuite)
+
+if __name__ == '__main__':
+    run_tests()
+    
+

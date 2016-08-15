@@ -19,6 +19,7 @@
 
 import random
 from randnum import *
+from system import System
 
 class Genome:
     MAX_CHANGE_SEQUENCE=32
@@ -31,7 +32,7 @@ class Genome:
 
         # If no seed given, generate a new random seed
         if seed is None:
-            self.seed=randint(1,9999999)
+            self.seed=random.randint(1,9999999)
         else:
             if not isinstance(seed,int):
                 raise TypeError(u"Genome 'seed' expects an int")
@@ -46,12 +47,13 @@ class Genome:
         self.system=system
         
         #TODO add option to pass argument in constructor?
-        self.mutation_rate=DEFAULT_MUTATION_RATE
-        self.crossover=DEFAULT_CROSSOVER
-        self.rebels=DEFAULT_REBELS
+        self.mutation_rate=Genome.DEFAULT_MUTATION_RATE
+        self.crossover=Genome.DEFAULT_CROSSOVER
+        self.rebels=Genome.DEFAULT_REBELS
         
         self.spawning_probability=0.0
-        self.steps= 1 + (self.rand.next() % (MAX_CHANGE_SEQUENCE-1))
+        self.steps= 1 + (self.rand.next() % (Genome.MAX_CHANGE_SEQUENCE-1))
+        self.score=0
         
 
     @staticmethod
@@ -68,8 +70,17 @@ class Genome:
         '''
 
         #TODO
-        genome=Genome(seed=seed)
+        genome=Genome(system, seed=seed)
         return genome
+    
+    def getScore(self):
+        '''
+        Gets the genome score
+        '''
+        
+        #TODO do evaluation here or somewhere else?
+        return self.score
+        
 
     def createInstallationStep(self):
         '''
