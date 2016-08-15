@@ -34,28 +34,29 @@ except ImportError:
     sys.exit()
 
 class System:
-    def __init__(self, repo_dir=None, definitions=None, programs=None):
+    def __init__(self, repo_path=None, definitions=None, programs=None):
         '''
         A system (collection of programs) can be created in at least 4 ways
         
-        - (repo_dir) Local directory containing git checkouts of programs
+        - (repo_path) Local directory containing git checkouts of programs
         - (definitions) Baserock stratam file
         - (programs) List of Program instances
         - Empty system - Programs to add later
         
-        @param repo_dir String Path to the directory that contains the system
+        @param repo_path String Path to the directory that contains the system
         @param definitions String Path to definitions file that describes the system
         @param program Program[] List of programs in a system
         '''
         
         # Check that more than one entry hasn't been given
-        if [repo_dir, definitions, programs].count(None) <= 2:
-            raise TypeError(u"System expects ONLY a repo_dir, definitions or programs, parameter")
+        if [repo_path, definitions, programs].count(None) < 2:
+            logger.error(list2str([repo_path, definitions, programs]))
+            raise TypeError(u"System expects ONLY a repo_path, definitions or programs, parameter")
         
         # Scan directory for programs (git)
-        if repo_dir is not None:
-            logger.debug("Creating System from repo_dir")
-            self.programs=System.programsFromGitDirectory(repo_dir)
+        if repo_path is not None:
+            logger.debug("Creating System from repo_path")
+            self.programs=System.programsFromGitDirectory(repo_path)
             
         # Parse definitions
         elif definitions is not None:
@@ -77,22 +78,22 @@ class System:
         logger.debug("Program list for this system: %s"%list2str(self.programs))
     
     @staticmethod
-    def programsFromGitDirectory(repo_dir):
+    def programsFromGitDirectory(repo_path):
         '''
         Get a list of Programs from a base directory that contains Git repos
         
-        @param repo_dir String Path to the directory where git checkouts are
+        @param repo_path String Path to the directory where git checkouts are
         @return Program[]
         '''
         
         program_list=[]
         
         #Scan all the directories for git repos
-        logger.debug("Searching inside %s"%repo_dir)
-        for d in list_dirs(repo_dir):
+        logger.debug("Searching inside %s"%repo_path)
+        for d in list_dirs(repo_path):
             
             program_name=d
-            program_path=os.path.join(repo_dir, d)
+            program_path=os.path.join(repo_path, d)
             logger.debug("-%s : %s"%(program_name,program_path))
             
             try:

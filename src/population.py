@@ -17,6 +17,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import random
+from system import System
+from goal import Goal
+from genome import Genome
+
 class Population:
     '''maximum number of genomes to have in a population'''
     MAX_POPULATION_SIZE=256
@@ -33,9 +38,9 @@ class Population:
         ##Type checking params
         if not isinstance(size, int):
             raise TypeError("Population size expects an int");
-        if size > MAX_POPULATION_SIZE:
+        if size > Population.MAX_POPULATION_SIZE:
             raise TypeError("Population size larger than MAX_POPULATION_SIZE (%d)"
-                            %MAX_POPULATION_SIZE)
+                            %Population.MAX_POPULATION_SIZE)
          
         if not isinstance(sys, System):
             raise TypeError("Population sys expects a System instance");
@@ -45,7 +50,7 @@ class Population:
           
         # If no seed given, generate a new random seed
         if seed is None:
-            self.seed=randint(1,9999999)
+            self.seed=random.randint(1,9999999)
         else:
             if not isinstance(seed,int):
                 raise TypeError(u"Population 'seed' expects an int")
@@ -66,8 +71,45 @@ class Population:
         
         genomes=[]
         for i in range(self.size):
-            genomes.append(Genome.createRandom(system,seed))
+            genomes.append(Genome.createRandom(self.sys,seed))
         #TODO anything else?
+        return genomes
+    
+    def getGenomes(self):
+        '''
+        Getter for the genomes in this population
+        
+        @return Genome[]
+        '''
+        
+        return self.individuals
+    
+    def isGoalMet(self):
+        '''
+        Checks to see if any of the genomes meet the goal system
+        '''
+        
+        # TODO should we return a boolean or a genome (list?) that
+        # meet the goal criteria
+        
+        for genome in self.getGenomes():
+            if genome.getScore() == self.goal.getMaxScore():
+                return True
+            
+        return False
+    
+        
+    def nextGeneration(self):
+        '''
+        Creates the next generation population
+       
+        @return Population
+        '''
+        
+        #TODO
+        return self
+    
+    ####
     
     def createDirectAscentGenome(self):
         '''
@@ -135,15 +177,6 @@ class Population:
         sc_genome * population_parent()
         
         TODO Rename/move this method, not clear on purpose at a glance
-        '''
-        pass
-        
-    def nextGeneration(self):
-        '''
-        * @brief Creates the next generation
-        * @param population The population to be updated after evaluation of genomes
-        * @returns zero on success
-        int population_next_generation()
         '''
         pass
     

@@ -64,7 +64,7 @@ def list2str(lst):
     Simple helper function to convert a list of objects to a string
     '''
     
-    return "[" + (", ".join([unicode(l) for l in lst])) + "]"
+    return "[" + (", ".join([str(l) for l in lst])) + "]"
 
 # Lifted from http://stackoverflow.com/a/5377051
 def running_inside_ipython():
