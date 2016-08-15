@@ -105,3 +105,7 @@ def dump_system_info():
             to_dump['env'][en]=os.environ[en]
 
     return to_dump
+
+#https://www.python.org/dev/peps/pep-0485/#proposed-implementation
+def float_eq(a,b, rel_tol=1e-9, abs_tol=0.0):
+    return abs(a-b) <= max( rel_tol * max(abs(a), abs(b)), abs_tol )

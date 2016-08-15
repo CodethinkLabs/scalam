@@ -30,6 +30,8 @@ class RandNum:
     regardless of python versions or operating system.
     '''
 
+    n_prime=4294967291
+
     def __init__(self, seed=111):
         '''
         Initialise with a given seed
@@ -42,7 +44,7 @@ class RandNum:
 
         @returns Random integer
         '''
-        return v * 279470273 % 4294967291
+        return v * 279470273 %RandNum.n_prime
 
     def next(self):
         '''
@@ -58,3 +60,14 @@ class RandNum:
                 v = v + 1;
         self.seed = v;
         return abs(v);
+    
+    def nextNormalised(self):
+        '''
+        Gets a normalised version of the random number
+        
+        @return float
+        '''
+        
+        v=self.next()
+        
+        return v/(RandNum.n_prime-1)

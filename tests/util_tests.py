@@ -40,3 +40,7 @@ class TestUtils(unittest.TestCase):
         unicode_snowman=u"☃"
         self.assertTrue(unify(unicode_snowman)==u"☃")
         
+    def test_float_eq(self):
+        
+        self.assertTrue(float_eq(1/3, 0.333, 1e-3))
+        self.assertFalse(float_eq(1/3, 0.333, 1e-4))

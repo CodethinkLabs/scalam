@@ -129,6 +129,15 @@ class System:
         
         return self.programs
     
+    def count(self):
+        '''
+        Counts the number of programs in the system
+        
+        @return int
+        '''
+        
+        return len(self.programs)
+    
     def dependencyMatrix(self):
         '''
         Create a dependency matrix for a system
