@@ -23,6 +23,8 @@ import unittest
 sys.path.insert(0, "../src/")
 
 from randnum import *
+from utils import float_eq
+
 
 class TestRandom(unittest.TestCase):
 
@@ -66,3 +68,15 @@ class TestRandom(unittest.TestCase):
             variance = variance + ((bucket[i] - mean)*(bucket[i] - mean))
         variance = math.sqrt(variance / buckets) * 100 / mean
         self.assertTrue(variance < 5)
+
+
+    def test_normalised(self):
+        
+        r = RandNum(30)
+        
+        self.assertTrue(float_eq(r.nextNormalised(), 0.9520773088355697, 1e-5))
+        self.assertTrue(float_eq(r.nextNormalised(), 0.3554310356575498, 1e-5))
+        self.assertTrue(float_eq(r.nextNormalised(), 0.5447605464767113, 1e-5))
+        self.assertTrue(float_eq(r.nextNormalised(), 0.608028552878688, 1e-5))
+        self.assertTrue(float_eq(r.nextNormalised(), 0.625237893953786, 1e-5))
+        self.assertTrue(float_eq(r.nextNormalised(), 0.8725258894812211, 1e-5))

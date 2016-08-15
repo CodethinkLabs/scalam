@@ -75,7 +75,7 @@ class System:
             logger.debug("Creating an empty System")
             self.programs=[]
 
-        logger.debug("Program list for this system: %s"%(self.programs))
+        logger.debug("Program list for this system: %s"%(list2str(self.programs)))
 
     @staticmethod
     def programsFromGitDirectory(repo_path):
@@ -129,7 +129,16 @@ class System:
         '''
 
         return self.programs
-
+    
+    def count(self):
+        '''
+        Counts the number of programs in the system
+        
+        @return int
+        '''
+        
+        return len(self.programs)
+ 
     def dependencyMatrix(self):
         '''
         Create a dependency matrix for a system
