@@ -60,8 +60,8 @@ class AbsRepoType:
     def checkout(self,commit):
         '''
         checks out to the given commit
-
-        @param commit String Commit or version to fetch
+        
+        @param commit (String) Commit or version to fetch
         '''
 
     def getPath(self):
@@ -73,8 +73,8 @@ class AbsRepoType:
 class GitType(AbsRepoType):
     def __init__(self, url, clone_path):
         '''
-        @param url String URL of the git repo
-        @param clone_path String Location of where to clone repo to
+        @param url (String) URL of the git repo
+        @param clone_path (String) Location of where to clone repo to
         '''
 
         if not isinstance(url,str):
@@ -115,8 +115,8 @@ class GitType(AbsRepoType):
     def checkout(self, commit):
         '''
         checks out to the given commit
-
-        @param commit String
+        
+        @param commit (String) 
         '''
 
         past_branch = self.git_ref.create_head(commit, commit)
@@ -126,9 +126,19 @@ class GitType(AbsRepoType):
         self.git_ref.head.reset(index=True, working_tree=True)
 
     def getPath(self):
+        '''
+        Getter for path
+        
+        @return String
+        '''
         return self.path
 
     def setPath(self, path):
+        '''
+        Setter for path
+        
+        @param path (String) Path to set
+        '''
         self.path = path
 
 
@@ -139,7 +149,7 @@ class DirType(GitType):
 
     def __init__(self, path):
         '''
-        @param path String Path to the directory
+        @param path (String) Path to the directory
         '''
 
         #Make sure that the path is valid
