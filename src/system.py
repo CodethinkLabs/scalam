@@ -58,6 +58,9 @@ class System:
             logger.debug("Creating System from repo_path")
             self.programs=System.programsFromGitDirectory(repo_path)
             
+            if len(self.programs)==0:
+                logger.warning("No programs found on repo_path ({})".format(repo_path))
+            
         # Parse definitions
         elif definitions is not None:
             #TODO
@@ -129,6 +132,17 @@ class System:
         
         return self.programs
     
+    def getRandomProgram(self,rand):
+        '''
+        Randomly selects a program in the system
+        
+        @return Program
+        '''
+        
+        rand_index=rand%self.count()
+        
+        return self.programs[rand_index]
+    
     def count(self):
         '''
         Counts the number of programs in the system
@@ -170,6 +184,26 @@ class System:
         
         # Make a shallow copy
         return copy.copy(self)
+    
+    def dump(self):
+        '''
+        Prints out (to the logger) as much information about the current
+        system as it can. This is mainly used for debugging/logging purposes.
+        '''
+    
+        logger.debug("Dumping System object")
+        #Print out all the programs
+        for p in self.programs:
+            logger.debug("- {}".format(p.getName()))
+            #Print out all the versions
+            for ver in p.getVersions():
+                #Highlight/mark the current version
+                if ver == p.getCurrentVersion():
+                    logger.debug("  * {}".format(ver))
+                else:
+                    logger.debug("  - {}".format(ver))
+        #end for
+    
     
     def __eq__(self, sys):
         # If sys isn't a System, then it is clearly not equal

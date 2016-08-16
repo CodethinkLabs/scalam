@@ -91,6 +91,7 @@ def run_simulation(repo_path, gen_max):
     
     # Init goal (latest version)
     goal=Goal.latestVersion(sys)
+    goal.system.dump()
     
     # Init population
     pop=Population(DEFAULT_POP_SIZE, sys, goal)
@@ -106,7 +107,7 @@ def run_simulation(repo_path, gen_max):
         more likely it is to create offspring for the next generation
         '''
         
-        print("#{}".format(i))
+        print("Generation #{}".format(i))
         
         for genome in pop.getGenomes():
             # TODO some evaluation, score, record
