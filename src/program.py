@@ -184,6 +184,44 @@ class Program:
         '''
         return self.getNoOfVersions()
 
+    def getCurrentVersion(self):
+        '''
+        Gets the current version (text) the program is currenty set to
+        
+        @return String
+        '''
+        
+        return self.versions_list[self.versionIndex]
+        
+    def getCurrentVersionIndex(self):
+        '''
+        Gets the current version index the program is currently set to
+        
+        @return int
+        '''
+        
+        return self.versionIndex
+
+    def getPath(self):
+        '''
+        Returns the path where the repo exists
+        
+        @return String
+        '''
+        return self.repo_ref.getPath(self)
+    
+    def canUpgrade(self, jumps=1):
+        '''
+        Checks to see if the program has a higher version to upgrade to.
+        The number of upgrade jumps depends on the `jumps ` parameter
+        
+        @param jumps (int) Number of jumps to make
+        @return bool If it is able to upgrade this many times or not
+        '''
+        
+        return (self.versionIndex+jumps)<=self.getNoOfVersions()
+        
+
     @staticmethod
     def isValidName(name):
         '''
@@ -210,9 +248,3 @@ class Program:
     def __unicode__(self):
         return "%s"%(self.getName(),)
 
-    def getPath(self):
-        '''
-        Returns the path where the repo exists
-        @return String
-        '''
-        return self.repo_ref.getPath(self)
