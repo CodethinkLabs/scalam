@@ -19,7 +19,6 @@
 
 import random
 from system import System
-from goal import Goal
 from genome import Genome
 
 class Population:
@@ -32,7 +31,7 @@ class Population:
             expected that this will remain constant.
         @param sys (System) Defines all of the programs within the system and
             their possible versions/commits.
-        @param goal (Goal) The given goal
+        @param goal (System) The given goal system
         '''
         
         ##Type checking params
@@ -45,8 +44,8 @@ class Population:
         if not isinstance(sys, System):
             raise TypeError("Population sys expects a System instance");
            
-        if not isinstance(goal, Goal):
-            raise TypeError("Population goal expects a Goal instance");
+        if not isinstance(goal, System):
+            raise TypeError("Population goal expects a System instance");
           
         # If no seed given, generate a new random seed
         if seed is None:
@@ -71,7 +70,7 @@ class Population:
         
         genomes=[]
         for i in range(self.size):
-            genomes.append(Genome.createRandom(self.sys,seed))
+            genomes.append(Genome.createRandom(self.sys, self.goal ,seed))
         #TODO anything else?
         return genomes
     
