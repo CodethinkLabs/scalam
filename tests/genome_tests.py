@@ -17,24 +17,17 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import sys
-import os
-import unittest
-import shutil
 import tempfile
-from system import System
+import unittest
 
 sys.path.insert(0, "../src/")
 from program import *
+from genome import *
+from system import *
 from logger import logger
 
-from utils import *
-
-class TestSystem(unittest.TestCase):
-
-    def test_empty(self):
-        emptySystem=System()
-
-    def test_from_path(self):
+class TestGenome(unittest.TestCase):
+    def test_createRandom(self):
         parent_dir=tempfile.mkdtemp('.scalam')
         repo_dir=parent_dir + "/frepo"
         os.makedirs(repo_dir)
@@ -44,40 +37,13 @@ class TestSystem(unittest.TestCase):
         # Create the git instance and clone
         gtype=GitType(repo_url, repo_dir)
 
-        sys=System(parent_dir)
-
-        self.assertTrue(sys)
-        self.assertTrue(sys.programs)
-        self.assertTrue(len(sys.programs) == 1)
-        self.assertTrue(sys.programs[0].name == 'frepo')
-
-        # remove the test directory after use
-        shutil.rmtree(parent_dir)
-
-    def test_from_definitions(self):
-        #TODO
-        pass
-
-    def test_from_list(self):
-        #TODO
-        pass
-
-    def test_from_multiple(self):
-        #TODO
-
-        #self.assertRaises(TypeError, System(repo_dir=, definitions=, programs=))
-        pass
-
-    def test_add_program(self):
-        #TODO
-        pass
-
-    def test_dependency_matrix(self):
-        #TODO
-        pass
-
-    def test_clone(self):
-        system1=System()
-
-        self.assertTrue(True)
-        pass
+        # in this test the start and goal are the same
+        # since we are only interested in whether
+        # the genome initialises
+        systemStart=System(parent_dir)
+        systemGoal=systemStart.clone()
+        seed = 64687
+        genome=Genome(systemStart, systemGoal, seed)
+        self.assertTrue(genome)
+        self.assertTrue(genome.steps >= 0)
+        self.assertTrue(genome.steps < Genome.MAX_CHANGE_SEQUENCE)
