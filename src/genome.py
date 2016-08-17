@@ -26,14 +26,14 @@ class Genome:
     A genome is a current instance of some software system and consists
     of many programs that can evolve (change version numbers)
     '''
-    
+
     MAX_CHANGE_SEQUENCE=32
     DEFAULT_MUTATION_RATE=0.2
     DEFAULT_CROSSOVER=0.5
     DEFAULT_REBELS=0.05
 
 
-    def __init__(self, systemStart, systemGoal, seed=None):
+    def __init__(self, systemStart, systemGoal, seed=None, steps=None):
 
         # If no seed given, generate a new random seed
         if seed is None:
@@ -63,7 +63,10 @@ class Genome:
         self.rebels=Genome.DEFAULT_REBELS
 
         self.spawning_probability=0.0
-        self.steps=self.rand.next() % Genome.MAX_CHANGE_SEQUENCE
+        if steps is not None:
+            self.steps=steps
+        else:
+            self.steps=self.rand.next() % Genome.MAX_CHANGE_SEQUENCE
         self.score=0
 
         # This contains a list of system objects which describe the upgrade sequence
@@ -109,28 +112,26 @@ class Genome:
         *        their versions/commits and whether they are installed or not
         * @returns zero on success
         '''
-        '''
         systemState = self.systemGoal.clone()
-        self.upgradeStep.append(SystemState)
+        self.upgradeStep.append(systemState)
 
         # use the systemStart and systemGoal to set programs and versions
         # at each upgrade step randomly
         # Assumption: The list of programs are always in the same sequence
         #             in the starting and goal states
-        for programIndex in range(0, len(SystemState.getPrograms())):
+        for programIndex in range(0, len(systemState.getPrograms())):
             # Distance between the current version and the goal
             distanceToGoal = \
                              self.systemGoal.programs[programIndex].versionIndex - \
                              self.systemStart.programs[programIndex].versionIndex
 
             # A random version/commit index between the start and the goal
-            SystemState.programs[programIndex].versionIndex = \
+            systemState.programs[programIndex].versionIndex = \
                                                               self.systemStart.programs[programIndex].versionIndex + \
                                                               (self.rand.next() % distanceToGoal)
 
             # Random install state
-            SystemState.programs[programIndex].installed = (self.rand.next() % 100 > 50)
-        '''
+            systemState.programs[programIndex].installed = (self.rand.next() % 100 > 50)
         return 0
 
     def getMutability(self):
@@ -141,7 +142,7 @@ class Genome:
         '''
 
         return self.mutation_rate
-    
+
     def mutate(self):
         '''
         genome_mutate_existing_programs()
@@ -155,30 +156,30 @@ class Genome:
         * @param individual The genome to be mutated
         * @returns zero on success
         '''
-        
+
         # Do a random pr check to see if this genome will mutate
         if self.rand.nextNormalised() > 0.5:
-            
+
             # Figure out how many of the programs inside the genome will change
             genome_count=int(self.getMutability()*self.system.count())
-            
+
             logger.debug("Mutating {} programs in {}".format(genome_count, self))
-            
+
             i=0
             while i < genome_count:
                 #Figure out which random program to mutate
                 prog=self.system.getRandomProgram(self.rand.next())
-                
+
                 # Select mutatation strategy
-                
+
                 #TODO get distance to the goal. select a random number of
                 # versions to change (pareto distribution?)
                 #
                 # For now, just do a single step
-                
+
                 steps=1
                 logger.debug("Attempting to mutate {} {} times".format(prog, steps))
-                
+
                 if prog.canUpgrade(steps):  #This could fail if steps >1 and ver = last-1
                     prog.upgrade(steps)
                     i+=1
@@ -186,21 +187,21 @@ class Genome:
                     logger.debug("Failed to upgrade {}".format(steps))
             #end while
         #end if
-        
-        return    
-    
+
+        return
+
     def crossover(self, otherParent):
         '''
         Create a new genome that shares random programs from each parent
-        
-        @param otherParent Genome 
+
+        @param otherParent Genome
         @return Genome New child genome
         '''
-        
-        #TODO 
+
+        #TODO
         skip
-    
-    ####   
+
+    ####
 
     def mutateInsertion(self):
         '''
