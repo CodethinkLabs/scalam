@@ -113,25 +113,25 @@ class Genome:
         * @returns zero on success
         '''
         systemState = self.systemGoal.clone()
-        self.upgradeStep.append(SystemState)
+        self.upgradeStep.append(systemState)
 
         # use the systemStart and systemGoal to set programs and versions
         # at each upgrade step randomly
         # Assumption: The list of programs are always in the same sequence
         #             in the starting and goal states
-        for programIndex in range(0, len(SystemState.getPrograms())):
+        for programIndex in range(0, len(systemState.getPrograms())):
             # Distance between the current version and the goal
             distanceToGoal = \
                              self.systemGoal.programs[programIndex].versionIndex - \
                              self.systemStart.programs[programIndex].versionIndex
 
             # A random version/commit index between the start and the goal
-            SystemState.programs[programIndex].versionIndex = \
+            systemState.programs[programIndex].versionIndex = \
                                                               self.systemStart.programs[programIndex].versionIndex + \
                                                               (self.rand.next() % distanceToGoal)
 
             # Random install state
-            SystemState.programs[programIndex].installed = (self.rand.next() % 100 > 50)
+            systemState.programs[programIndex].installed = (self.rand.next() % 100 > 50)
         return 0
 
     def getMutability(self):
