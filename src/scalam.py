@@ -24,7 +24,6 @@ from system import System
 from population import Population
 from genome import Genome
 from logger import logger
-from goal import Goal
 
 
 # Number of generations to go through
@@ -92,8 +91,8 @@ def run_simulation(repo_path, gen_max):
     sys.dump()
     
     # Init goal (latest version)
-    goal=Goal.latestVersion(sys)
-    goal.system.dump()
+    goal=System.latestVersion(sys)
+    goal.dump()
     
     # Init population
     pop=Population(DEFAULT_POP_SIZE, sys, goal)

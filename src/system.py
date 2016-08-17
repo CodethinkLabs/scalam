@@ -228,6 +228,44 @@ class System:
                 if spam_count==spam_limit:
                     logger.debug("  - .. [limiting version spam output] ..")
         #end for
+
+    @staticmethod		
+    def latestVersion(system):		
+        '''		
+        Creates a goal based on the latest versions of software in the System		
+                
+        @param system (System) Set of programs to upgrade		
+        @returns System instance		
+        '''		
+        
+        ##Type checking params		
+        if not isinstance(system, System):		
+            raise TypeError(u"Goal 'system' expects a System instance")       		
+        
+        #Create an empty system and popululate one by one with highest version		
+        #of each software		
+        goal_system=System()  		
+        for prog in system.getPrograms():		
+            #Make a copy of the object and set version to the max		
+            max_version=prog.clone()		
+            latest_version=max_version.getCurrentHead()		
+            max_version.setVersion(latest_version)		
+                   
+            #Add this to our goal system		
+            goal_system.addProgram(max_version)		
+                    
+                    
+        return goal_system
+    
+    def getMaxScore(self):
+        '''
+        Gets the total score of this system
+        '''
+        
+        #TODO
+        
+        return 1.0
+        
     
     def __eq__(self, sys):
         # If sys isn't a System, then it is clearly not equal

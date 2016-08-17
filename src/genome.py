@@ -92,7 +92,7 @@ class Genome:
         # the system at each upgrade step
         genome.upgradeStep = []
         for step in range(genome.steps):
-            create.createInstallationStep()
+            genome.createInstallationStep()
         return genome
 
     def getScore(self):
@@ -109,7 +109,7 @@ class Genome:
         *        their versions/commits and whether they are installed or not
         * @returns zero on success
         '''
-
+        '''
         systemState = self.systemGoal.clone()
         self.upgradeStep.append(SystemState)
 
@@ -130,6 +130,7 @@ class Genome:
 
             # Random install state
             SystemState.programs[programIndex].installed = (self.rand.next() % 100 > 50)
+        '''
         return 0
 
     def getMutability(self):
