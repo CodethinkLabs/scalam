@@ -17,10 +17,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import sys
+import os
 import unittest
+import shutil
+import tempfile
 from system import System
 
 sys.path.insert(0, "../src/")
+from program import *
+from logger import logger
 
 from utils import *
 
@@ -30,33 +35,49 @@ class TestSystem(unittest.TestCase):
         emptySystem=System()
 
     def test_from_path(self):
-        #TODO
-        pass
-    
+        parent_dir=tempfile.mkdtemp('.scalam')
+        repo_dir=parent_dir + "/frepo"
+        os.makedirs(repo_dir)
+        repo_url="https://github.com/CodethinkLabs/frepo"
+        repo_name="frepo"
+
+        # Create the git instance and clone
+        gtype=GitType(repo_url, repo_dir)
+
+        sys=System(parent_dir)
+
+        self.assertTrue(sys)
+        self.assertTrue(sys.programs)
+        self.assertTrue(len(sys.programs) == 1)
+        self.assertTrue(sys.programs[0].name == 'frepo')
+
+        # remove the test directory after use
+        shutil.rmtree(parent_dir)
+
     def test_from_definitions(self):
         #TODO
         pass
-    
+
     def test_from_list(self):
         #TODO
         pass
-    
+
     def test_from_multiple(self):
         #TODO
-        
+
         #self.assertRaises(TypeError, System(repo_dir=, definitions=, programs=))
         pass
-    
+
     def test_add_program(self):
         #TODO
         pass
-    
+
     def test_dependency_matrix(self):
         #TODO
         pass
 
     def test_clone(self):
-        #TODO
-        
+        system1=System()
+
         self.assertTrue(True)
         pass
