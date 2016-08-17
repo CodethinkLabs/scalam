@@ -43,7 +43,7 @@ class TestGenome(unittest.TestCase):
         systemStart=System(parent_dir)
         systemGoal=systemStart.clone()
         seed = 64687
-        genome=Genome(systemStart, systemGoal, seed)
+        upgradeSteps=2
+        genome=Genome(systemStart, systemGoal, seed, steps=upgradeSteps)
         self.assertTrue(genome)
-        self.assertTrue(genome.steps >= 0)
-        self.assertTrue(genome.steps < Genome.MAX_CHANGE_SEQUENCE)
+        self.assertTrue(genome.steps == upgradeSteps)
