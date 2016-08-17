@@ -257,15 +257,31 @@ class System:
                     
         return goal_system
     
+    def getScore(self):
+        '''
+        Gets the current score of this system
+        
+        TODO Scoring strategy. For now, it is the total number of commits in
+             all of the the repos
+        '''
+        
+        sumscore=0
+        for prog in self.programs:
+            sumscore+=prog.getCurrentVersionIndex()
+        
+        return sumscore
+            
+    
     def getMaxScore(self):
         '''
         Gets the total score of this system
         '''
         
-        #TODO
+        sumscore=0
+        for prog in self.programs:
+            sumscore+=prog.getNoOfVersions()-1
         
-        return 1.0
-        
+        return sumscore
     
     def __eq__(self, sys):
         # If sys isn't a System, then it is clearly not equal

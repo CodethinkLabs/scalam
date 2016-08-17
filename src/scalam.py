@@ -30,7 +30,7 @@ from logger import logger
 DEFAULT_GEN_SIZE=10
 
 # Number of unique genome instances to have
-DEFAULT_POP_SIZE=5
+DEFAULT_POP_SIZE=1
 
 def print_usage():
     usage='''Usage {}: (-t | -r REPO_PATH [GENERATION_MAX])
@@ -76,6 +76,8 @@ def parse_args():
             
     
     except IndexError:
+    
+        logger.error(traceback.format_exc())
         print_usage()
     except Exception as e:
         logger.error(traceback.format_exc())
@@ -100,6 +102,8 @@ def run_simulation(repo_path, gen_max):
     # Init dataframe for storing results
     ## TODO
 
+    logger.info("Starting simulation...")
+    
     for i in range(gen_max):
         '''
         For each generation we need to go through all the genomes
@@ -108,20 +112,26 @@ def run_simulation(repo_path, gen_max):
         more likely it is to create offspring for the next generation
         '''
         
-        print("Generation #{}".format(i))
+        logger.info("Generation #{}".format(i))
         
         for genome in pop.getGenomes():
             # TODO some evaluation, score, record
-            print("\t{}".format(genome))
+            logger.info("\t{}".format(genome))
         
         #Check if objective has been met yet
         if pop.isGoalMet():
             # TODO
-            pass
+            logger.info("Goal configuration has been found!")
+            break
         
         pop=pop.nextGeneration()
+        
+        logger.debug("System state at end of this generation")
+        pop.sys.dump()
     
     #TODO do some final reporting
+    logger.info("Final configuration after {} generations looks like:".format(i))
+    pop.sys.dump()
 
 if __name__ == '__main__':
     parse_args()

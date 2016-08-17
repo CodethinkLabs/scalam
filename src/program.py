@@ -231,16 +231,26 @@ class Program:
         '''
         return self.repo_ref.getPath(self)
     
-    def canUpgrade(self, jumps=1):
+    def canUpgrade(self, steps=1):
         '''
         Checks to see if the program has a higher version to upgrade to.
-        The number of upgrade jumps depends on the `jumps ` parameter
+        The number of upgrade steps depends on the `jumps ` parameter
         
-        @param jumps (int) Number of jumps to make
+        @param jumps (int) Number of steps to make
         @return bool If it is able to upgrade this many times or not
         '''
         
-        return (self.versionIndex+jumps)<=self.getNoOfVersions()
+        return (self.versionIndex+steps)<self.getNoOfVersions()
+        
+    def upgrade(self, steps=1):
+        if not self.canUpgrade(steps):
+            raise IndexError("Can not upgrade past the max")
+
+        logger.debug("Upgrading {} -> {}".format(
+                    self.versionIndex,
+                    self.versionIndex+steps
+        ))
+        self.versionIndex+=steps
         
 
     @staticmethod

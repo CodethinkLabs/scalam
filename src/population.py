@@ -20,6 +20,7 @@
 import random
 from system import System
 from genome import Genome
+from logger import logger
 
 class Population:
     '''maximum number of genomes to have in a population'''
@@ -92,6 +93,7 @@ class Population:
         # meet the goal criteria
         
         for genome in self.getGenomes():
+            logger.debug("Current score is {} needs {}?".format(genome.getScore(),self.goal.getMaxScore()))
             if genome.getScore() == self.goal.getMaxScore():
                 return True
             
@@ -106,6 +108,10 @@ class Population:
         '''
         
         #TODO
+        for genome in self.getGenomes():
+            genome.mutate()
+        
+        
         return self
     
     ####
