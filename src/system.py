@@ -186,23 +186,47 @@ class System:
         # Make a shallow copy
         return copy.copy(self)
     
+    def setLowestVersions(self):
+        '''
+        Sets all the programs at the lowest possible verison and checks them out
+        '''
+        
+        logger.debug("Setting all programs at the earliest commit")
+        
+        for p in self.programs:
+            p.setVersionIndex(0)
+            p.checkout()
+            
+            logger.debug("{} set to commit {}".format(p.name, p.getCurrentVersion()))
+        #end for
+        
+    
     def dump(self):
         '''
         Prints out (to the logger) as much information about the current
         system as it can. This is mainly used for debugging/logging purposes.
         '''
+        
+        spam_limit=10
     
         logger.debug("Dumping System object")
         #Print out all the programs
         for p in self.programs:
             logger.debug("- {}".format(p.getName()))
+            spam_count=0
             #Print out all the versions
             for ver in p.getVersions():
                 #Highlight/mark the current version
                 if ver == p.getCurrentVersion():
-                    logger.debug("  * {}".format(ver))
-                else:
+                    logger.debug("  * {} *".format(ver))
+                    spam_count=0
+                elif spam_count<spam_limit:
                     logger.debug("  - {}".format(ver))
+                
+                spam_count+=1
+                    
+                if spam_count==spam_limit:
+                    logger.debug("  - .. [limiting version spam output] ..")
         #end for
     
     def __eq__(self, sys):
