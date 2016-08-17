@@ -95,11 +95,19 @@ class GitType(AbsRepoType):
 
         @return List of versions
         '''
+        
+        #Since this might not be the latest commit, remember where we started
+        orighead=self.git_ref.head.commit.hexsha
 
+        self.git_ref.heads['master'].checkout()
+        
         versions=[]
         #Grab all of the shas from this repo
         for commits in self.git_ref.iter_commits():
             versions.append(commits.hexsha)
+
+        #Put original head back
+        self.checkout(orighead)
 
         return versions
 
@@ -110,7 +118,8 @@ class GitType(AbsRepoType):
         @return String
         '''
 
-        return self.git_ref.head.ref.commit.hexsha
+        #return self.git_ref.head.ref.commit.hexsha
+        return self.git_ref.head.commit.hexsha
 
     def checkout(self, commit):
         '''
@@ -119,11 +128,15 @@ class GitType(AbsRepoType):
         @param commit (String) 
         '''
 
+        ''' Not sure if all this is needed. The create_head actually makes a new branch
         past_branch = self.git_ref.create_head(commit, commit)
         self.git_ref.head.reference = past_branch
         assert not self.git_ref.head.is_detached
         # reset the index and working tree to match the pointed-to commit
         self.git_ref.head.reset(index=True, working_tree=True)
+        '''
+        self.git_ref.git.checkout(commit)
+        
 
     def getPath(self):
         '''

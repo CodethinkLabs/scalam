@@ -88,9 +88,12 @@ def run_simulation(repo_path, gen_max):
     
     # Init base system
     sys=System(repo_path=repo_path)
+    sys.setLowestVersions()
+    sys.dump()
     
     # Init goal (latest version)
     goal=Goal.latestVersion(sys)
+    goal.system.dump()
     
     # Init population
     pop=Population(DEFAULT_POP_SIZE, sys, goal)
@@ -106,12 +109,11 @@ def run_simulation(repo_path, gen_max):
         more likely it is to create offspring for the next generation
         '''
         
-        print("#{}".format(i))
+        print("Generation #{}".format(i))
         
         for genome in pop.getGenomes():
             # TODO some evaluation, score, record
             print("\t{}".format(genome))
-            pass
         
         #Check if objective has been met yet
         if pop.isGoalMet():

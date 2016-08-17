@@ -18,6 +18,7 @@
 '''
 
 import os
+import copy
 from utils import unify
 from repo_type import *
 from logger import logger
@@ -50,13 +51,17 @@ class Program:
         self.versions_list=[]
         self.versionIndex=-1
 
-    def checkout(self,commit):
+    def checkout(self,commit=None):
         '''
         Checks out to the given commit
 
         @param commit (String) Commit string you wish to checkout
         @return git.Checkout?
         '''
+
+        #If no commit is given, we are checking out the current version set
+        if commit is None:
+            commit=self.getCurrentVersion()
 
         if not isinstance(commit,str):
             raise TypeError(u"Program 'commit' expects a string")
@@ -118,7 +123,23 @@ class Program:
             return False
         self.versionIndex=newVersionIndex
         return True
-
+    
+    def setVersionIndex(self, ix):
+        '''
+        Manually sets the version index that the program is currently on
+        
+        @param ix (int) Index in the version list to set
+        '''
+        
+        if not isinstance(ix, int):
+            raise TypeError(u"Program 'ix' expects an int")
+        
+        if ix < 0 or ix >= len(self.getVersions()):
+            raise IndexError(u"Invalid version index passed ({})".format(ix))
+            
+        self.versionIndex=ix
+        
+    
     def getCurrentHead(self):
         '''
         Returns the latest version or commit for the software
@@ -184,6 +205,44 @@ class Program:
         '''
         return self.getNoOfVersions()
 
+    def getCurrentVersion(self):
+        '''
+        Gets the current version (text) the program is currenty set to
+        
+        @return String
+        '''
+        
+        return self.versions_list[self.versionIndex]
+        
+    def getCurrentVersionIndex(self):
+        '''
+        Gets the current version index the program is currently set to
+        
+        @return int
+        '''
+        
+        return self.versionIndex
+
+    def getPath(self):
+        '''
+        Returns the path where the repo exists
+        
+        @return String
+        '''
+        return self.repo_ref.getPath(self)
+    
+    def canUpgrade(self, jumps=1):
+        '''
+        Checks to see if the program has a higher version to upgrade to.
+        The number of upgrade jumps depends on the `jumps ` parameter
+        
+        @param jumps (int) Number of jumps to make
+        @return bool If it is able to upgrade this many times or not
+        '''
+        
+        return (self.versionIndex+jumps)<=self.getNoOfVersions()
+        
+
     @staticmethod
     def isValidName(name):
         '''
@@ -205,14 +264,18 @@ class Program:
 
         return True
 
-    def __str__(self):
-        return unicode(self)
-    def __unicode__(self):
-        return "%s"%(self.getName(),)
+    def clone(self):
+        '''
+        Makes a copy of the current Program instance
+        
+        @return Program
+        '''
+        
+        #TODO shallow or deep copy? Does it matter?
+        
+        # Make a shallow copy
+        return copy.copy(self)
 
-    def getPath(self):
-        '''
-        Returns the path where the repo exists
-        @return String
-        '''
-        return self.repo_ref.getPath(self)
+    def __str__(self):
+        return "{}".format(self.getName())
+

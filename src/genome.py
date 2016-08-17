@@ -22,6 +22,11 @@ from randnum import *
 from system import System
 
 class Genome:
+    '''
+    A genome is a current instance of some software system and consists
+    of many programs that can evolve (change version numbers)
+    '''
+    
     MAX_CHANGE_SEQUENCE=32
     DEFAULT_MUTATION_RATE=0.2
     DEFAULT_CROSSOVER=0.5
@@ -80,20 +85,7 @@ class Genome:
         
         #TODO do evaluation here or somewhere else?
         return self.score
-        
-
-    def createInstallationStep(self):
-        '''
-        genome_create_installation_step()
-        * @brief Creates a single upgrade step consisting of a set of programs,
-        *        their versions/commits and whether they are installed or not
-        * @param population The population in which the genome exists
-        * @param individual The genome to be mutated
-        * @param upgrade_step The index within the upgrade series
-        * @returns zero on success
-       '''
-        skip
-
+    
     def getMutability(self):
         '''
         Getter for mutation rate
@@ -102,7 +94,7 @@ class Genome:
         '''
         
         return self.mutation_rate
-
+    
     def mutate(self):
         '''
         genome_mutate_existing_programs()
@@ -116,7 +108,55 @@ class Genome:
         * @param individual The genome to be mutated
         * @returns zero on success
         '''
+        
+        # Do a random pr check to see if this genome will mutate
+        if self.rand.nextNormalised() > 0.5:
+            
+            # Figure out how many of the programs inside the genome will change
+            genome_count=int(self.getMutability()*self.system.count())
+            
+            logger.debug("Mutating {} programs in {}".format(genome_count, self))
+            
+            i=0
+            while i < genome_count:
+                #Figure out which random program to mutate
+                prog=self.system.getRandomProgram(self.rand.next())
+                
+                # Select mutatation strategy
+                
+                #TODO get distance to the goal. select a random number of
+                # versions to change (pareto distribution?)
+                #
+                # For now, just do a single step
+                
+                steps=1
+                logger.debug("Attempting to mutate {} {} times".format(prog, steps))
+                
+                if prog.canUpgrade(steps):  #This could fail if steps >1 and ver = last-1
+                    prog.upgrade(steps)
+                    i+=1
+                else:
+                    logger.debug("Failed to upgrade {}".format(steps))
+            #end while
+        #end if
+        
+        return    
+    
+    def crossover(self, otherParent):
+        '''
+        Create a new genome that shares random programs from each parent
+        
+        @param otherParent Genome 
+        @return Genome New child genome
+        '''
+        
+        #TODO 
         skip
+    
+    ####   
+
+    
+
 
     def insert(self):
         '''
@@ -137,17 +177,6 @@ class Genome:
         '''
         skip
 
-    def spawn(self):
-        '''
-        * @brief create a child from two parents
-        * @param population The population in which the individuals exist
-        * @param parent1 First parent
-        * @param parent2 Second parent
-        * @param child Returned child genome
-        * @returns zero on success
-        int genome_spawn()
-        '''
-        pass
 
     def __eq__(self, genome):
         #TODO Criteria for comparing genomes for the unique property

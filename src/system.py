@@ -58,6 +58,9 @@ class System:
             logger.debug("Creating System from repo_path")
             self.programs=System.programsFromGitDirectory(repo_path)
             
+            if len(self.programs)==0:
+                logger.warning("No programs found on repo_path ({})".format(repo_path))
+            
         # Parse definitions
         elif definitions is not None:
             #TODO
@@ -129,6 +132,26 @@ class System:
         
         return self.programs
     
+    def getRandomProgram(self,rand):
+        '''
+        Randomly selects a program in the system
+        
+        @return Program
+        '''
+        
+        rand_index=rand%self.count()
+        
+        return self.programs[rand_index]
+    
+    def count(self):
+        '''
+        Counts the number of programs in the system
+        
+        @return int
+        '''
+        
+        return len(self.programs)
+    
     def dependencyMatrix(self):
         '''
         Create a dependency matrix for a system
@@ -161,6 +184,50 @@ class System:
         
         # Make a shallow copy
         return copy.copy(self)
+    
+    def setLowestVersions(self):
+        '''
+        Sets all the programs at the lowest possible verison and checks them out
+        '''
+        
+        logger.debug("Setting all programs at the earliest commit")
+        
+        for p in self.programs:
+            p.setVersionIndex(0)
+            p.checkout()
+            
+            logger.debug("{} set to commit {}".format(p.name, p.getCurrentVersion()))
+        #end for
+        
+    
+    def dump(self):
+        '''
+        Prints out (to the logger) as much information about the current
+        system as it can. This is mainly used for debugging/logging purposes.
+        '''
+        
+        spam_limit=10
+    
+        logger.debug("Dumping System object")
+        #Print out all the programs
+        for p in self.programs:
+            logger.debug("- {}".format(p.getName()))
+            spam_count=0
+            #Print out all the versions
+            for ver in p.getVersions():
+                #Highlight/mark the current version
+                if ver == p.getCurrentVersion():
+                    logger.debug("  * {} *".format(ver))
+                    spam_count=0
+                elif spam_count<spam_limit:
+                    logger.debug("  - {}".format(ver))
+                
+                spam_count+=1
+                    
+                if spam_count==spam_limit:
+                    logger.debug("  - .. [limiting version spam output] ..")
+        #end for
+    
     
     def __eq__(self, sys):
         # If sys isn't a System, then it is clearly not equal
