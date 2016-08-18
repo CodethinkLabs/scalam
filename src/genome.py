@@ -20,6 +20,7 @@
 import random
 from randnum import *
 from system import System
+from logger import logger
 
 class Genome:
     '''
@@ -28,7 +29,7 @@ class Genome:
     '''
 
     MAX_CHANGE_SEQUENCE=32
-    DEFAULT_MUTATION_RATE=0.2
+    DEFAULT_MUTATION_RATE=1.0#0.2
     DEFAULT_CROSSOVER=0.5
     DEFAULT_REBELS=0.05
 
@@ -56,6 +57,9 @@ class Genome:
 
         # the state of the reference system
         self.systemGoal=systemGoal
+        
+        # current system that evolves over time
+        self.currentSystem=systemStart.clone()
 
         #TODO add option to pass argument in constructor?
         self.mutation_rate=Genome.DEFAULT_MUTATION_RATE
@@ -104,7 +108,7 @@ class Genome:
         '''
 
         #TODO do evaluation here or somewhere else?
-        return self.score
+        return self.currentSystem.getScore()
 
     def createInstallationStep(self):
         '''
@@ -145,31 +149,23 @@ class Genome:
 
     def mutate(self):
         '''
-        genome_mutate_existing_programs()
-        * @brief Mutates existing programs within a genome
-        * @param population The population in which the genome exists
-        * @param individual The genome to be mutated
-        * @returns zero on success
-        genome_mutate()
-        * @brief Mutates a given genome
-        * @param population The population in which the genome exists
-        * @param individual The genome to be mutated
-        * @returns zero on success
+        Randomly attempts to mutate a genome. Returns true on sucessful mutation
         '''
 
         # Do a random pr check to see if this genome will mutate
         if self.rand.nextNormalised() > 0.5:
 
             # Figure out how many of the programs inside the genome will change
-            genome_count=int(self.getMutability()*self.system.count())
-
+            genome_count=int(self.getMutability()*self.currentSystem.count())
+         
             logger.debug("Mutating {} programs in {}".format(genome_count, self))
 
             i=0
             while i < genome_count:
                 #Figure out which random program to mutate
-                prog=self.system.getRandomProgram(self.rand.next())
 
+                prog=self.currentSystem.getRandomProgram(self.rand.next())
+                
                 # Select mutatation strategy
 
                 #TODO get distance to the goal. select a random number of
@@ -182,14 +178,17 @@ class Genome:
 
                 if prog.canUpgrade(steps):  #This could fail if steps >1 and ver = last-1
                     prog.upgrade(steps)
+                    
                     i+=1
                 else:
                     logger.debug("Failed to upgrade {}".format(steps))
             #end while
+            
+            return True
         #end if
-
-        return
-
+        
+        return False
+    
     def crossover(self, otherParent):
         '''
         Create a new genome that shares random programs from each parent
