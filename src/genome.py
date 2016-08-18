@@ -34,7 +34,7 @@ class Genome:
     DEFAULT_REBELS=0.05
 
 
-    def __init__(self, systemStart, systemGoal, seed=None, steps=None):
+    def __init__(self, systemStart, systemGoal, seed=None, steps=None, parent1=None, parent2=None):
 
         # If no seed given, generate a new random seed
         if seed is None:
@@ -57,7 +57,7 @@ class Genome:
 
         # the state of the reference system
         self.systemGoal=systemGoal
-        
+
         # current system that evolves over time
         self.currentSystem=systemStart.clone()
 
@@ -75,6 +75,12 @@ class Genome:
 
         # This contains a list of system objects which describe the upgrade sequence
         self.upgradeStep = []
+
+        # if parents have been specified then this is their child
+        if parent1 is not None:
+            if parent2 is not None:
+                self.crossover(self, parent1, parent2)
+                self.mutate()
 
     @staticmethod
     def createRandom(systemStart, systemGoal, seed=None):
@@ -157,7 +163,7 @@ class Genome:
 
             # Figure out how many of the programs inside the genome will change
             genome_count=int(self.getMutability()*self.currentSystem.count())
-         
+
             logger.debug("Mutating {} programs in {}".format(genome_count, self))
 
             i=0
@@ -165,7 +171,7 @@ class Genome:
                 #Figure out which random program to mutate
 
                 prog=self.currentSystem.getRandomProgram(self.rand.next())
-                
+
                 # Select mutatation strategy
 
                 #TODO get distance to the goal. select a random number of
@@ -178,27 +184,40 @@ class Genome:
 
                 if prog.canUpgrade(steps):  #This could fail if steps >1 and ver = last-1
                     prog.upgrade(steps)
-                    
+
                     i+=1
                 else:
                     logger.debug("Failed to upgrade {}".format(steps))
             #end while
-            
+
             return True
         #end if
-        
+
         return False
-    
-    def crossover(self, otherParent):
+
+    def crossover(self, parent1, parent2):
         '''
         Create a new genome that shares random programs from each parent
 
-        @param otherParent Genome
+        @param parent1 Genome
+        @param parent2 Genome
         @return Genome New child genome
         '''
 
-        #TODO
-        skip
+        rand=RandNum(self.seed)
+
+        # pick the number of steps from either parent
+        self.steps = parent1.steps
+        if rand.next() % 100 > 50:
+            self.steps = parent2.steps
+
+        for s in range(self,steps):
+            # choose to take this step from one parent or the other
+            if rand.next() % 100 < 50 and s < parent1.steps:
+                systemState = parent1.upgradeStep[s].clone()
+            else:
+                systemState = parent2.upgradeStep[s].clone()
+            self.upgradeStep.append(systemState)
 
     ####
 
