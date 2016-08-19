@@ -25,8 +25,8 @@ from logger import logger
 class Population:
     '''maximum number of genomes to have in a population'''
     MAX_POPULATION_SIZE=256
-    
-    def __init__(self, size, sys, goal, seed=None):
+
+    def __init__(self, size, sys, goal, seed=None, prevgen=None):
         '''
         @param size (int) Number of individuals in the population. It's
             expected that this will remain constant.
@@ -34,88 +34,103 @@ class Population:
             their possible versions/commits.
         @param goal (System) The given goal system
         '''
-        
+
         ##Type checking params
         if not isinstance(size, int):
             raise TypeError("Population size expects an int");
         if size > Population.MAX_POPULATION_SIZE:
             raise TypeError("Population size larger than MAX_POPULATION_SIZE (%d)"
                             %Population.MAX_POPULATION_SIZE)
-         
+
         if not isinstance(sys, System):
             raise TypeError("Population sys expects a System instance");
-           
+
         if not isinstance(goal, System):
             raise TypeError("Population goal expects a System instance");
-          
+
         # If no seed given, generate a new random seed
         if seed is None:
             self.seed=random.randint(1,9999999)
         else:
             if not isinstance(seed,int):
                 raise TypeError(u"Population 'seed' expects an int")
-            self.seed=seed  
-          
+            self.seed=seed
+
         self.size=size
         self.sys=sys
         self.goal=goal
-        
-        self.individuals=self._createInitGenomes(self.seed)
-    
+
+        if prevgen is not None:
+            if not isinstance(prevgen, Population):
+                raise TypeError("Population prevgen expects a Population instance");
+            self.nextGeneration(prevgen)
+        else:
+            self.individuals=self._createInitGenomes(self.seed)
+
     def _createInitGenomes(self, seed):
         '''
         Creates the initial set of Genomes in the population
-        
+
         @return Genome[]
         '''
-        
+
         genomes=[]
         for i in range(self.size):
             genomes.append(Genome.createRandom(self.sys, self.goal ,seed))
         #TODO anything else?
         return genomes
-    
+
     def getGenomes(self):
         '''
         Getter for the genomes in this population
-        
+
         @return Genome[]
         '''
-        
+
         return self.individuals
-    
+
     def isGoalMet(self):
         '''
         Checks to see if any of the genomes meet the goal system
         '''
-        
+
         # TODO should we return a boolean or a genome (list?) that
         # meet the goal criteria
-        
+
         for genome in self.getGenomes():
             logger.debug("Current score is {} needs {}?".format(genome.getScore(),self.goal.getMaxScore()))
             if genome.getScore() == self.goal.getMaxScore():
                 return True
-            
+
         return False
-    
-        
-    def nextGeneration(self):
+
+    def selectParent(self, prevgen):
+        '''
+        Randomly selects a parent genome from the previous generation.
+        This is biased towards the beginning of the list, and assumes that
+        the previous generation have been sorted into descending score order
+
+        @return Genome The parent genome
+        '''
+        rand=RandNum(self.seed)
+        posn=(rand.next() % 100000) / 100000
+        return prevgen.individual[int(posn * posn * len(prevgen.getGenomes()))]
+
+    def nextGeneration(self, prevgen):
         '''
         Creates the next generation population
-       
+
         @return Population
         '''
-        
-        #TODO
-        for genome in self.getGenomes():
-            genome.mutate()
-        
-        
-        return self
-    
+
+        prevgen.sort()
+
+        self.individuals=[]
+        for gen in range(len(prevgen.getGenomes())):
+            individuals.add(child=Genome(self.sys, self.goal, self.selectParent(prevgen), self.selectParent(prevgen)))
+
     ####
-    
+
     def createDirectAscentGenome(self):
         '''
         * @brief Assigns one genome in the population to try going straight
@@ -125,7 +140,7 @@ class Population:
         int population_create_direct_ascent_genome()
         '''
         pass
-    
+
     def isGenomeUnique(self):
         '''
         * @brief Returns true if the given genome is unique.
@@ -138,11 +153,11 @@ class Population:
         * @param next_generation Use the next generation (1) or the current generation (0)
         * @returns True if the given genome is unique
         int genome_unique()
-        
+
         TODO Shouldn't this be in Genome? Check
         '''
         pass
-    
+
     def reproductionFunction(self):
         '''
         * @brief Given a normalised evaluation score for a genome return the probability
@@ -151,7 +166,7 @@ class Population:
         * @param normalised_score Evaluation score in the range 0.0 -> 1.0
         * @returns Spawning probability.
         float population_reproduction_function()
-        
+
         TODO rename this method?
         '''
         pass
@@ -163,7 +178,7 @@ class Population:
         int population_spawning_probabilities()
         '''
         pass
-    
+
     def sort(self):
         '''
         * @brief sorts the current generation in order of their spawning probability
@@ -171,20 +186,14 @@ class Population:
         * @returns zero on success
         int population_sort()
         '''
-        pass
-    
-    def populationParrent(self):
-        '''
-        * @brief Randomly picks a parent genome with a bias towards
-        *        higher scores
-        * @param population The population to be updated after evaluation of genomes
-        * @returns Pointer to the parent genome
-        sc_genome * population_parent()
-        
-        TODO Rename/move this method, not clear on purpose at a glance
-        '''
-        pass
-    
+        # Maybe there is some python way to sort a list based on the getScore function
+        for i in range(len(self.getGenomes())):
+            for j in range(len(self.getGenomes())-i):
+                if self.individual[i].getScore() < self.individual[i+j].getScore():
+                    tempgen=self.individual[i]
+                    self.individual[i] = self.individual[i+j]
+                    self.individual[i+j] = tempgen
+
     def setTestPasses(self):
         '''
         * @brief Sets the evaluation score for a genome with the given array index
@@ -194,11 +203,11 @@ class Population:
         * @returns zero on success
         */
         int population_set_test_passes()
-        
+
         TODO is this needed in python?
         '''
         pass
-    
+
     def getScore(self):
         '''
         * @brief Returns the evaluation score for a genome with the given array index
@@ -209,7 +218,7 @@ class Population:
         float population_get_score()
         '''
         pass
-    
+
     def getAvgScore(self):
         '''
         * @brief Returns the average fitness score for the population
@@ -217,11 +226,11 @@ class Population:
         * @returns Average score
         */
         float population_average_score()
-        
+
         TODO Needed? Expect to just go something like self.score.mean()
         '''
         pass
-    
+
     def getBestIndex(self):
         '''
         * @brief Returns the array index of the top scoring genome
@@ -238,18 +247,18 @@ class Population:
         int population_worst_index()
         '''
         pass
-    
+
     def getMaxScore(self):
         '''
         * @brief Returns the best score for the given population
         * @param population The population after individuals have been evaluated
         * @returns The best score within the population
         float population_best_score()
-        
+
         TODO See getAvgScore
         '''
         pass
-    
+
     def getVariance(self):
         '''
         * @brief Returns the RMS variance of scores within the population
@@ -258,7 +267,7 @@ class Population:
         float population_variance()
         '''
         pass
-    
+
     def __clone__(self):
         '''
         * @brief Copies a population object
@@ -268,7 +277,7 @@ class Population:
         * @param source Population object to copy from
         * @returns zero on success
         int population_copy()
-        
+
         TODO Check that this is the correct syntax for cloning/copying
         '''
         pass
