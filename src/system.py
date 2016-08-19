@@ -57,10 +57,10 @@ class System:
         if repo_path is not None:
             logger.debug("Creating System from repo_path")
             self.programs=System.programsFromGitDirectory(repo_path)
-            
+
             if len(self.programs)==0:
                 logger.warning("No programs found on repo_path ({})".format(repo_path))
-            
+
         # Parse definitions
         elif definitions is not None:
             #TODO
@@ -132,27 +132,27 @@ class System:
         '''
 
         return self.programs
-    
+
     def getRandomProgram(self,rand):
         '''
         Randomly selects a program in the system
-        
+
         @return Program
         '''
-        
+
         rand_index=rand%self.count()
-        
+
         return self.programs[rand_index]
-    
+
     def count(self):
         '''
         Counts the number of programs in the system
-        
+
         @return int
         '''
-        
+
         return len(self.programs)
- 
+
     def dependencyMatrix(self):
         '''
         Create a dependency matrix for a system
@@ -185,30 +185,30 @@ class System:
 
         # Make a shallow copy
         return copy.copy(self)
-    
+
     def setLowestVersions(self):
         '''
         Sets all the programs at the lowest possible verison and checks them out
         '''
-        
+
         logger.debug("Setting all programs at the earliest commit")
-        
+
         for p in self.programs:
             p.setVersionIndex(0)
             p.checkout()
-            
+
             logger.debug("{} set to commit {}".format(p.name, p.getCurrentVersion()))
         #end for
-        
-    
+
+
     def dump(self):
         '''
         Prints out (to the logger) as much information about the current
         system as it can. This is mainly used for debugging/logging purposes.
         '''
-        
+
         spam_limit=10
-    
+
         logger.debug("Dumping System object")
         #Print out all the programs
         for p in self.programs:
@@ -222,67 +222,64 @@ class System:
                     spam_count=0
                 elif spam_count<spam_limit:
                     logger.debug("  - {}".format(ver))
-                
+
                 spam_count+=1
-                    
+
                 if spam_count==spam_limit:
                     logger.debug("  - .. [limiting version spam output] ..")
         #end for
 
-    @staticmethod		
-    def latestVersion(system):		
-        '''		
-        Creates a goal based on the latest versions of software in the System		
-                
-        @param system (System) Set of programs to upgrade		
-        @returns System instance		
-        '''		
-        
-        ##Type checking params		
-        if not isinstance(system, System):		
-            raise TypeError(u"Goal 'system' expects a System instance")       		
-        
-        #Create an empty system and popululate one by one with highest version		
-        #of each software		
-        goal_system=System()  		
-        for prog in system.getPrograms():		
-            #Make a copy of the object and set version to the max		
-            max_version=prog.clone()		
-            latest_version=max_version.getCurrentHead()		
-            max_version.setVersion(latest_version)		
-                   
-            #Add this to our goal system		
-            goal_system.addProgram(max_version)		
-                    
-                    
+    @staticmethod
+    def latestVersion(system):
+        '''
+        Creates a goal based on the latest versions of software in the System
+
+        @param system (System) Set of programs to upgrade
+        @returns System instance
+        '''
+
+        ##Type checking params
+        if not isinstance(system, System):
+            raise TypeError(u"Goal 'system' expects a System instance")
+
+        #Create an empty system and popululate one by one with highest version
+        #of each software
+        goal_system=System()
+        for prog in system.getPrograms():
+            #Make a copy of the object and set version to the max
+            max_version=prog.clone()
+            latest_version=max_version.getCurrentHead()
+            max_version.setVersion(latest_version)
+
+            #Add this to our goal system
+            goal_system.addProgram(max_version)
+
+
         return goal_system
-    
+
     def getScore(self):
         '''
         Gets the current score of this system
-        
-        TODO Scoring strategy. For now, it is the total number of commits in
-             all of the the repos
+
+        TODO Scoring strategy. Percentage progress towards the latest commits
         '''
-        
+
         sumscore=0
         for prog in self.programs:
-            sumscore+=prog.getCurrentVersionIndex()
-        
-        return sumscore
-            
-    
+            # Normalise here so that there isn't a strong bias towards
+            # any particular program within the system
+            sumscore+=prog.getCurrentVersionIndex() / prog.getNoOfVersions()
+
+        return sumscore * 100 / len(self.programs)
+
+
     def getMaxScore(self):
         '''
-        Gets the total score of this system
+        Gets the best possible score of this system
         '''
-        
-        sumscore=0
-        for prog in self.programs:
-            sumscore+=prog.getNoOfVersions()-1
-        
-        return sumscore
-    
+
+        return 100
+
     def __eq__(self, sys):
         # If sys isn't a System, then it is clearly not equal
         if not isinstance(sys, System):
